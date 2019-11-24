@@ -1,13 +1,12 @@
 package com.apps.adrcotfas.burpeebuddy.main;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.view.LayoutInflater;
+
+import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 
-public class MainActivity extends AppCompatActivity implements MainViewMvcImpl.Listener{
+public class MainActivity extends BaseActivity implements MainViewMvcImpl.Listener{
 
     MainViewMvc mViewMvc;
 
@@ -15,7 +14,7 @@ public class MainActivity extends AppCompatActivity implements MainViewMvcImpl.L
     public final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mViewMvc = new MainViewMvcImpl(LayoutInflater.from(this), null);
+        mViewMvc = getCompositionRoot().getViewMvcFactory().getMainViewMvc(null);
         setContentView(mViewMvc.getRootView());
     }
 
@@ -34,6 +33,5 @@ public class MainActivity extends AppCompatActivity implements MainViewMvcImpl.L
 
     @Override
     public void onStartButtonClicked() {
-        //TODO jump to the start workout activity
     }
 }

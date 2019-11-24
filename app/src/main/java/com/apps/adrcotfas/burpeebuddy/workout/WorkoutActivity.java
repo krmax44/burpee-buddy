@@ -1,21 +1,20 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+
+import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 
-public class WorkoutActivity extends AppCompatActivity implements WorkoutViewMvc.Listener {
+public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.Listener {
 
     WorkoutViewMvc mViewMvc;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewMvc = new WorkoutViewMvcImpl(LayoutInflater.from(this), null);
+        mViewMvc = getCompositionRoot().getViewMvcFactory().getWorkoutViewMvc(null);
     }
 
     @Override
