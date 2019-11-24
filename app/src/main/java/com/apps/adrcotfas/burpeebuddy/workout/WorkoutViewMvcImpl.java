@@ -5,14 +5,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.BaseViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.BaseObservableViewMvc;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class WorkoutViewMvcImpl extends BaseViewMvc implements WorkoutViewMvc{
-
-    private final List<WorkoutViewMvc.Listener> mListeners = new ArrayList<>();
+public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Listener>
+        implements WorkoutViewMvc{
 
     public WorkoutViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.activity_workout, parent, false));
@@ -22,18 +18,8 @@ public class WorkoutViewMvcImpl extends BaseViewMvc implements WorkoutViewMvc{
     }
 
     private void onStopButtonClicked() {
-        for (Listener listener : mListeners) {
+        for (Listener listener : getListeners()) {
             listener.onStopButtonClicked();
         }
-    }
-
-    @Override
-    public void registerListener(Listener listener) {
-        mListeners.add(listener);
-    }
-
-    @Override
-    public void unregisterListener(Listener listener) {
-        mListeners.remove(listener);
     }
 }
