@@ -18,7 +18,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     }
 
     public void onStartButtonClicked() {
-        for(Listener listener : getListeners()) {
+        for (Listener listener : getListeners()) {
             listener.onStartButtonClicked();
         }
     }

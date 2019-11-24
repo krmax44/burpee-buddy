@@ -1,19 +1,14 @@
 package com.apps.adrcotfas.burpeebuddy.common;
 
-import android.content.Context;
 import android.view.View;
 
-public abstract class BaseViewMvc implements ViewMvc{
+public abstract class BaseViewMvc implements ViewMvc {
 
     private View mRootView;
 
     @Override
     public View getRootView() {
         return mRootView;
-    }
-
-    protected Context getContext() {
-        return getRootView().getContext();
     }
 
     protected void setRootView(View view) {

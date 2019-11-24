@@ -7,4 +7,6 @@ public interface WorkoutViewMvc extends ObservableViewMvc<WorkoutViewMvc.Listene
     public interface Listener {
         void onStopButtonClicked();
     }
+
+    public void updateCounter(long value);
 }

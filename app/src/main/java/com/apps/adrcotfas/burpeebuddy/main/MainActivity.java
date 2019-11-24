@@ -3,10 +3,11 @@ package com.apps.adrcotfas.burpeebuddy.main;
 import android.os.Bundle;
 
 import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
+import com.apps.adrcotfas.burpeebuddy.workout.WorkoutActivity;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 
-public class MainActivity extends BaseActivity implements MainViewMvcImpl.Listener{
+public class MainActivity extends BaseActivity implements MainViewMvcImpl.Listener {
 
     MainViewMvc mViewMvc;
 
@@ -33,5 +34,6 @@ public class MainActivity extends BaseActivity implements MainViewMvcImpl.Listen
 
     @Override
     public void onStartButtonClicked() {
+        WorkoutActivity.start(this, 0);
     }
 }
