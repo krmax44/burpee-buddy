@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy;
+package com.apps.adrcotfas.burpeebuddy.main;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,26 +9,26 @@ import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 
 public class MainActivity extends AppCompatActivity implements MainViewMvcImpl.Listener{
 
-    MainViewMvc mMainViewMvc;
+    MainViewMvc mViewMvc;
 
     @Override
     public final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMainViewMvc = new MainViewMvcImpl(LayoutInflater.from(this), null);
-        setContentView(mMainViewMvc.getRootView());
+        mViewMvc = new MainViewMvcImpl(LayoutInflater.from(this), null);
+        setContentView(mViewMvc.getRootView());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
-        mMainViewMvc.registerListener(this);
+        mViewMvc.registerListener(this);
     }
 
     @Override
     protected void onDestroy() {
-        mMainViewMvc.unregisterListener(this);
+        mViewMvc.unregisterListener(this);
         super.onDestroy();
     }
 
