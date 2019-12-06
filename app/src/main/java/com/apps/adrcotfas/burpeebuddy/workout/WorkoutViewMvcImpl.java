@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         implements WorkoutViewMvc {
 
     private TextView mCounter;
+    private TextView mTimer;
 
     public WorkoutViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.activity_workout, parent, false));
@@ -20,6 +22,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         stopButton.setOnClickListener(v -> onStopButtonClicked());
 
         mCounter = findViewById(R.id.rep_counter);
+        mTimer = findViewById(R.id.timer);
     }
 
     private void onStopButtonClicked() {
@@ -31,5 +34,18 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
     @Override
     public void updateCounter(long value) {
         mCounter.setText(String.valueOf(value));
+    }
+
+    @Override
+    public void updateTimer(long value) {
+        //TODO: format to timer style
+        mTimer.setText(String.valueOf(value));
+    }
+
+    @Override
+    public void toggleTimerVisibility() {
+        mTimer.setVisibility(
+                mTimer.getVisibility() == View.VISIBLE ?
+                        View.INVISIBLE : View.VISIBLE);
     }
 }

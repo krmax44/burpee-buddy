@@ -9,4 +9,6 @@ public interface WorkoutViewMvc extends ObservableViewMvc<WorkoutViewMvc.Listene
     }
 
     public void updateCounter(long value);
+    public void updateTimer(long value);
+    void toggleTimerVisibility();
 }

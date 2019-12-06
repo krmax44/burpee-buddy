@@ -8,45 +8,42 @@ import android.hardware.SensorManager;
 
 public class RepCounter implements SensorEventListener {
 
+    private final Sensor mProximitySensor;
+
     public interface Listener {
         void onRepCompleted();
     }
 
-    private SensorManager mSensorManager;
+    private final SensorManager mSensorManager;
     private RepCounter.Listener mListener;
-    private float MAX_RANGE = 0;
+    private final float MAX_RANGE;
 
     public RepCounter(Context context) {
         mSensorManager = (SensorManager)
                 context.getSystemService(Context.SENSOR_SERVICE);
 
-        Sensor proximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        if (proximitySensor == null) {
-            //TODO: signal this to the outside
-            return;
+        mProximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        if (mProximitySensor == null) {
+            //TODO: signal this to the outside in a nicer way
+            throw new RuntimeException("Device does not have a proximity sensor");
         }
 
-        MAX_RANGE = proximitySensor.getMaximumRange();
-
-        mSensorManager.registerListener(
-                this,
-                proximitySensor,
-                android.hardware.SensorManager.SENSOR_DELAY_NORMAL);
-
-    }
-
-    public void stop() {
-        if (mSensorManager != null) {
-            mSensorManager.unregisterListener(this);
-        }
+        MAX_RANGE = mProximitySensor.getMaximumRange();
     }
 
     public void register(RepCounter.Listener listener) {
         mListener = listener;
+        mSensorManager.registerListener(
+                this,
+                mProximitySensor,
+                android.hardware.SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void unregister() {
         mListener = null;
+        if (mSensorManager != null) {
+            mSensorManager.unregisterListener(this);
+        }
     }
 
     @Override

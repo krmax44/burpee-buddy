@@ -8,7 +8,10 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
-import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
+import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.Listener {
 
@@ -25,19 +28,35 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
         super.onCreate(savedInstanceState);
         mViewMvc = getCompositionRoot().getViewMvcFactory().getWorkoutViewMvc(null);
         setContentView(mViewMvc.getRootView());
-
-        BuddyApplication.getWorkoutManager().getReps().observe(
-                WorkoutActivity.this
-                , reps -> mViewMvc.updateCounter(reps));
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mViewMvc.registerListener(this);
+        if (!WorkoutService.isStarted) {
+            startWorkout();
+        }
+    }
 
-        // TODO: implement countdown timer before starting
+    // TODO: unregister from certain events like update countdown timer event in onStop
+    // because we're working with the display off
 
+    @Override
+    protected void onDestroy() {
+        mViewMvc.unregisterListener(this);
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onStopButtonClicked() {
+        //TODO open finished dialog, save to ROOM etc
+        stopWorkout();
+    }
+
+    private void startWorkout() {
         Intent startIntent = new Intent(WorkoutActivity.this, WorkoutService.class);
         startIntent.setAction("START");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -47,16 +66,7 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        mViewMvc.unregisterListener(this);
-        super.onDestroy();
-    }
-
-    @Override
-    public void onStopButtonClicked() {
-        //TODO open finished dialog, save to ROOM etc
-
+    private void stopWorkout() {
         Intent stopIntent = new Intent(WorkoutActivity.this, WorkoutService.class);
         stopIntent.setAction("STOP"); //TODO extract constant
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -64,5 +74,21 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
         } else {
             startService(stopIntent);
         }
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
+        //TODO switch to timer mode depending on workout type
+        mViewMvc.toggleTimerVisibility();
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
+        mViewMvc.updateTimer(event.seconds);
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.RepCompletedEvent event) {
+        mViewMvc.updateCounter(event.size);
     }
 }
