@@ -1,9 +1,12 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 
 import androidx.annotation.Nullable;
 
@@ -16,6 +19,7 @@ import org.greenrobot.eventbus.Subscribe;
 public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.Listener {
 
     WorkoutViewMvc mViewMvc;
+    private  static final int REQUEST_ENABLE = 0;
 
     public static void start(Context context, int workoutType) {
         Intent intent = new Intent(context, WorkoutActivity.class);
@@ -80,6 +84,30 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
         //TODO switch to timer mode depending on workout type
         mViewMvc.toggleTimerVisibility();
+
+        if (isScreenOn()) {
+            lockScreen();
+        }
+    }
+
+    private boolean isScreenOn() {
+        return ((PowerManager) getSystemService(Context.POWER_SERVICE)).isScreenOn();
+    }
+
+    private void lockScreen() {
+        ComponentName adminComponent = new ComponentName(
+                WorkoutActivity.this,
+                android.app.admin.DeviceAdminReceiver.class);
+        DevicePolicyManager devicePolicyManager =
+                (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+
+        if (!devicePolicyManager.isAdminActive(adminComponent)) {
+            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
+            startActivityForResult(intent, REQUEST_ENABLE);
+        } else {
+            devicePolicyManager.lockNow();
+        }
     }
 
     @Subscribe

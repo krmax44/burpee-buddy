@@ -26,17 +26,17 @@ public class SoundPlayer extends ContextWrapper {
             int sound;
             switch (soundType) {
                 case COUNTDOWN:
-                    sound  = R.raw.ding;
+                    sound = R.raw.ding;
                     break;
                 case COUNTDOWN_LONG:
-                    sound  = R.raw.long_ding;
+                    sound = R.raw.long_ding;
                     break;
                 case REP_COMPLETE_SPECIAL:
-                    sound  = R.raw.special;
+                    sound = R.raw.special;
                     break;
                 case REP_COMPLETE:
                 default:
-                    sound  = R.raw.coin;
+                    sound = R.raw.coin;
                     break;
             }
 

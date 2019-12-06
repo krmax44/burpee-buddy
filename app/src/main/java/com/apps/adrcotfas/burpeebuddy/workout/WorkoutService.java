@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
+import android.os.PowerManager;
 
 import androidx.lifecycle.LifecycleService;
 
@@ -28,7 +29,6 @@ public class WorkoutService extends LifecycleService {
     private static long PRE_WORKOUT_COUNTDOWN_SECONDS = TimeUnit.SECONDS.toMillis(5);
 
     private void onStartWorkout() {
-        isStarted = true;
         getWorkoutManager().start();
         getRepCounter().register(getWorkoutManager());
     }
@@ -52,6 +52,7 @@ public class WorkoutService extends LifecycleService {
                 onStop();
                 break;
             case "START":
+                isStarted = true;
                 PreWorkoutCountdown timer = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
                 timer.start();
                 startForeground(42, getNotificationHelper().getInProgressBuilder().build()); //todo: extract constant
@@ -91,7 +92,12 @@ public class WorkoutService extends LifecycleService {
         getNotificationHelper().updateNotificationProgress(
                 String.valueOf(event.size));
         // TODO: extract to preferences
-        getMediaPlayer().play(event.size % 5 == 0 ? REP_COMPLETE_SPECIAL : REP_COMPLETE);
+        if (event.size % 5 == 0) {
+            getMediaPlayer().play(REP_COMPLETE_SPECIAL);
+            turnOnScreen();
+        } else {
+            getMediaPlayer().play(REP_COMPLETE);
+        }
     }
 
     private NotificationHelper getNotificationHelper() {
@@ -108,5 +114,12 @@ public class WorkoutService extends LifecycleService {
 
     private SoundPlayer getMediaPlayer() {
         return BuddyApplication.getMediaPlayer();
+    }
+
+    private void turnOnScreen() {
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                WorkoutService.class.getName());
+        wakeLock.acquire(0);
     }
 }
