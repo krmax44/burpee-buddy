@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
 import android.app.Application;
+import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 
 public class BuddyApplication extends Application {
 
@@ -8,7 +9,7 @@ public class BuddyApplication extends Application {
     private static WorkoutManager mWorkoutManager;
     private static RepCounter mRepCounter;
     private static NotificationHelper mNotificationHelper;
-    private static MediaPlayer mMediaPlayer;
+    private static SoundPlayer mMediaPlayer;
 
     public static NotificationHelper getNotificationHelper() {
         return mNotificationHelper;
@@ -22,7 +23,7 @@ public class BuddyApplication extends Application {
         return mWorkoutManager;
     }
 
-    public static MediaPlayer getMediaPlayer() {
+    public static SoundPlayer getMediaPlayer() {
         return mMediaPlayer;
     }
 
@@ -37,6 +38,6 @@ public class BuddyApplication extends Application {
         mWorkoutManager = new WorkoutManager();
         mRepCounter = new RepCounter(this);
         mNotificationHelper = new NotificationHelper(this);
-        mMediaPlayer = new MediaPlayer(this);
+        mMediaPlayer = new SoundPlayer(this);
     }
 }

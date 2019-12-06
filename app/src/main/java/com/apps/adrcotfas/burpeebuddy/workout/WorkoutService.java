@@ -1,22 +1,26 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
-import android.os.Handler;
 
 import androidx.lifecycle.LifecycleService;
 
 import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
-import com.apps.adrcotfas.burpeebuddy.common.bl.MediaPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.bl.PreWorkoutCountdown;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.bl.RepCounter;
 import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
+import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.concurrent.TimeUnit;
+
+import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.COUNTDOWN;
+import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.COUNTDOWN_LONG;
+import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.REP_COMPLETE;
+import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.REP_COMPLETE_SPECIAL;
 
 public class WorkoutService extends LifecycleService {
 
@@ -70,7 +74,11 @@ public class WorkoutService extends LifecycleService {
 
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
-        getMediaPlayer().play();
+        if (event.seconds == 0) {
+            getMediaPlayer().play(COUNTDOWN_LONG);
+        } else if (event.seconds <= 3) {
+            getMediaPlayer().play(COUNTDOWN);
+        }
     }
 
     @Subscribe
@@ -82,22 +90,9 @@ public class WorkoutService extends LifecycleService {
     public void onMessageEvent(Events.RepCompletedEvent event) {
         getNotificationHelper().updateNotificationProgress(
                 String.valueOf(event.size));
-        //new Handler().postDelayed(() -> getMediaPlayer().play(), 1000);
-        getMediaPlayer().play();
+        // TODO: extract to preferences
+        getMediaPlayer().play(event.size % 5 == 0 ? REP_COMPLETE_SPECIAL : REP_COMPLETE);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private NotificationHelper getNotificationHelper() {
         return BuddyApplication.getNotificationHelper();
@@ -111,7 +106,7 @@ public class WorkoutService extends LifecycleService {
         return BuddyApplication.getRepCounter();
     }
 
-    private MediaPlayer getMediaPlayer() {
+    private SoundPlayer getMediaPlayer() {
         return BuddyApplication.getMediaPlayer();
     }
 }

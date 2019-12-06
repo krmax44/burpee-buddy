@@ -48,8 +48,11 @@ public class NotificationHelper extends ContextWrapper {
     }
 
     private PendingIntent createActivityIntent() {
-        Intent openMainIntent = new Intent(this, WorkoutActivity.class);
-        return PendingIntent.getActivity(this, 0, openMainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(this, WorkoutActivity.class);
+        return PendingIntent.getActivity(this
+                , 0
+                , intent
+                , PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public NotificationCompat.Builder getInProgressBuilder() {

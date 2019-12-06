@@ -1,8 +1,9 @@
-package com.apps.adrcotfas.burpeebuddy.common.bl;
+package com.apps.adrcotfas.burpeebuddy.common.soundplayer;
 
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 
@@ -10,18 +11,36 @@ import com.apps.adrcotfas.burpeebuddy.R;
 
 import java.io.IOException;
 
-public class MediaPlayer extends ContextWrapper {
+public class SoundPlayer extends ContextWrapper {
 
-    private static final String TAG = "MediaPlayer";
+    private static final String TAG = "SoundPlayer";
 
-    public MediaPlayer(Context base) {
+    public SoundPlayer(Context base) {
         super(base);
     }
 
-    public void play() {
+    public void play(SoundType soundType) {
         try {
-            final android.media.MediaPlayer mMediaPlayer = new android.media.MediaPlayer();
-            final Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.ding);
+            final MediaPlayer mMediaPlayer = new MediaPlayer();
+
+            int sound;
+            switch (soundType) {
+                case COUNTDOWN:
+                    sound  = R.raw.ding;
+                    break;
+                case COUNTDOWN_LONG:
+                    sound  = R.raw.long_ding;
+                    break;
+                case REP_COMPLETE_SPECIAL:
+                    sound  = R.raw.special;
+                    break;
+                case REP_COMPLETE:
+                default:
+                    sound  = R.raw.coin;
+                    break;
+            }
+
+            final Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + sound);
 
             mMediaPlayer.setDataSource(this, uri);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
