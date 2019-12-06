@@ -8,9 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
-import com.apps.adrcotfas.burpeebuddy.common.application.BuddyApplication;
-
-import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
 
 public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.Listener {
 
@@ -36,7 +34,6 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
     @Override
     protected void onResume() {
         super.onResume();
-        getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
         mViewMvc.registerListener(this);
 
         // TODO: implement countdown timer before starting

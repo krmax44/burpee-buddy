@@ -19,7 +19,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         Button stopButton = findViewById(R.id.stop_button);
         stopButton.setOnClickListener(v -> onStopButtonClicked());
 
-        mCounter = findViewById(R.id.counter);
+        mCounter = findViewById(R.id.rep_counter);
     }
 
     private void onStopButtonClicked() {

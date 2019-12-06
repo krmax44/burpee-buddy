@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.common.application;
+package com.apps.adrcotfas.burpeebuddy.common.bl;
 
 import android.annotation.TargetApi;
 import android.app.NotificationChannel;

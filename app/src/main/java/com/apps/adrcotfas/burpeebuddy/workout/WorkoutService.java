@@ -4,10 +4,10 @@ import android.content.Intent;
 
 import androidx.lifecycle.LifecycleService;
 
-import com.apps.adrcotfas.burpeebuddy.common.application.BuddyApplication;
-import com.apps.adrcotfas.burpeebuddy.common.application.NotificationHelper;
-import com.apps.adrcotfas.burpeebuddy.common.application.RepCounter;
-import com.apps.adrcotfas.burpeebuddy.common.application.WorkoutManager;
+import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
+import com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper;
+import com.apps.adrcotfas.burpeebuddy.common.bl.RepCounter;
+import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
 
 public class WorkoutService extends LifecycleService {
 

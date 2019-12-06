@@ -5,8 +5,6 @@ import android.os.Bundle;
 import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
 import com.apps.adrcotfas.burpeebuddy.workout.WorkoutActivity;
 
-import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-
 public class MainActivity extends BaseActivity implements MainViewMvcImpl.Listener {
 
     MainViewMvc mViewMvc;
@@ -22,7 +20,6 @@ public class MainActivity extends BaseActivity implements MainViewMvcImpl.Listen
     @Override
     protected void onResume() {
         super.onResume();
-        getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
         mViewMvc.registerListener(this);
     }
 
