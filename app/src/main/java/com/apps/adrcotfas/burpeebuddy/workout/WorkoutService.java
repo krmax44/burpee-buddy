@@ -1,10 +1,12 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
+import android.os.Handler;
 
 import androidx.lifecycle.LifecycleService;
 
 import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
+import com.apps.adrcotfas.burpeebuddy.common.bl.MediaPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.bl.PreWorkoutCountdown;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper;
@@ -60,11 +62,15 @@ public class WorkoutService extends LifecycleService {
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
-
         onStop();
         getRepCounter().unregister();
         getWorkoutManager().resetWorkout();
         super.onDestroy();
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
+        getMediaPlayer().play();
     }
 
     @Subscribe
@@ -76,6 +82,8 @@ public class WorkoutService extends LifecycleService {
     public void onMessageEvent(Events.RepCompletedEvent event) {
         getNotificationHelper().updateNotificationProgress(
                 String.valueOf(event.size));
+        //new Handler().postDelayed(() -> getMediaPlayer().play(), 1000);
+        getMediaPlayer().play();
     }
 
 
@@ -101,5 +109,9 @@ public class WorkoutService extends LifecycleService {
 
     private RepCounter getRepCounter() {
         return BuddyApplication.getRepCounter();
+    }
+
+    private MediaPlayer getMediaPlayer() {
+        return BuddyApplication.getMediaPlayer();
     }
 }

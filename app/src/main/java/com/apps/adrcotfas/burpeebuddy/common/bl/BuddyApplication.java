@@ -8,6 +8,7 @@ public class BuddyApplication extends Application {
     private static WorkoutManager mWorkoutManager;
     private static RepCounter mRepCounter;
     private static NotificationHelper mNotificationHelper;
+    private static MediaPlayer mMediaPlayer;
 
     public static NotificationHelper getNotificationHelper() {
         return mNotificationHelper;
@@ -21,6 +22,10 @@ public class BuddyApplication extends Application {
         return mWorkoutManager;
     }
 
+    public static MediaPlayer getMediaPlayer() {
+        return mMediaPlayer;
+    }
+
     public static BuddyApplication getInstance() {
         return INSTANCE;
     }
@@ -32,5 +37,6 @@ public class BuddyApplication extends Application {
         mWorkoutManager = new WorkoutManager();
         mRepCounter = new RepCounter(this);
         mNotificationHelper = new NotificationHelper(this);
+        mMediaPlayer = new MediaPlayer(this);
     }
 }
