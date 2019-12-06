@@ -3,7 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.common.dependencyinjection;
 import android.app.Activity;
 import android.view.LayoutInflater;
 
-import com.apps.adrcotfas.burpeebuddy.common.ViewMvcFactory;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ViewMvcFactory;
 
 public class ControllerCompositionRoot {
 

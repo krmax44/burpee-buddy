@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.workout.repcounter;
+package com.apps.adrcotfas.burpeebuddy.common.application;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -6,40 +6,23 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import java.lang.ref.WeakReference;
-
 public class RepCounter implements SensorEventListener {
 
-    private final int INITIAL_COUNTER_VALUE = -1;
-
     public interface Listener {
-        public void onRepCompleted();
-
-        public void onSensorError();
+        void onRepCompleted();
     }
 
-    private final WeakReference<Context> mContext;
     private SensorManager mSensorManager;
-
-    private Listener mListener;
+    private RepCounter.Listener mListener;
     private float MAX_RANGE = 0;
 
-    private long mReps = INITIAL_COUNTER_VALUE;
-
-    public RepCounter(Context context, Listener listener) {
-        this.mContext = new WeakReference<>(context);
-        this.mListener = listener;
-        init();
-    }
-
-    private void init() {
+    public RepCounter(Context context) {
         mSensorManager = (SensorManager)
-                mContext.get().getSystemService(Context.SENSOR_SERVICE);
+                context.getSystemService(Context.SENSOR_SERVICE);
 
         Sensor proximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-
         if (proximitySensor == null) {
-            mListener.onSensorError();
+            //TODO: signal this to the outside
             return;
         }
 
@@ -49,24 +32,30 @@ public class RepCounter implements SensorEventListener {
                 this,
                 proximitySensor,
                 android.hardware.SensorManager.SENSOR_DELAY_NORMAL);
+
     }
 
     public void stop() {
         if (mSensorManager != null) {
             mSensorManager.unregisterListener(this);
         }
-        mReps = INITIAL_COUNTER_VALUE;
     }
 
-    public long getReps() {
-        return mReps;
+    public void register(RepCounter.Listener listener) {
+        mListener = listener;
+    }
+
+    public void unregister() {
+        mListener = null;
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        if (mListener == null) {
+            return;
+        }
         float distance = event.values[0];
         if (distance == MAX_RANGE) {
-            ++mReps;
             mListener.onRepCompleted();
         }
     }

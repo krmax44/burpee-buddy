@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 
 public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Listener>
         implements WorkoutViewMvc {

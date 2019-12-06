@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 
 public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         implements MainViewMvc {

@@ -1,6 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
-import com.apps.adrcotfas.burpeebuddy.common.ObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
 
 public interface WorkoutViewMvc extends ObservableViewMvc<WorkoutViewMvc.Listener> {
 

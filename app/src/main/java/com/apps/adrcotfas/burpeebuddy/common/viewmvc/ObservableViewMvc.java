@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.common;
+package com.apps.adrcotfas.burpeebuddy.common.viewmvc;
 
 public interface ObservableViewMvc<ListenerType> extends ViewMvc {
 

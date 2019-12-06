@@ -1,6 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.main;
 
-import com.apps.adrcotfas.burpeebuddy.common.ObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
 
 public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
 
