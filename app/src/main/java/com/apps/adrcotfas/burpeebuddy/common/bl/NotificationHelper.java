@@ -67,12 +67,12 @@ public class NotificationHelper extends ContextWrapper {
                 getBuilder()
                         .setOnlyAlertOnce(true)
                         //TODO: extract string, consider plurals
-                        .setSubText(reps + " reps | " + TimerFormat.secondsToTimerFormat(elapsed))
+                        .setContentTitle(reps + " reps | " + TimerFormat.secondsToTimerFormat(elapsed))
                         .build());
     }
 
     public void setSubtext(String value) {
-        mManager.notify(WORKOUT_NOTIFICATION_ID, getBuilder().setSubText(value).build());
+        mManager.notify(WORKOUT_NOTIFICATION_ID, getBuilder().setContentTitle(value).build());
     }
 
     public void clearNotification() {
