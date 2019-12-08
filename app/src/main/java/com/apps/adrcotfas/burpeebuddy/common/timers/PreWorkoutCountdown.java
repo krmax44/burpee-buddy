@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.common.timers;
 
 import android.os.CountDownTimer;
+import android.util.Log;
 
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PreWorkoutCountdown extends CountDownTimer {
 
+    private static final String TAG = "PreWorkoutCountdown";
     /**
      * @param millisInFuture    The number of millis in the future from the call
      *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
@@ -21,6 +23,13 @@ public class PreWorkoutCountdown extends CountDownTimer {
 
     @Override
     public void onTick(long millisUntilFinished) {
+        Log.d(TAG, "onTick: " + millisUntilFinished);
+        // workaround for a bug in CountDownTimer which causes
+        // onTick to be called twice inside a countDownInterval
+        if (millisUntilFinished < 100) {
+            return;
+        }
+
         EventBus.getDefault().post(
                 new Events.PreWorkoutCountdownTickEvent((int)
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)));
