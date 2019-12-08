@@ -34,6 +34,7 @@ public class WorkoutService extends LifecycleService {
 
     private void onStartWorkout() {
         Log.d(TAG, "onStartWorkout");
+        getNotificationHelper().setReps(0);
         getWorkoutManager().start();
         getRepCounter().register(getWorkoutManager());
         Timer.start();
@@ -87,7 +88,7 @@ public class WorkoutService extends LifecycleService {
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
         Log.d(TAG, "PreWorkoutCountdownTickEvent: " + event.seconds);
-        getNotificationHelper().setSubtext("Get ready"); //TODO: extract string
+        getNotificationHelper().setTitle("Get ready"); //TODO: extract string
         if (event.seconds == 0) {
             getMediaPlayer().play(COUNTDOWN_LONG);
         } else if (event.seconds <= 3) {
@@ -104,9 +105,7 @@ public class WorkoutService extends LifecycleService {
     @Subscribe
     public void onMessageEvent(Events.TimerTickEvent event) {
         Log.d(TAG, "TimerTickEvent: " + event.seconds + " seconds");
-
-        final int reps = getWorkoutManager().getWorkout().reps.size();
-        getNotificationHelper().setRepsAndElapsedTime(reps, event.seconds);
+        getNotificationHelper().setElapsedTime(event.seconds);
     }
 
     @Subscribe
@@ -114,16 +113,17 @@ public class WorkoutService extends LifecycleService {
         Log.d(TAG, "RepCompletedEvent: " + event.size + " reps");
 
         // TODO: extract to preferences
-        if (event.size % 20 == 0) {
+        if (event.size % 10 == 0) {
             // TODO: give warning to users of S10 and other similar phones
             // proximity sensor does not work when the screen is on
             Power.turnOnScreen(this);
         }
-        if (event.size % 10 == 0){
+        if (event.size % 5 == 0){
             getMediaPlayer().play(REP_COMPLETE_SPECIAL);
         } else {
             getMediaPlayer().play(REP_COMPLETE);
         }
+        getNotificationHelper().setReps(event.size);
     }
 
     private NotificationHelper getNotificationHelper() {

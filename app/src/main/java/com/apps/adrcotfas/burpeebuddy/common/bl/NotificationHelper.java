@@ -62,16 +62,24 @@ public class NotificationHelper extends ContextWrapper {
         return mBuilder;
     }
 
-    public void setRepsAndElapsedTime(int reps, long elapsed) {
+    public void setReps(int reps) {
         mManager.notify(WORKOUT_NOTIFICATION_ID,
                 getBuilder()
                         .setOnlyAlertOnce(true)
                         //TODO: extract string, consider plurals
-                        .setContentTitle(reps + " reps | " + TimerFormat.secondsToTimerFormat(elapsed))
+                        .setContentTitle(reps + " reps")
                         .build());
     }
 
-    public void setSubtext(String value) {
+    public void setElapsedTime(long elapsed) {
+        mManager.notify(WORKOUT_NOTIFICATION_ID,
+                getBuilder()
+                        .setOnlyAlertOnce(true)
+                        .setContentText(TimerFormat.secondsToTimerFormat(elapsed))
+                        .build());
+    }
+
+    public void setTitle(String value) {
         mManager.notify(WORKOUT_NOTIFICATION_ID, getBuilder().setContentTitle(value).build());
     }
 
