@@ -6,18 +6,20 @@ import android.os.PowerManager;
 import androidx.lifecycle.LifecycleService;
 
 import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
-import com.apps.adrcotfas.burpeebuddy.common.bl.PreWorkoutCountdown;
+import com.apps.adrcotfas.burpeebuddy.common.timers.PreWorkoutCountdown;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.bl.RepCounter;
 import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
+import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper.WORKOUT_NOTIFICATION_ID;
 import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.COUNTDOWN;
 import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.COUNTDOWN_LONG;
 import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.REP_COMPLETE;
@@ -27,16 +29,20 @@ public class WorkoutService extends LifecycleService {
 
     public static boolean isStarted = false;
     private static long PRE_WORKOUT_COUNTDOWN_SECONDS = TimeUnit.SECONDS.toMillis(5);
+    private PreWorkoutCountdown preWorkoutCountdown;
 
     private void onStartWorkout() {
         getWorkoutManager().start();
         getRepCounter().register(getWorkoutManager());
+        Timer.start();
     }
 
     private void onStop() {
         isStarted = false;
+        preWorkoutCountdown.cancel();
         stopForeground(true);
         stopSelf();
+        Timer.stop();
     }
 
     @Override
@@ -53,9 +59,9 @@ public class WorkoutService extends LifecycleService {
                 break;
             case "START":
                 isStarted = true;
-                PreWorkoutCountdown timer = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
-                timer.start();
-                startForeground(42, getNotificationHelper().getInProgressBuilder().build()); //todo: extract constant
+                preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
+                preWorkoutCountdown.start();
+                startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build()); //todo: extract constant
                 break;
         }
 
@@ -75,6 +81,7 @@ public class WorkoutService extends LifecycleService {
 
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
+        getNotificationHelper().setSubtext("Get ready"); //TODO: extract string
         if (event.seconds == 0) {
             getMediaPlayer().play(COUNTDOWN_LONG);
         } else if (event.seconds <= 3) {
@@ -88,12 +95,18 @@ public class WorkoutService extends LifecycleService {
     }
 
     @Subscribe
+    public void onMessageEvent(Events.TimerTickEvent event) {
+        final int reps = getWorkoutManager().getWorkout().reps.size();
+        getNotificationHelper().setRepsAndElapsedTime(reps, event.elapsedSeconds);
+    }
+
+    @Subscribe
     public void onMessageEvent(Events.RepCompletedEvent event) {
-        getNotificationHelper().updateNotificationProgress(
-                String.valueOf(event.size));
         // TODO: extract to preferences
         if (event.size % 5 == 0) {
             getMediaPlayer().play(REP_COMPLETE_SPECIAL);
+            // TODO: give warning to users of S10 and other similar phones
+            // proximity sensor does not work when the screen is on
             turnOnScreen();
         } else {
             getMediaPlayer().play(REP_COMPLETE);
@@ -118,7 +131,8 @@ public class WorkoutService extends LifecycleService {
 
     private void turnOnScreen() {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
+                PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
                 WorkoutService.class.getName());
         wakeLock.acquire(0);
     }

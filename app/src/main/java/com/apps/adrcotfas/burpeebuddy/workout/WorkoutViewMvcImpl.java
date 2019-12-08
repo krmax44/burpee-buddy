@@ -1,12 +1,12 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.common.timers.StringUtils;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 
 public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Listener>
@@ -32,20 +32,12 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
     }
 
     @Override
-    public void updateCounter(long value) {
-        mCounter.setText(String.valueOf(value));
+    public void updateCounter(long reps) {
+        mCounter.setText(String.valueOf(reps));
     }
 
     @Override
-    public void updateTimer(long value) {
-        //TODO: format to timer style
-        mTimer.setText(String.valueOf(value));
-    }
-
-    @Override
-    public void toggleTimerVisibility() {
-        mTimer.setVisibility(
-                mTimer.getVisibility() == View.VISIBLE ?
-                        View.INVISIBLE : View.VISIBLE);
+    public void updateTimer(long seconds) {
+        mTimer.setText(StringUtils.secondsToTimerFormat(seconds));
     }
 }

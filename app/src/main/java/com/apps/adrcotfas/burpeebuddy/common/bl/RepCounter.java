@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+//TODO: fusion with light sensor too
 public class RepCounter implements SensorEventListener {
 
     private final Sensor mProximitySensor;
@@ -27,7 +28,6 @@ public class RepCounter implements SensorEventListener {
             //TODO: signal this to the outside in a nicer way
             throw new RuntimeException("Device does not have a proximity sensor");
         }
-
         MAX_RANGE = mProximitySensor.getMaximumRange();
     }
 

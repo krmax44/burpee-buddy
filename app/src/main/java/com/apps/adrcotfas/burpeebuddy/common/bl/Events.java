@@ -4,13 +4,18 @@ public class Events {
     public static class PreWorkoutCountdownFinished {}
 
     public static class PreWorkoutCountdownTickEvent {
-        PreWorkoutCountdownTickEvent(int seconds) {
+        public PreWorkoutCountdownTickEvent(int seconds) {
             this.seconds = seconds;
         }
         public int seconds;
     }
 
-    public static class TimerTickEvent {}
+    public static class TimerTickEvent {
+        public TimerTickEvent(long elapsedSeconds) {
+            this.elapsedSeconds = elapsedSeconds;
+        }
+        public long elapsedSeconds;
+    }
 
     public static class RepCompletedEvent {
         public RepCompletedEvent(int size) {

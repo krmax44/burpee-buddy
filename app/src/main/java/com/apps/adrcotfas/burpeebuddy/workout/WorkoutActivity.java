@@ -83,8 +83,6 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
         //TODO switch to timer mode depending on workout type
-        mViewMvc.toggleTimerVisibility();
-
         if (isScreenOn()) {
             lockScreen();
         }
@@ -118,5 +116,10 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
     @Subscribe
     public void onMessageEvent(Events.RepCompletedEvent event) {
         mViewMvc.updateCounter(event.size);
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.TimerTickEvent event) {
+        mViewMvc.updateTimer(event.elapsedSeconds);
     }
 }

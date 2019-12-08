@@ -12,10 +12,12 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.common.timers.StringUtils;
 import com.apps.adrcotfas.burpeebuddy.workout.WorkoutActivity;
 
 public class NotificationHelper extends ContextWrapper {
 
+    public static final int WORKOUT_NOTIFICATION_ID = 42;
     private static final String BUDDY_NOTIFICATION = "buddy.notification";
 
     private final NotificationManager mManager;
@@ -25,26 +27,27 @@ public class NotificationHelper extends ContextWrapper {
         super(context);
         mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            initChannels();
+            initChannel();
         }
         mBuilder = new NotificationCompat.Builder(this, BUDDY_NOTIFICATION)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentIntent(createActivityIntent())
+                .setShowWhen(false)
                 .setOngoing(true)
-                .setShowWhen(false);
+                .setOnlyAlertOnce(true);
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    private void initChannels() {
-        NotificationChannel channelInProgress = new NotificationChannel(
-                BUDDY_NOTIFICATION, "notifications",
+    private void initChannel() {
+        NotificationChannel c = new NotificationChannel(
+                BUDDY_NOTIFICATION, "Buddy workout notification", //TODO: extract string
                 NotificationManager.IMPORTANCE_LOW);
-        channelInProgress.setBypassDnd(true);
-        channelInProgress.setShowBadge(true);
-        channelInProgress.setSound(null, null);
-        mManager.createNotificationChannel(channelInProgress);
+        c.setBypassDnd(true);
+        c.setShowBadge(true);
+        c.setSound(null, null);
+        mManager.createNotificationChannel(c);
     }
 
     private PendingIntent createActivityIntent() {
@@ -55,19 +58,21 @@ public class NotificationHelper extends ContextWrapper {
                 , PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    public NotificationCompat.Builder getInProgressBuilder() {
-        mBuilder.setContentTitle("DummyTitle")
-                .setContentText("DummyContent");
-
+    public NotificationCompat.Builder getBuilder() {
         return mBuilder;
     }
 
-    public void updateNotificationProgress(String value) {
-        mManager.notify(42,
-                getInProgressBuilder()
+    public void setRepsAndElapsedTime(int reps, long elapsed) {
+        mManager.notify(WORKOUT_NOTIFICATION_ID,
+                getBuilder()
                         .setOnlyAlertOnce(true)
-                        .setContentText(value)
+                        //TODO: extract string, consider plurals
+                        .setSubText(reps + " reps | " + StringUtils.secondsToTimerFormat(elapsed))
                         .build());
+    }
+
+    public void setSubtext(String value) {
+        mManager.notify(WORKOUT_NOTIFICATION_ID, getBuilder().setSubText(value).build());
     }
 
     public void clearNotification() {

@@ -1,6 +1,9 @@
-package com.apps.adrcotfas.burpeebuddy.common.bl;
+package com.apps.adrcotfas.burpeebuddy.common.timers;
 
 import android.os.CountDownTimer;
+
+import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
