@@ -81,7 +81,7 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
 
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
-        Log.d(TAG, "RepCompletedEvent: " + event.seconds);
+        Log.d(TAG, "PreWorkoutCountdownTickEvent: " + event.seconds);
         mViewMvc.updateTimer(event.seconds);
     }
 
