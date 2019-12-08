@@ -12,7 +12,7 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.timers.StringUtils;
+import com.apps.adrcotfas.burpeebuddy.common.utilities.TimerFormat;
 import com.apps.adrcotfas.burpeebuddy.workout.WorkoutActivity;
 
 public class NotificationHelper extends ContextWrapper {
@@ -67,7 +67,7 @@ public class NotificationHelper extends ContextWrapper {
                 getBuilder()
                         .setOnlyAlertOnce(true)
                         //TODO: extract string, consider plurals
-                        .setSubText(reps + " reps | " + StringUtils.secondsToTimerFormat(elapsed))
+                        .setSubText(reps + " reps | " + TimerFormat.secondsToTimerFormat(elapsed))
                         .build());
     }
 

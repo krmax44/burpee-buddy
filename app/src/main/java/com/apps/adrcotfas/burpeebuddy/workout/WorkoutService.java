@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
-import android.os.PowerManager;
 
 import androidx.lifecycle.LifecycleService;
 
@@ -13,6 +12,7 @@ import com.apps.adrcotfas.burpeebuddy.common.bl.RepCounter;
 import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
+import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -54,10 +54,10 @@ public class WorkoutService extends LifecycleService {
         }
 
         switch (intent.getAction()) {
-            case "STOP":
+            case Actions.STOP:
                 onStop();
                 break;
-            case "START":
+            case Actions.START:
                 isStarted = true;
                 preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
                 preWorkoutCountdown.start();
@@ -97,17 +97,18 @@ public class WorkoutService extends LifecycleService {
     @Subscribe
     public void onMessageEvent(Events.TimerTickEvent event) {
         final int reps = getWorkoutManager().getWorkout().reps.size();
-        getNotificationHelper().setRepsAndElapsedTime(reps, event.elapsedSeconds);
+        getNotificationHelper().setRepsAndElapsedTime(reps, event.seconds);
     }
 
     @Subscribe
     public void onMessageEvent(Events.RepCompletedEvent event) {
         // TODO: extract to preferences
-        if (event.size % 5 == 0) {
-            getMediaPlayer().play(REP_COMPLETE_SPECIAL);
+        if (event.size % 20 == 0) {
             // TODO: give warning to users of S10 and other similar phones
             // proximity sensor does not work when the screen is on
-            turnOnScreen();
+            Power.turnOnScreen(this);
+        } else if (event.size % 10 == 0){
+            getMediaPlayer().play(REP_COMPLETE_SPECIAL);
         } else {
             getMediaPlayer().play(REP_COMPLETE);
         }
@@ -127,13 +128,5 @@ public class WorkoutService extends LifecycleService {
 
     private SoundPlayer getMediaPlayer() {
         return BuddyApplication.getMediaPlayer();
-    }
-
-    private void turnOnScreen() {
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
-                PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
-                WorkoutService.class.getName());
-        wakeLock.acquire(0);
     }
 }

@@ -1,17 +1,15 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 
 import androidx.annotation.Nullable;
 
 import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
+import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -19,7 +17,6 @@ import org.greenrobot.eventbus.Subscribe;
 public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.Listener {
 
     WorkoutViewMvc mViewMvc;
-    private  static final int REQUEST_ENABLE = 0;
 
     public static void start(Context context, int workoutType) {
         Intent intent = new Intent(context, WorkoutActivity.class);
@@ -62,7 +59,7 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
 
     private void startWorkout() {
         Intent startIntent = new Intent(WorkoutActivity.this, WorkoutService.class);
-        startIntent.setAction("START");
+        startIntent.setAction(Actions.START);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(startIntent);
         } else {
@@ -72,7 +69,7 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
 
     private void stopWorkout() {
         Intent stopIntent = new Intent(WorkoutActivity.this, WorkoutService.class);
-        stopIntent.setAction("STOP"); //TODO extract constant
+        stopIntent.setAction(Actions.STOP);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(stopIntent);
         } else {
@@ -83,28 +80,10 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
         //TODO switch to timer mode depending on workout type
-        if (isScreenOn()) {
-            lockScreen();
-        }
-    }
-
-    private boolean isScreenOn() {
-        return ((PowerManager) getSystemService(Context.POWER_SERVICE)).isScreenOn();
-    }
-
-    private void lockScreen() {
-        ComponentName adminComponent = new ComponentName(
-                WorkoutActivity.this,
-                android.app.admin.DeviceAdminReceiver.class);
-        DevicePolicyManager devicePolicyManager =
-                (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-
-        if (!devicePolicyManager.isAdminActive(adminComponent)) {
-            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
-            startActivityForResult(intent, REQUEST_ENABLE);
-        } else {
-            devicePolicyManager.lockNow();
+        if (Power.isScreenOn(this)) {
+            //TODO: this requires an additional permission, make it optional
+            // extract to preferences
+            Power.lockScreen(this);
         }
     }
 
@@ -120,6 +99,6 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
 
     @Subscribe
     public void onMessageEvent(Events.TimerTickEvent event) {
-        mViewMvc.updateTimer(event.elapsedSeconds);
+        mViewMvc.updateTimer(event.seconds);
     }
 }

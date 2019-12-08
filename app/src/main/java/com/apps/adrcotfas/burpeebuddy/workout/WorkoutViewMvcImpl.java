@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.timers.StringUtils;
+import com.apps.adrcotfas.burpeebuddy.common.utilities.TimerFormat;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 
 public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Listener>
@@ -38,6 +38,6 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
 
     @Override
     public void updateTimer(long seconds) {
-        mTimer.setText(StringUtils.secondsToTimerFormat(seconds));
+        mTimer.setText(TimerFormat.secondsToTimerFormat(seconds));
     }
 }

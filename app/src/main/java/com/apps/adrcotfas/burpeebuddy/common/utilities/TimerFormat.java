@@ -1,8 +1,8 @@
-package com.apps.adrcotfas.burpeebuddy.common.timers;
+package com.apps.adrcotfas.burpeebuddy.common.utilities;
 
 import java.util.concurrent.TimeUnit;
 
-public class StringUtils {
+public class TimerFormat {
 
     /**
      * Utility method to format seconds to a more friendly layout
