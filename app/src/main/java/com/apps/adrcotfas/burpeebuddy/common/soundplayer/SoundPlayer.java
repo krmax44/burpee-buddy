@@ -14,14 +14,18 @@ import java.io.IOException;
 public class SoundPlayer extends ContextWrapper {
 
     private static final String TAG = "SoundPlayer";
+    private MediaPlayer mMediaPlayer;
 
     public SoundPlayer(Context base) {
         super(base);
     }
 
+    public void init() {
+        mMediaPlayer = new MediaPlayer();
+    }
+
     public void play(SoundType soundType) {
         try {
-            final MediaPlayer mMediaPlayer = new MediaPlayer();
 
             int sound;
             switch (soundType) {
@@ -41,21 +45,26 @@ public class SoundPlayer extends ContextWrapper {
             }
 
             final Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + sound);
-
+            mMediaPlayer.reset();
             mMediaPlayer.setDataSource(this, uri);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
             mMediaPlayer.prepare();
 
             mMediaPlayer.setOnPreparedListener(mp -> {
+                Log.i(TAG, "OnPrepareListener was called");
                 // TODO: check duration of custom ringtones which may be much longer than notification sounds.
                 // If it's n seconds long and we're in continuous mode,
                 // schedule a stop after x seconds.
                 mMediaPlayer.start();
             });
-            mMediaPlayer.setOnCompletionListener(mp1 -> mMediaPlayer.release());
 
         } catch (SecurityException | IOException e) {
             Log.wtf(TAG, e.getMessage());
+            mMediaPlayer.release();
         }
+    }
+
+    public void stop() {
+        mMediaPlayer.release();
     }
 }

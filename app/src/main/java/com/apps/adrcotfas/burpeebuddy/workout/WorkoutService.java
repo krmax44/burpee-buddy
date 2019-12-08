@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.lifecycle.LifecycleService;
 
@@ -26,18 +27,20 @@ import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.REP_CO
 import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.REP_COMPLETE_SPECIAL;
 
 public class WorkoutService extends LifecycleService {
-
+    private static final String TAG = "WorkoutService";
     public static boolean isStarted = false;
     private static long PRE_WORKOUT_COUNTDOWN_SECONDS = TimeUnit.SECONDS.toMillis(5);
     private PreWorkoutCountdown preWorkoutCountdown;
 
     private void onStartWorkout() {
+        Log.d(TAG, "onStartWorkout");
         getWorkoutManager().start();
         getRepCounter().register(getWorkoutManager());
         Timer.start();
     }
 
     private void onStop() {
+        Log.d(TAG, "onStop");
         isStarted = false;
         preWorkoutCountdown.cancel();
         stopForeground(true);
@@ -55,10 +58,12 @@ public class WorkoutService extends LifecycleService {
 
         switch (intent.getAction()) {
             case Actions.STOP:
+                getMediaPlayer().stop();
                 onStop();
                 break;
             case Actions.START:
                 isStarted = true;
+                getMediaPlayer().init();
                 preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
                 preWorkoutCountdown.start();
                 startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build()); //todo: extract constant
@@ -81,6 +86,7 @@ public class WorkoutService extends LifecycleService {
 
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
+        Log.d(TAG, "PreWorkoutCountdownTickEvent: " + event.seconds);
         getNotificationHelper().setSubtext("Get ready"); //TODO: extract string
         if (event.seconds == 0) {
             getMediaPlayer().play(COUNTDOWN_LONG);
@@ -91,23 +97,29 @@ public class WorkoutService extends LifecycleService {
 
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
+        Log.d(TAG, "PreWorkoutCountdownFinished");
         onStartWorkout();
     }
 
     @Subscribe
     public void onMessageEvent(Events.TimerTickEvent event) {
+        Log.d(TAG, "TimerTickEvent: " + event.seconds + " seconds");
+
         final int reps = getWorkoutManager().getWorkout().reps.size();
         getNotificationHelper().setRepsAndElapsedTime(reps, event.seconds);
     }
 
     @Subscribe
     public void onMessageEvent(Events.RepCompletedEvent event) {
+        Log.d(TAG, "RepCompletedEvent: " + event.size + " reps");
+
         // TODO: extract to preferences
         if (event.size % 20 == 0) {
             // TODO: give warning to users of S10 and other similar phones
             // proximity sensor does not work when the screen is on
             Power.turnOnScreen(this);
-        } else if (event.size % 10 == 0){
+        }
+        if (event.size % 10 == 0){
             getMediaPlayer().play(REP_COMPLETE_SPECIAL);
         } else {
             getMediaPlayer().play(REP_COMPLETE);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -16,6 +17,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.Listener {
 
+    private static final String TAG = "WorkoutActivity";
     WorkoutViewMvc mViewMvc;
 
     public static void start(Context context, int workoutType) {
@@ -78,7 +80,14 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
     }
 
     @Subscribe
+    public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
+        Log.d(TAG, "RepCompletedEvent: " + event.seconds);
+        mViewMvc.updateTimer(event.seconds);
+    }
+
+    @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
+        Log.d(TAG, "PreWorkoutCountdownFinished");
         //TODO switch to timer mode depending on workout type
         if (Power.isScreenOn(this)) {
             //TODO: this requires an additional permission, make it optional
@@ -88,17 +97,14 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
     }
 
     @Subscribe
-    public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
-        mViewMvc.updateTimer(event.seconds);
-    }
-
-    @Subscribe
     public void onMessageEvent(Events.RepCompletedEvent event) {
+        Log.d(TAG, "RepCompletedEvent: " + event.size + " reps");
         mViewMvc.updateCounter(event.size);
     }
 
     @Subscribe
     public void onMessageEvent(Events.TimerTickEvent event) {
+        Log.d(TAG, "TimerTickEvent: " + event.seconds);
         mViewMvc.updateTimer(event.seconds);
     }
 }
