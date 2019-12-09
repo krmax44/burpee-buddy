@@ -14,6 +14,7 @@ import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
+import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -67,7 +68,7 @@ public class WorkoutService extends LifecycleService {
                 getMediaPlayer().init();
                 preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
                 preWorkoutCountdown.start();
-                startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build()); //todo: extract constant
+                startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build());
                 getNotificationHelper().setTitle("Get ready"); //TODO: extract string
                 break;
         }
@@ -113,15 +114,15 @@ public class WorkoutService extends LifecycleService {
     public void onMessageEvent(Events.RepCompletedEvent event) {
         Log.d(TAG, "RepCompletedEvent: " + event.size + " reps");
 
-        // TODO: extract to preferences
-        if (event.size % 10 == 0) {
-            // TODO: give warning to users of S10 and other similar phones
-            // proximity sensor does not work when the screen is on
+        if (SettingsHelper.wakeupEnabled()
+                && (event.size % SettingsHelper.getWakeUpInterval() == 0)) {
             Power.turnOnScreen(this);
         }
-        if (event.size % 5 == 0){
+
+        if (SettingsHelper.specialSoundEnabled()
+                && (event.size % SettingsHelper.getSpecialSoundInterval() == 0)){
             getMediaPlayer().play(REP_COMPLETE_SPECIAL);
-        } else {
+        } else if (SettingsHelper.soundEnabled()){
             getMediaPlayer().play(REP_COMPLETE);
         }
         getNotificationHelper().setReps(event.size);

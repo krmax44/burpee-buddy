@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 import com.apps.adrcotfas.burpeebuddy.main.MainActivity;
+import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -97,9 +98,8 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
         Log.d(TAG, "PreWorkoutCountdownFinished");
         //TODO switch to timer mode depending on workout type
-        if (Power.isScreenOn(getActivity())) {
-            //TODO: this requires an additional permission, make it optional
-            // extract to preferences
+
+        if (SettingsHelper.autoLockEnabled() && Power.isScreenOn(getActivity())) {
             Power.lockScreen((AppCompatActivity) getActivity());
         }
     }

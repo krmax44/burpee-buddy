@@ -33,14 +33,14 @@ public class SettingsHelper {
                 .getBoolean(ENABLE_WAKEUP, false);
     }
 
-    public static String getSpecialSoundInterval() {
-        return getDefaultSharedPreferences(BuddyApplication.getInstance())
-                .getString(SPECIAL_SOUND_INTERVAL, "5");
+    public static int getSpecialSoundInterval() {
+        return Integer.parseInt(getDefaultSharedPreferences(BuddyApplication.getInstance())
+                .getString(SPECIAL_SOUND_INTERVAL, "5"));
     }
 
-    public static String getWakeUpInterval() {
-        return getDefaultSharedPreferences(BuddyApplication.getInstance())
-                .getString(WAKEUP_INTERVAL, "10");
+    public static int getWakeUpInterval() {
+        return Integer.parseInt(getDefaultSharedPreferences(BuddyApplication.getInstance())
+                .getString(WAKEUP_INTERVAL, "10"));
     }
 
 }

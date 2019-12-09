@@ -20,6 +20,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         //TODO: clean-up
+
+        //TODO: start activity for result for the special lock permission here
+
+        // TODO: give warning to users of S10 and other similar phones
+        // proximity sensor does not work when the screen is on
         final EditTextPreference wakeupInterval = findPreference(SettingsHelper.WAKEUP_INTERVAL);
         wakeupInterval.setVisible(SettingsHelper.wakeupEnabled());
         wakeupInterval.setSummary(SettingsHelper.getWakeUpInterval() + " reps");
