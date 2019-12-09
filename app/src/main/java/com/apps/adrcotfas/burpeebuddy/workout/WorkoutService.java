@@ -68,6 +68,7 @@ public class WorkoutService extends LifecycleService {
                 preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
                 preWorkoutCountdown.start();
                 startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build()); //todo: extract constant
+                getNotificationHelper().setTitle("Get ready"); //TODO: extract string
                 break;
         }
 
@@ -88,7 +89,7 @@ public class WorkoutService extends LifecycleService {
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
         Log.d(TAG, "PreWorkoutCountdownTickEvent: " + event.seconds);
-        getNotificationHelper().setTitle("Get ready"); //TODO: extract string
+        getNotificationHelper().setElapsedTime(event.seconds);
         if (event.seconds == 0) {
             getMediaPlayer().play(COUNTDOWN_LONG);
         } else if (event.seconds <= 3) {
