@@ -5,37 +5,44 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
-import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
+import com.apps.adrcotfas.burpeebuddy.main.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.Listener {
+public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener {
 
-    private static final String TAG = "WorkoutActivity";
-    WorkoutViewMvc mViewMvc;
+    private static final String TAG = "WorkoutFragment";
+    private WorkoutViewMvc mViewMvc;
 
-    public static void start(Context context, int workoutType) {
-        Intent intent = new Intent(context, WorkoutActivity.class);
-        //TODO later intent.putExtra(EXTRA_WORKOUT_TYPE, workoutType);
-        context.startActivity(intent);
+    public WorkoutFragment() {}
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        ((MainActivity)getActivity()).setBottomNavigationVisibility(View.INVISIBLE);
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mViewMvc = getCompositionRoot().getViewMvcFactory().getWorkoutViewMvc(null);
-        setContentView(mViewMvc.getRootView());
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        mViewMvc = new WorkoutViewMvcImpl(inflater, container);
         EventBus.getDefault().register(this);
+        return mViewMvc.getRootView();
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         mViewMvc.registerListener(this);
         if (!WorkoutService.isStarted) {
@@ -47,9 +54,10 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
     // because we're working with the display off
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         mViewMvc.unregisterListener(this);
         EventBus.getDefault().unregister(this);
+        ((MainActivity)getActivity()).setBottomNavigationVisibility(View.VISIBLE);
         super.onDestroy();
     }
 
@@ -60,22 +68,22 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
     }
 
     private void startWorkout() {
-        Intent startIntent = new Intent(WorkoutActivity.this, WorkoutService.class);
+        Intent startIntent = new Intent(getActivity(), WorkoutService.class);
         startIntent.setAction(Actions.START);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(startIntent);
+            getActivity().startForegroundService(startIntent);
         } else {
-            startService(startIntent);
+            getActivity().startService(startIntent);
         }
     }
 
     private void stopWorkout() {
-        Intent stopIntent = new Intent(WorkoutActivity.this, WorkoutService.class);
+        Intent stopIntent = new Intent(getActivity(), WorkoutService.class);
         stopIntent.setAction(Actions.STOP);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(stopIntent);
+            getActivity().startForegroundService(stopIntent);
         } else {
-            startService(stopIntent);
+            getActivity().startService(stopIntent);
         }
     }
 
@@ -89,10 +97,10 @@ public class WorkoutActivity extends BaseActivity implements WorkoutViewMvc.List
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
         Log.d(TAG, "PreWorkoutCountdownFinished");
         //TODO switch to timer mode depending on workout type
-        if (Power.isScreenOn(this)) {
+        if (Power.isScreenOn(getActivity())) {
             //TODO: this requires an additional permission, make it optional
             // extract to preferences
-            Power.lockScreen(this);
+            Power.lockScreen((AppCompatActivity) getActivity());
         }
     }
 

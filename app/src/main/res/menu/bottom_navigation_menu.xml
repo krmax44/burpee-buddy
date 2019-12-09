@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/mainFragment"
+        android:title="Workout"
+        android:icon="@drawable/ic_workout"/>
+    <item android:id="@+id/accountFragment"
+        android:title="My Account"
+        android:icon="@drawable/ic_account"/>
+    <item android:id="@+id/leaderboardFragment"
+        android:title="Leaderboard"
+        android:icon="@drawable/ic_podium"/>
+    <item android:id="@+id/settingsFragment"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings"/>
+</menu>

@@ -1,42 +1,31 @@
 package com.apps.adrcotfas.burpeebuddy.main;
 
 import android.os.Bundle;
-import android.widget.Toast;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
-import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
-import com.apps.adrcotfas.burpeebuddy.workout.WorkoutActivity;
+import com.apps.adrcotfas.burpeebuddy.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends BaseActivity implements MainViewMvcImpl.Listener {
+public class MainActivity extends AppCompatActivity {
 
-    MainViewMvc mViewMvc;
+    private BottomNavigationView navView;
 
     @Override
-    public final void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        mViewMvc = getCompositionRoot().getViewMvcFactory().getMainViewMvc(null);
-        setContentView(mViewMvc.getRootView());
+        navView = findViewById(R.id.nav_view);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            NavigationUI.setupWithNavController(navView, navHostFragment.getNavController());
+        }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mViewMvc.registerListener(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        mViewMvc.unregisterListener(this);
-        super.onDestroy();
-    }
-
-    @Override
-    public void onStartButtonClicked() {
-        WorkoutActivity.start(this, 0);
-    }
-
-    @Override
-    public void onDisabledChipClicked() {
-        Toast.makeText(this, "This feature is coming soon.", Toast.LENGTH_SHORT).show();
+    public void setBottomNavigationVisibility(int visibility) {
+        navView.setVisibility(visibility);
     }
 }

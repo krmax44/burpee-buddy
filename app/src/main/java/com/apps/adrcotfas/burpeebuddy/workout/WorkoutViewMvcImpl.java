@@ -2,12 +2,12 @@ package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.TimerFormat;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Listener>
         implements WorkoutViewMvc {
@@ -16,9 +16,9 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
     private TextView mTimer;
 
     public WorkoutViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
-        setRootView(inflater.inflate(R.layout.activity_workout, parent, false));
+        setRootView(inflater.inflate(R.layout.fragment_workout, parent, false));
 
-        Button stopButton = findViewById(R.id.stop_button);
+        ExtendedFloatingActionButton stopButton = findViewById(R.id.stop_button);
         stopButton.setOnClickListener(v -> onStopButtonClicked());
 
         mCounter = findViewById(R.id.rep_counter);

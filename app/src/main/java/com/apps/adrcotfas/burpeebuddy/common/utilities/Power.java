@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 
-import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import static android.content.Context.POWER_SERVICE;
 
@@ -22,7 +22,7 @@ public class Power {
         wakeLock.acquire(0);
     }
 
-    public static void lockScreen(BaseActivity activity) {
+    public static void lockScreen(AppCompatActivity activity) {
         ComponentName adminComponent = new ComponentName(
                 activity,
                 android.app.admin.DeviceAdminReceiver.class);

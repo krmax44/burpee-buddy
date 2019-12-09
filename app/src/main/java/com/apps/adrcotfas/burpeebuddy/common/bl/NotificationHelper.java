@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.TimerFormat;
-import com.apps.adrcotfas.burpeebuddy.workout.WorkoutActivity;
+import com.apps.adrcotfas.burpeebuddy.workout.WorkoutFragment;
 
 public class NotificationHelper extends ContextWrapper {
 
@@ -51,7 +51,7 @@ public class NotificationHelper extends ContextWrapper {
     }
 
     private PendingIntent createActivityIntent() {
-        Intent intent = new Intent(this, WorkoutActivity.class);
+        Intent intent = new Intent(this, WorkoutFragment.class);
         return PendingIntent.getActivity(this
                 , 0
                 , intent
