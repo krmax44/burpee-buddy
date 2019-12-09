@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.main;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.apps.adrcotfas.burpeebuddy.common.BaseActivity;
 import com.apps.adrcotfas.burpeebuddy.workout.WorkoutActivity;
@@ -32,5 +33,10 @@ public class MainActivity extends BaseActivity implements MainViewMvcImpl.Listen
     @Override
     public void onStartButtonClicked() {
         WorkoutActivity.start(this, 0);
+    }
+
+    @Override
+    public void onDisabledChipClicked() {
+        Toast.makeText(this, "This feature is coming soon.", Toast.LENGTH_SHORT).show();
     }
 }

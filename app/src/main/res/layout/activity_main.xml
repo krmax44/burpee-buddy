@@ -48,8 +48,7 @@
             android:id="@+id/plank"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="plank"
-            style="@style/Widget.MaterialComponents.Chip.Choice"/>
+            android:text="plank" />
     </com.google.android.material.chip.ChipGroup>
 
     <TextView
@@ -88,14 +87,12 @@
             android:id="@+id/reps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="reps"
-            style="@style/Widget.MaterialComponents.Chip.Choice"/>
+            android:text="reps" />
         <com.google.android.material.chip.Chip
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="time"
-            style="@style/Widget.MaterialComponents.Chip.Choice"/>
+            android:text="time"/>
     </com.google.android.material.chip.ChipGroup>
 
     <Button
