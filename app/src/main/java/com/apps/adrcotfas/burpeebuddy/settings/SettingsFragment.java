@@ -3,24 +3,54 @@ package com.apps.adrcotfas.burpeebuddy.settings;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.takisoft.preferencex.EditTextPreference;
+import com.takisoft.preferencex.PreferenceFragmentCompat;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
 
     public SettingsFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+    public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.settings, rootKey);
+
+        //TODO: clean-up
+        final EditTextPreference wakeupInterval = findPreference(SettingsHelper.WAKEUP_INTERVAL);
+        wakeupInterval.setVisible(SettingsHelper.wakeupEnabled());
+        wakeupInterval.setSummary(SettingsHelper.getWakeUpInterval() + " reps");
+        wakeupInterval.setOnPreferenceChangeListener((preference, newValue) -> {
+            wakeupInterval.setSummary(newValue + " reps");
+            return true;
+        });
+
+        final SwitchPreferenceCompat enableWakeup = findPreference(SettingsHelper.ENABLE_WAKEUP);
+        enableWakeup.setOnPreferenceChangeListener((preference, newValue) -> {
+            boolean enable = (boolean)newValue;
+            wakeupInterval.setVisible(enable);
+            return true;
+        });
+
+        final EditTextPreference specialSoundInterval = findPreference(SettingsHelper.SPECIAL_SOUND_INTERVAL);
+        specialSoundInterval.setVisible(SettingsHelper.specialSoundEnabled());
+        specialSoundInterval.setSummary(SettingsHelper.getSpecialSoundInterval() + " reps");
+        specialSoundInterval.setOnPreferenceChangeListener((preference, newValue) -> {
+            specialSoundInterval.setSummary(newValue + " reps");
+            return true;
+        });
+
+        SwitchPreferenceCompat enableSpecialSound = findPreference(SettingsHelper.ENABLE_SPECIAL_SOUND);
+        enableSpecialSound.setOnPreferenceChangeListener((preference, newValue) -> {
+            boolean enable = (boolean)newValue;
+            specialSoundInterval.setVisible(enable);
+            return true;
+        });
+
+
+
     }
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        android:key="pref_enable_sound"
+        android:defaultValue="true"
+        android:persistent="true"
+        android:title="Audio feedback"
+        android:summary="Play a short sound after each completed repetition"
+        app:iconSpaceReserved="false"/>
+
+    <SwitchPreferenceCompat
+        android:key="pref_enable_sound_special"
+        android:defaultValue="true"
+        android:persistent="true"
+        android:title="Special audio feedback"
+        android:summary="Play a distinct sound once every several completed repetitions"
+        app:iconSpaceReserved="false"/>
+
+    <EditTextPreference
+        android:key="pref_sound_special_reps"
+        android:dependency="pref_enable_sound_special"
+        android:defaultValue="5"
+        android:persistent="true"
+        android:title="Interval length for special audio feedback"
+        android:inputType="number"
+        android:summary="%s reps"
+        app:iconSpaceReserved="false"/>
+
+    <SwitchPreferenceCompat
+        android:key="pref_enable_wakeup"
+        android:defaultValue="false"
+        android:persistent="true"
+        android:title="Wake-up screen"
+        android:summary="Visual feedback once every several completed repetitions"
+        app:iconSpaceReserved="false"/>
+
+    <EditTextPreference
+        android:key="pref_wakeup_reps"
+        android:dependency="pref_enable_wakeup"
+        android:defaultValue="10"
+        android:persistent="true"
+        android:title="Interval length for screen wake-up"
+        android:summary="%s reps"
+        android:inputType="number"
+        app:iconSpaceReserved="false"/>
+
+    <SwitchPreferenceCompat
+        android:key="pref_auto_lock"
+        android:defaultValue="false"
+        android:persistent="true"
+        android:title="Auto lock screen when working out"
+        android:summary="This needs a special permission and will force lock your device. It is recommended that you lock your phone manually to avoid accidental clicks."
+        app:iconSpaceReserved="false"/>
+</PreferenceScreen>

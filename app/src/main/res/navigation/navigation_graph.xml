@@ -37,8 +37,7 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.settings.SettingsFragment"
-        android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
+        android:label="fragment_settings" />
     <fragment
         android:id="@+id/leaderboardFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.leaderboard.LeaderboardFragment"
