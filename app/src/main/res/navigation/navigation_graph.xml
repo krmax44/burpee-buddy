@@ -29,4 +29,19 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:popUpTo="@id/mainFragment"></action>
     </fragment>
+    <fragment
+        android:id="@+id/myProfileFragment"
+        android:name="com.apps.adrcotfas.burpeebuddy.myprofile.MyProfileFragment"
+        android:label="fragment_my_profile"
+        tools:layout="@layout/fragment_my_profile" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.apps.adrcotfas.burpeebuddy.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/leaderboardFragment"
+        android:name="com.apps.adrcotfas.burpeebuddy.leaderboard.LeaderboardFragment"
+        android:label="fragment_leaderboard"
+        tools:layout="@layout/fragment_leaderboard" />
 </navigation>

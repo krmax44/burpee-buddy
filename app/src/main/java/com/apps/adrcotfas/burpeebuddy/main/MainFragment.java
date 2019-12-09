@@ -44,6 +44,6 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
     @Override
     public void onDisabledChipClicked() {
-        Toast.makeText(getActivity(), "This feature is coming soon.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), getString(R.string.implementation_not_ready), Toast.LENGTH_SHORT).show();
     }
 }

@@ -3,8 +3,8 @@
     <item android:id="@+id/mainFragment"
         android:title="Workout"
         android:icon="@drawable/ic_workout"/>
-    <item android:id="@+id/accountFragment"
-        android:title="My Account"
+    <item android:id="@+id/myProfileFragment"
+        android:title="My Profile"
         android:icon="@drawable/ic_account"/>
     <item android:id="@+id/leaderboardFragment"
         android:title="Leaderboard"

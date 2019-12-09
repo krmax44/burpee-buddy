@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Burpee Buddy</string>
+    <string name="implementation_not_ready">This feature is coming soon.</string>
 </resources>
