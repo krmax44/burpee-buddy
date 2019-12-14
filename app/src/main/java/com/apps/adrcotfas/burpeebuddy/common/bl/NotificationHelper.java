@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
@@ -13,11 +14,14 @@ import androidx.navigation.NavDeepLinkBuilder;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.TimerFormat;
+import com.apps.adrcotfas.burpeebuddy.workout.Actions;
+import com.apps.adrcotfas.burpeebuddy.workout.WorkoutService;
 
 public class NotificationHelper extends ContextWrapper {
 
-    public static final int WORKOUT_NOTIFICATION_ID = 42;
     private static final String BUDDY_NOTIFICATION = "buddy.notification";
+    public static final int WORKOUT_NOTIFICATION_ID = 42;
+    public static final int ACTION_ID_STOP = 1;
 
     private final NotificationManager mManager;
     private final NotificationCompat.Builder mBuilder;
@@ -38,6 +42,7 @@ public class NotificationHelper extends ContextWrapper {
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .addAction(getStopAction(context))
                 .setContentIntent(pendingIntent)
                 .setShowWhen(false)
                 .setOngoing(true)
@@ -83,4 +88,17 @@ public class NotificationHelper extends ContextWrapper {
     public void clearNotification() {
         mManager.cancelAll();
     }
+
+    private NotificationCompat.Action getStopAction(Context context) {
+        Intent i = new Intent(context, WorkoutService.class);
+        i.setAction(Actions.STOP);
+        PendingIntent pi = PendingIntent
+                .getService(context, ACTION_ID_STOP, i, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_stop,
+                context.getString(R.string.action_stop),
+                pi).build();
+    }
+
 }
