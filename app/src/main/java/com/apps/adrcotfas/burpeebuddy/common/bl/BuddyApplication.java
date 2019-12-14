@@ -1,6 +1,8 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 
 public class BuddyApplication extends Application {
@@ -10,6 +12,8 @@ public class BuddyApplication extends Application {
     private static RepCounter mRepCounter;
     private static NotificationHelper mNotificationHelper;
     private static SoundPlayer mMediaPlayer;
+
+    private static SharedPreferences mPrivatePreferences;
 
     public static NotificationHelper getNotificationHelper() {
         return mNotificationHelper;
@@ -31,6 +35,10 @@ public class BuddyApplication extends Application {
         return INSTANCE;
     }
 
+    public static SharedPreferences getPrivatePreferences() {
+        return mPrivatePreferences;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -39,5 +47,8 @@ public class BuddyApplication extends Application {
         mRepCounter = new RepCounter(this);
         mNotificationHelper = new NotificationHelper(this);
         mMediaPlayer = new SoundPlayer(this);
+
+        mPrivatePreferences =
+                getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
     }
 }
