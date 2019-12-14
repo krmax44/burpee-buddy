@@ -26,7 +26,6 @@ public class SoundPlayer extends ContextWrapper {
 
     public void play(SoundType soundType) {
         try {
-
             int sound;
             switch (soundType) {
                 case COUNTDOWN:

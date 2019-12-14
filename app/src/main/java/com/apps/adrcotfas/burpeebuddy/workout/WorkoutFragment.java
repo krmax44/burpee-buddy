@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
+import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 import com.apps.adrcotfas.burpeebuddy.main.MainActivity;
@@ -128,5 +129,11 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     public void onMessageEvent(Events.TimerTickEvent event) {
         Log.d(TAG, "TimerTickEvent: " + event.seconds);
         mViewMvc.updateTimer(event.seconds);
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.FinishedWorkoutEvent event) {
+        NavHostFragment.findNavController(this)
+                .popBackStack(R.id.mainFragment, false);
     }
 }

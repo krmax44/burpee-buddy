@@ -19,6 +19,10 @@ public class WorkoutManager implements RepCounter.Listener{
         return mWorkout;
     }
 
+    public int getNumberOfReps() {
+        return mWorkout.reps.size();
+    }
+
     public void resetWorkout() {
         mWorkout = new Workout();
     }

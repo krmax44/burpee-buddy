@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.lifecycle.LifecycleService;
@@ -48,6 +49,10 @@ public class WorkoutService extends LifecycleService {
         stopForeground(true);
         stopSelf();
         Timer.stop();
+        getMediaPlayer().play(COUNTDOWN_LONG);
+        // workaround to make sure that the sound played above is audible
+        new Handler().postDelayed(() -> getMediaPlayer().stop(), 1000);
+        EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
     }
 
     @Override
@@ -60,16 +65,19 @@ public class WorkoutService extends LifecycleService {
 
         switch (intent.getAction()) {
             case Actions.STOP:
-                getMediaPlayer().stop();
-                onStop();
+                if (isStarted) {
+                    onStop();
+                }
                 break;
             case Actions.START:
-                isStarted = true;
-                getMediaPlayer().init();
-                preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
-                preWorkoutCountdown.start();
-                startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build());
-                getNotificationHelper().setTitle("Get ready"); //TODO: extract string
+                if (!isStarted) {
+                    isStarted = true;
+                    getMediaPlayer().init();
+                    preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
+                    preWorkoutCountdown.start();
+                    startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build());
+                    getNotificationHelper().setTitle("Get ready"); //TODO: extract string
+                }
                 break;
         }
 
@@ -81,7 +89,9 @@ public class WorkoutService extends LifecycleService {
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
-        onStop();
+        if (isStarted) {
+            onStop();
+        }
         getRepCounter().unregister();
         getWorkoutManager().resetWorkout();
         super.onDestroy();
@@ -118,7 +128,6 @@ public class WorkoutService extends LifecycleService {
                 && (event.size % SettingsHelper.getWakeUpInterval() == 0)) {
             Power.turnOnScreen(this);
         }
-
         if (SettingsHelper.specialSoundEnabled()
                 && (event.size % SettingsHelper.getSpecialSoundInterval() == 0)){
             getMediaPlayer().play(REP_COMPLETE_SPECIAL);

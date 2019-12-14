@@ -1,8 +1,13 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
 import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.navigation.NavDeepLinkBuilder;
+
+import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 
 public class BuddyApplication extends Application {
@@ -37,6 +42,13 @@ public class BuddyApplication extends Application {
 
     public static SharedPreferences getPrivatePreferences() {
         return mPrivatePreferences;
+    }
+
+    public static PendingIntent getNavigationIntent(Context context, int destId) {
+        return new NavDeepLinkBuilder(context)
+                .setGraph(R.navigation.navigation_graph)
+                .setDestination(destId)
+                .createPendingIntent();
     }
 
     @Override

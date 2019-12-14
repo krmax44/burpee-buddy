@@ -8,4 +8,6 @@
     <string name="title_me">Me</string>
     <string name="title_workout">Workout</string>
     <string name="title_main">Burpee buddy</string>
+    <string name="notification_description">Buddy workout notification</string>
+    <string name="reps">reps</string>
 </resources>
