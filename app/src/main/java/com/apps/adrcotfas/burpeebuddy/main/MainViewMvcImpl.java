@@ -45,7 +45,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     @Override
     public void showIntroduction() {
-        if (SettingsHelper.showStartSnack() || !SettingsHelper.wakeupEnabled()) {
+        if (SettingsHelper.showStartSnack() && !SettingsHelper.wakeupEnabled()) {
             Snackbar snackbar = Snackbar
                     .make(coordinatorLayout, getContext().getString(R.string.snack_avoid_clicks),
                             Snackbar.LENGTH_INDEFINITE)
