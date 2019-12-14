@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.main.MainFragment"
-        android:label="fragment_main"
+        android:label="@string/title_main"
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_main_to_workout"
@@ -22,7 +22,7 @@
     <fragment
         android:id="@+id/workoutFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.workout.WorkoutFragment"
-        android:label="fragment_workout"
+        android:label="@string/title_workout"
         tools:layout="@layout/fragment_workout">
         <action
             android:id="@+id/action_workout_finished"
@@ -32,15 +32,15 @@
     <fragment
         android:id="@+id/myProfileFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.myprofile.MyProfileFragment"
-        android:label="fragment_my_profile"
+        android:label="@string/title_me"
         tools:layout="@layout/fragment_my_profile" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.settings.SettingsFragment"
-        android:label="fragment_settings" />
+        android:label="@string/title_settings" />
     <fragment
         android:id="@+id/leaderboardFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.leaderboard.LeaderboardFragment"
-        android:label="fragment_leaderboard"
+        android:label="@string/title_leaderboard"
         tools:layout="@layout/fragment_leaderboard" />
 </navigation>

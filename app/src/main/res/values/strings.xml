@@ -3,4 +3,9 @@
     <string name="implementation_not_ready">This feature is coming soon.</string>
     <string name="snack_avoid_clicks">Lock your phone when working out to avoid accidental clicks.</string>
     <string name="action_stop">STOP</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_leaderboard">Leaderboard</string>
+    <string name="title_me">Me</string>
+    <string name="title_workout">Workout</string>
+    <string name="title_main">Burpee buddy</string>
 </resources>
