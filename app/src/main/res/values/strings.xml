@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Burpee Buddy</string>
     <string name="implementation_not_ready">This feature is coming soon.</string>
+    <string name="snack_avoid_clicks">Avoid accidental clicks by locking your phone when working out.</string>
 </resources>

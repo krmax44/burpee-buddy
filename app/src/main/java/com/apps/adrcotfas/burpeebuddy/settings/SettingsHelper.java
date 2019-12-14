@@ -12,6 +12,8 @@ public class SettingsHelper {
     public final static String ENABLE_WAKEUP = "pref_enable_wakeup";
     public final static String WAKEUP_INTERVAL = "pref_wakeup_reps";
 
+    private static final String IS_FIRST_RUN = "pref_is_first_run";
+    private static final String SHOW_START_SNACK = "pref_show_start_snack";
 
     public static boolean autoLockEnabled() {
         return getDefaultSharedPreferences(BuddyApplication.getInstance())
@@ -41,6 +43,25 @@ public class SettingsHelper {
     public static int getWakeUpInterval() {
         return Integer.parseInt(getDefaultSharedPreferences(BuddyApplication.getInstance())
                 .getString(WAKEUP_INTERVAL, "10"));
+    }
+
+    public static boolean isFirstRun() {
+        return BuddyApplication.getPrivatePreferences().getBoolean(IS_FIRST_RUN, true);
+    }
+
+    public static void setIsFirstRun(boolean value) {
+        BuddyApplication.getPrivatePreferences().edit()
+                .putBoolean(IS_FIRST_RUN, value).apply();
+    }
+
+    public static boolean showStartSnack() {
+        return BuddyApplication.getPrivatePreferences()
+                .getBoolean(SHOW_START_SNACK, true);
+    }
+
+    public static void setShowStartSnack(boolean value) {
+        BuddyApplication.getPrivatePreferences().edit()
+                .putBoolean(SHOW_START_SNACK, value).apply();
     }
 
 }

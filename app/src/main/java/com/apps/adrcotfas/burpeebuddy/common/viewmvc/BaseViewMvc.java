@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.common.viewmvc;
 
+import android.content.Context;
 import android.view.View;
 
 public abstract class BaseViewMvc implements ViewMvc {
@@ -9,6 +10,10 @@ public abstract class BaseViewMvc implements ViewMvc {
     @Override
     public View getRootView() {
         return mRootView;
+    }
+
+    public Context getContext() {
+        return getRootView().getContext();
     }
 
     protected void setRootView(View view) {

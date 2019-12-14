@@ -11,12 +11,22 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 
 public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
     private MainViewMvc mViewMvc;
 
     public MainFragment() {}
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (SettingsHelper.isFirstRun()) {
+            // show Intro
+            SettingsHelper.setIsFirstRun(true); // TODO: set to false
+        }
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -29,6 +39,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     public void onResume() {
         super.onResume();
         mViewMvc.registerListener(this);
+        mViewMvc.showIntroduction();
     }
 
     @Override

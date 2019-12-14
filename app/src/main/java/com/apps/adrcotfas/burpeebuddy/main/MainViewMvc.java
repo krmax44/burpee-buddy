@@ -4,6 +4,8 @@ import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
 
 public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
 
+    void showIntroduction();
+
     public interface Listener {
         void onStartButtonClicked();
         void onDisabledChipClicked();
