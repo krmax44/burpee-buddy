@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.main;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,14 @@ import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 
 public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
+    private static final String TAG = "MainFragment";
     private MainViewMvc mViewMvc;
 
     public MainFragment() {}
 
     @Override
     public void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
         if (SettingsHelper.isFirstRun()) {
             // show Intro
@@ -31,12 +34,14 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         mViewMvc = new MainViewMvcImpl(inflater, container);
         return mViewMvc.getRootView();
     }
 
     @Override
     public void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
         mViewMvc.registerListener(this);
         mViewMvc.showIntroduction();
@@ -44,7 +49,10 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
     @Override
     public void onDestroy() {
-        mViewMvc.unregisterListener(this);
+        Log.v(TAG, "onDestroy");
+        if (mViewMvc != null){
+            mViewMvc.unregisterListener(this);
+        }
         super.onDestroy();
     }
 

@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -30,13 +32,23 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onAttach(@NonNull Context context) {
+        Log.v(TAG, "onAttach");
         super.onAttach(context);
         ((MainActivity)getActivity()).setBottomNavigationVisibility(View.INVISIBLE);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // TODO: show dialog to stop session
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         mViewMvc = new WorkoutViewMvcImpl(inflater, container);
         EventBus.getDefault().register(this);
         return mViewMvc.getRootView();
@@ -44,6 +56,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
         mViewMvc.registerListener(this);
         if (!WorkoutService.isStarted) {
@@ -56,6 +69,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onDestroy() {
+        Log.v(TAG, "onDestroy");
         mViewMvc.unregisterListener(this);
         EventBus.getDefault().unregister(this);
         ((MainActivity)getActivity()).setBottomNavigationVisibility(View.VISIBLE);
