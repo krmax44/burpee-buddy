@@ -9,7 +9,7 @@ public class TimerFormat {
      * @param elapsed seconds
      * @return a String in the format of HH:mm:ss
      */
-    public static String secondsToTimerFormat(long elapsed) {
+    public static String secondsToTimerFormat(int elapsed) {
         final long hours = TimeUnit.SECONDS.toHours(elapsed);
         final long minutes = TimeUnit.SECONDS.toMinutes(elapsed) - hours * 60;
         final long seconds = elapsed - (minutes * 60);

@@ -20,7 +20,7 @@ public class WorkoutManager implements RepCounter.Listener{
     }
 
     public int getNumberOfReps() {
-        return mWorkout.reps.size();
+        return mWorkout.reps;
     }
 
     public void resetWorkout() {
@@ -36,13 +36,12 @@ public class WorkoutManager implements RepCounter.Listener{
             return;
         }
 
-        mWorkout.reps.add((int)TimeUnit.MILLISECONDS.toSeconds(
-                System.currentTimeMillis() - mWorkout.timestamp));
+        ++mWorkout.reps;
         mWorkout.timestamp = System.currentTimeMillis();
-        EventBus.getDefault().post(new Events.RepCompletedEvent(mWorkout.reps.size()));
+        EventBus.getDefault().post(new Events.RepCompletedEvent(mWorkout.reps));
     }
 
-    public void setDuration(long value) {
+    public void setDuration(int value) {
         mWorkout.duration = value;
     }
 

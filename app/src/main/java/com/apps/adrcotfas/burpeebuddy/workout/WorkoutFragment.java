@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 import com.apps.adrcotfas.burpeebuddy.main.MainActivity;
@@ -62,6 +63,8 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         mViewMvc.registerListener(this);
         if (!WorkoutService.isStarted) {
             startWorkout();
+        } else {
+            mViewMvc.updateCounter(BuddyApplication.getWorkoutManager().getNumberOfReps());
         }
     }
 

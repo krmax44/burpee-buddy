@@ -36,19 +36,19 @@
             android:id="@+id/burpees"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="burpees"
+            android:text="@string/workout_type_burpees"
             style="@style/Widget.MaterialComponents.Chip.Choice"/>
         <com.google.android.material.chip.Chip
             android:id="@+id/pushups"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="push-ups"
+            android:text="@string/workout_type_pushups"
             style="@style/Widget.MaterialComponents.Chip.Choice"/>
         <com.google.android.material.chip.Chip
             android:id="@+id/plank"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="plank" />
+            android:text="@string/workout_type_plank" />
     </com.google.android.material.chip.ChipGroup>
 
     <TextView
@@ -71,28 +71,23 @@
         android:layout_marginLeft="32dp"
         app:singleSelection="true"
         app:selectionRequired="true"
-        app:checkedChip="@id/amrap"
+        app:checkedChip="@id/time"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/goal_title">
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/amrap"
+            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="AMRAP"
+            android:text="@string/goal_type_time"
             style="@style/Widget.MaterialComponents.Chip.Choice"/>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/reps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="reps" />
-        <com.google.android.material.chip.Chip
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="time"/>
+            android:text="@string/goal_type_reps" />
     </com.google.android.material.chip.ChipGroup>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -101,7 +96,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:backgroundTint="@color/colorAccent"
-        android:text="Begin workout"
+        android:text="@string/begin_workout"
         android:textColor="@color/cardview_light_background"
         android:layout_marginTop="100sp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -31,7 +31,7 @@ import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.REP_CO
 public class WorkoutService extends LifecycleService {
     private static final String TAG = "WorkoutService";
     public static boolean isStarted = false;
-    private static long PRE_WORKOUT_COUNTDOWN_SECONDS = TimeUnit.SECONDS.toMillis(5);
+    private static int PRE_WORKOUT_COUNTDOWN_SECONDS = (int) TimeUnit.SECONDS.toMillis(5);
     private PreWorkoutCountdown preWorkoutCountdown;
 
     private void onStartWorkout() {

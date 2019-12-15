@@ -14,7 +14,7 @@ import io.reactivex.schedulers.Schedulers;
 public class Timer {
 
     private static Disposable mDisposable;
-    private static long elapsedSeconds;
+    private static int elapsedSeconds;
 
     public static void start(){
         mDisposable = Observable.timer(1, TimeUnit.SECONDS, Schedulers.computation())

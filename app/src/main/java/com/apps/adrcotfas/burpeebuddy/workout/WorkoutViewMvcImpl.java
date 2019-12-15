@@ -32,12 +32,12 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
     }
 
     @Override
-    public void updateCounter(long reps) {
+    public void updateCounter(int reps) {
         mCounter.setText(String.valueOf(reps));
     }
 
     @Override
-    public void updateTimer(long seconds) {
+    public void updateTimer(int seconds) {
         mTimer.setText(TimerFormat.secondsToTimerFormat(seconds));
     }
 }

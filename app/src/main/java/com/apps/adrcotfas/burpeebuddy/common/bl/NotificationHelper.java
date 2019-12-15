@@ -65,7 +65,7 @@ public class NotificationHelper extends ContextWrapper {
                         .build());
     }
 
-    public void setElapsedTime(long elapsed) {
+    public void setElapsedTime(int elapsed) {
         mManager.notify(WORKOUT_NOTIFICATION_ID,
                 getBuilder()
                         .setOnlyAlertOnce(true)

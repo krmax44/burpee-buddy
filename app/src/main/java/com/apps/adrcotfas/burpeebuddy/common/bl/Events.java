@@ -11,10 +11,10 @@ public class Events {
     }
 
     public static class TimerTickEvent {
-        public TimerTickEvent(long elapsedSeconds) {
+        public TimerTickEvent(int elapsedSeconds) {
             this.seconds = elapsedSeconds;
         }
-        public long seconds;
+        public int seconds;
     }
 
     public static class RepCompletedEvent {
