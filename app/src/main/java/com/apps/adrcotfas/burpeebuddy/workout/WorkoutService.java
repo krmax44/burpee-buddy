@@ -103,6 +103,7 @@ public class WorkoutService extends LifecycleService {
         getNotificationHelper().setElapsedTime(event.seconds);
         if (event.seconds == 0) {
             getMediaPlayer().play(COUNTDOWN_LONG);
+            onStartWorkout();
         } else if (event.seconds <= 3) {
             getMediaPlayer().play(COUNTDOWN);
         }
@@ -111,7 +112,6 @@ public class WorkoutService extends LifecycleService {
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
         Log.d(TAG, "PreWorkoutCountdownFinished");
-        onStartWorkout();
     }
 
     @Subscribe
