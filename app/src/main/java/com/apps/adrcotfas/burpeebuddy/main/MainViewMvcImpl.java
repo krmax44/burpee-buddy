@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.main;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -16,13 +17,17 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         implements MainViewMvc {
 
+    private static final String TAG = "MainViewMvcImpl";
+
     private final CoordinatorLayout mCoordinatorLayout;
     private final ChipGroup mExerciseTypeChipGroup;
+    private List<ExerciseType> mExerciseTypes = new ArrayList<>();
 
     public MainViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_main, parent, false));
@@ -62,8 +67,9 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     @Override
     public void updateExerciseTypes(List<ExerciseType> exerciseTypes) {
+        mExerciseTypes = exerciseTypes;
         mExerciseTypeChipGroup.removeAllViews();
-        for (ExerciseType w : ExerciseTypeFactory.getDefaultWorkouts()) {
+        for (ExerciseType w : mExerciseTypes) {
             Chip c = new Chip(getContext());
             c.setText(w.getName());
 
@@ -80,7 +86,35 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             mExerciseTypeChipGroup.addView(c);
         }
 
+        mExerciseTypeChipGroup.setSelectionRequired(true);
         mExerciseTypeChipGroup.setSingleSelection(true);
         mExerciseTypeChipGroup.check(mExerciseTypeChipGroup.getChildAt(0).getId());
+    }
+
+    /**
+     * Returns the currently selected exercise type
+     */
+    public ExerciseType getCurrentExerciseType() {
+        String name = "";
+        for (int i = 0; i < mExerciseTypeChipGroup.getChildCount(); ++i) {
+            Chip crt = (Chip)mExerciseTypeChipGroup.getChildAt(i);
+            if (crt.getId() == mExerciseTypeChipGroup.getCheckedChipId()) {
+                name = crt.getText().toString();
+            }
+        }
+
+        if (name.isEmpty()) {
+            Log.wtf(TAG, "No exercise was selected.");
+            return mExerciseTypes.get(0);
+        }
+
+        for (ExerciseType e : mExerciseTypes) {
+            if (e.getName().equals(name)) {
+                return e;
+            }
+        }
+
+        Log.wtf(TAG, "The selected exercise is not part of the internal exercises.");
+        return mExerciseTypes.get(0);
     }
 }
