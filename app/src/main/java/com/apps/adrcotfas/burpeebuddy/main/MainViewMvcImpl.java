@@ -7,8 +7,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
-import com.apps.adrcotfas.burpeebuddy.db.WorkoutType;
-import com.apps.adrcotfas.burpeebuddy.db.WorkoutTypeFactory;
+import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeFactory;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipDrawable;
@@ -16,16 +16,18 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.List;
+
 public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         implements MainViewMvc {
 
     private final CoordinatorLayout mCoordinatorLayout;
+    private final ChipGroup mExerciseTypeChipGroup;
 
     public MainViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_main, parent, false));
 
-        ChipGroup workoutChipGroup = findViewById(R.id.workout_type);
-        fillWorkoutChipGroup(workoutChipGroup);
+        mExerciseTypeChipGroup = findViewById(R.id.exercise_type);
 
         mCoordinatorLayout = findViewById(R.id.top_coordinator);
         ExtendedFloatingActionButton startButton = findViewById(R.id.start_button);
@@ -58,14 +60,16 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         }
     }
 
-    private void fillWorkoutChipGroup(ChipGroup group) {
-        for (WorkoutType w : WorkoutTypeFactory.getDefaultWorkouts()) {
+    @Override
+    public void updateExerciseTypes(List<ExerciseType> exerciseTypes) {
+        mExerciseTypeChipGroup.removeAllViews();
+        for (ExerciseType w : ExerciseTypeFactory.getDefaultWorkouts()) {
             Chip c = new Chip(getContext());
             c.setText(w.getName());
 
             //TODO: adapt this later
-            if (w.getName().equals(WorkoutTypeFactory.BURPEES) ||
-                    w.getName().equals(WorkoutTypeFactory.PUSHUPS)) {
+            if (w.getName().equals(ExerciseTypeFactory.BURPEES) ||
+                    w.getName().equals(ExerciseTypeFactory.PUSHUPS)) {
                 ChipDrawable d = ChipDrawable.createFromAttributes(
                         getContext(), null, 0,
                         R.style.Widget_MaterialComponents_Chip_Choice);
@@ -73,9 +77,10 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             } else {
                 c.setOnClickListener(v -> onDisabledChipClicked());
             }
-            group.addView(c);
+            mExerciseTypeChipGroup.addView(c);
         }
-        group.setSingleSelection(true);
-        group.check(group.getChildAt(0).getId());
+
+        mExerciseTypeChipGroup.setSingleSelection(true);
+        mExerciseTypeChipGroup.check(mExerciseTypeChipGroup.getChildAt(0).getId());
     }
 }

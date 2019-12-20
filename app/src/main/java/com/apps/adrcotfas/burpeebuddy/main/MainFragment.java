@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
+import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 
 public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
@@ -25,16 +25,17 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     public void onStart() {
         Log.v(TAG, "onStart");
         super.onStart();
-        if (SettingsHelper.isFirstRun()) {
-            // show Intro
-            SettingsHelper.setIsFirstRun(true); // TODO: set to false
-        }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
+
+        AppDatabase.getDatabase(getContext()).exerciseTypeDao().getAll().observe(
+                getViewLifecycleOwner(), exerciseTypes ->
+                        mViewMvc.updateExerciseTypes(exerciseTypes));
+
         mViewMvc = new MainViewMvcImpl(inflater, container);
         return mViewMvc.getRootView();
     }

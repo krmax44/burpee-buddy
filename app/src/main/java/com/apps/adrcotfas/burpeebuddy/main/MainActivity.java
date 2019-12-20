@@ -11,6 +11,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
+import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
+import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.WorkoutFinishedDialog;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -33,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
         if (navHostFragment != null) {
             NavigationUI.setupWithNavController(navView, navHostFragment.getNavController());
             NavigationUI.setupActionBarWithNavController(this, navHostFragment.getNavController());
+        }
+
+        if (SettingsHelper.isFirstRun()) {
+            AppDatabase.getDatabase(getApplicationContext());
+            AppDatabase.populateExercises(getApplicationContext());
+            SettingsHelper.setIsFirstRun(false); // TODO: set to false
         }
     }
 

@@ -5,15 +5,15 @@ import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class SettingsHelper {
+    private static final String IS_FIRST_RUN = "pref_is_first_run";
+    private static final String SHOW_START_SNACK = "pref_show_start_snack";
+
     public final static String ENABLE_AUTO_LOCK = "pref_auto_lock";
     public final static String ENABLE_SOUND = "pref_enable_sound";
     public final static String ENABLE_SPECIAL_SOUND = "pref_enable_sound_special";
     public final static String SPECIAL_SOUND_INTERVAL = "pref_sound_special_reps";
     public final static String ENABLE_WAKEUP = "pref_enable_wakeup";
     public final static String WAKEUP_INTERVAL = "pref_wakeup_reps";
-
-    private static final String IS_FIRST_RUN = "pref_is_first_run";
-    private static final String SHOW_START_SNACK = "pref_show_start_snack";
 
     public static boolean autoLockEnabled() {
         return getDefaultSharedPreferences(BuddyApplication.getInstance())

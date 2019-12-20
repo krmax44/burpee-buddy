@@ -1,10 +1,8 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
-import com.apps.adrcotfas.burpeebuddy.db.Workout;
+import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.util.concurrent.TimeUnit;
 
 public class WorkoutManager implements RepCounter.Listener{
 

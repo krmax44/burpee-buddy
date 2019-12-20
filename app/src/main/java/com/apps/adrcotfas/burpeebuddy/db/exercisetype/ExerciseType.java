@@ -1,14 +1,23 @@
-package com.apps.adrcotfas.burpeebuddy.db;
+package com.apps.adrcotfas.burpeebuddy.db.exercisetype;
+
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorkoutType {
+@Entity(indices = {@Index(value = {"name", "metrics", "color"}, unique = true)})
+public class ExerciseType {
 
     /**
      * The workout name, which can be pre-defined like burpees, plank
      * or something custom added by the user.
      */
+    @PrimaryKey
+    @NonNull
     private String name;
 
     /**
@@ -23,7 +32,9 @@ public class WorkoutType {
      * - reps, time and weight for weighted burpees
      * - etc
      */
-    private List<Metrics> metrics;
+    @TypeConverters(MetricConverter.class)
+    @NonNull
+    private List<String> metrics;
 
     /**
      * Index of the color used to represent this workout type.
@@ -38,11 +49,11 @@ public class WorkoutType {
         this.name = name;
     }
 
-    public List<Metrics> getMetrics() {
+    public List<String> getMetrics() {
         return metrics;
     }
 
-    public void setMetrics(ArrayList<Metrics> metrics) {
+    public void setMetrics(ArrayList<String> metrics) {
         this.metrics = metrics;
     }
 
@@ -54,7 +65,7 @@ public class WorkoutType {
         this.color = color;
     }
 
-    WorkoutType(String name, List<Metrics> metrics) {
+    public ExerciseType(String name, List<String> metrics) {
 
         if ((metrics.size() <= 0)) throw new AssertionError();
 
