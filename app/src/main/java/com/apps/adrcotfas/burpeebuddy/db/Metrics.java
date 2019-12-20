@@ -4,5 +4,6 @@ public enum Metrics {
     REPS,
     TIME,
     WEIGHT,
-    DISTANCE
+    DISTANCE,
+    PROXIMITY_SENSOR_RELEVANT
 }
