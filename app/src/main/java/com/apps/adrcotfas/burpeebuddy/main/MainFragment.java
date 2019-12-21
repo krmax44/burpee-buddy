@@ -9,10 +9,21 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
+import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+
+import java.util.List;
+
+import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.COUNTABLE;
+import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.REP_BASED;
+import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.TIME_BASED;
 
 public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
@@ -31,12 +42,28 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
+        mViewMvc = new MainViewMvcImpl(inflater, container);
 
         AppDatabase.getDatabase(getContext()).exerciseTypeDao().getAll().observe(
                 getViewLifecycleOwner(), exerciseTypes ->
                         mViewMvc.updateExerciseTypes(exerciseTypes));
 
-        mViewMvc = new MainViewMvcImpl(inflater, container);
+        mViewMvc.getExercise().observe(getViewLifecycleOwner(), exercise -> {
+
+            LiveData<List<Goal>> goalsLd = new MutableLiveData<>();
+
+            ExerciseType type = exercise.getType();
+            if (COUNTABLE.equals(type)) {
+                goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getCountableGoals();
+            } else if (TIME_BASED.equals(type)) {
+                goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.TIME_BASED);
+            } else if (REP_BASED.equals(type)) {
+                goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.AMRAP);
+            }
+            goalsLd.observe(getViewLifecycleOwner(),
+                    goals -> mViewMvc.updateGoals(goals));
+        });
+
         return mViewMvc.getRootView();
     }
 

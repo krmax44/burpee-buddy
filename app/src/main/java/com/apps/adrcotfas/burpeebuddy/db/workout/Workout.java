@@ -6,31 +6,27 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.apps.adrcotfas.burpeebuddy.db.exercisetype.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.MetricConverter;
-
-import java.util.List;
+import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeConverter;
 
 import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(
         foreignKeys = {@ForeignKey(
-                entity = ExerciseType.class,
-                parentColumns = {"name", "metrics", "color"},
-                childColumns = {"exerciseName", "metrics", "color"},
+                entity = Exercise.class,
+                parentColumns = {"name", "type", "color"},
+                childColumns = {"exerciseName", "type", "color"},
                 onUpdate = CASCADE, onDelete = CASCADE)},
-        indices = {@Index(value = {"exerciseName", "metrics", "color"}, unique = true)})
+        indices = {@Index(value = {"exerciseName", "type", "color"}, unique = true)})
 public class Workout {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public int id;
 
-    /**
-     * part of ExerciseType
-     */
     public String exerciseName;
-    @TypeConverters(MetricConverter.class)
-    public List<String> metrics;
+    @TypeConverters(ExerciseTypeConverter.class)
+    public ExerciseType type;
     public int color;
 
     /**

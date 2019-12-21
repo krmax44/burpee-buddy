@@ -5,11 +5,12 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.lifecycle.MutableLiveData;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeFactory;
+import com.apps.adrcotfas.burpeebuddy.db.exercisetype.Exercise;
+import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipDrawable;
@@ -20,6 +21,8 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.goalToString;
+
 public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         implements MainViewMvc {
 
@@ -27,18 +30,33 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     private final CoordinatorLayout mCoordinatorLayout;
     private final ChipGroup mExerciseTypeChipGroup;
-    private List<ExerciseType> mExerciseTypes = new ArrayList<>();
+    private final ChipGroup mGoalsChipGroup;
+
+    private List<Exercise> mExercises = new ArrayList<>();
+    private List<Goal> mGoals = new ArrayList<>();
+
+    public MutableLiveData<Exercise> getExercise() {
+        return mExercise;
+    }
+
+    private MutableLiveData<Exercise> mExercise = new MutableLiveData<>();
 
     public MainViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_main, parent, false));
 
         mExerciseTypeChipGroup = findViewById(R.id.exercise_type);
+        mExerciseTypeChipGroup.setSelectionRequired(true);
+        mExerciseTypeChipGroup.setSingleSelection(true);
+        mExerciseTypeChipGroup.setOnCheckedChangeListener((group, checkedId) -> onExerciseSelected());
+
+        mGoalsChipGroup = findViewById(R.id.goal_type);
+        mGoalsChipGroup.setSelectionRequired(true);
+        mGoalsChipGroup.setSingleSelection(true);
 
         mCoordinatorLayout = findViewById(R.id.top_coordinator);
+
         ExtendedFloatingActionButton startButton = findViewById(R.id.start_button);
         startButton.setOnClickListener(v -> onStartButtonClicked());
-        Chip reps = findViewById(R.id.reps);
-        reps.setOnClickListener(v -> onDisabledChipClicked());
     }
 
     public void onStartButtonClicked() {
@@ -66,55 +84,90 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     }
 
     @Override
-    public void updateExerciseTypes(List<ExerciseType> exerciseTypes) {
-        mExerciseTypes = exerciseTypes;
+    public void updateExerciseTypes(List<Exercise> exercises) {
+        mExercises = exercises;
         mExerciseTypeChipGroup.removeAllViews();
-        for (ExerciseType w : mExerciseTypes) {
+        for (Exercise w : mExercises) {
             Chip c = new Chip(getContext());
             c.setText(w.getName());
 
-            //TODO: adapt this later
-            if (w.getName().equals(ExerciseTypeFactory.BURPEES) ||
-                    w.getName().equals(ExerciseTypeFactory.PUSHUPS)) {
-                ChipDrawable d = ChipDrawable.createFromAttributes(
-                        getContext(), null, 0,
-                        R.style.Widget_MaterialComponents_Chip_Choice);
-                c.setChipDrawable(d);
-            } else {
-                c.setOnClickListener(v -> onDisabledChipClicked());
-            }
+            ChipDrawable d = ChipDrawable.createFromAttributes(
+                    getContext(), null, 0,
+                    R.style.Widget_MaterialComponents_Chip_Choice);
+            c.setChipDrawable(d);
+             //   c.setOnClickListener(v -> onDisabledChipClicked());
             mExerciseTypeChipGroup.addView(c);
         }
-
-        mExerciseTypeChipGroup.setSelectionRequired(true);
-        mExerciseTypeChipGroup.setSingleSelection(true);
-        mExerciseTypeChipGroup.check(mExerciseTypeChipGroup.getChildAt(0).getId());
+        if (!mExercises.isEmpty()) {
+            mExerciseTypeChipGroup.check(mExerciseTypeChipGroup.getChildAt(0).getId());
+        }
     }
 
-    /**
-     * Returns the currently selected exercise type
-     */
-    public ExerciseType getCurrentExerciseType() {
+    @Override
+    public void updateGoals(List<Goal> goals) {
+        mGoals = goals;
+        mGoalsChipGroup.removeAllViews();
+        for (Goal g : mGoals) {
+            Chip c = new Chip(getContext());
+            c.setText(goalToString(g));
+            ChipDrawable d = ChipDrawable.createFromAttributes(
+                    getContext(), null, 0,
+                    R.style.Widget_MaterialComponents_Chip_Choice);
+            c.setChipDrawable(d);
+            mGoalsChipGroup.addView(c);
+        }
+        if (!goals.isEmpty()) {
+            mGoalsChipGroup.check(mGoalsChipGroup.getChildAt(0).getId());
+        }
+    }
+
+    private void onExerciseSelected() {
         String name = "";
         for (int i = 0; i < mExerciseTypeChipGroup.getChildCount(); ++i) {
             Chip crt = (Chip)mExerciseTypeChipGroup.getChildAt(i);
             if (crt.getId() == mExerciseTypeChipGroup.getCheckedChipId()) {
                 name = crt.getText().toString();
+                break;
             }
         }
 
         if (name.isEmpty()) {
             Log.wtf(TAG, "No exercise was selected.");
-            return mExerciseTypes.get(0);
+            mExercise.setValue(mExercises.get(0));
+            return;
         }
 
-        for (ExerciseType e : mExerciseTypes) {
+        for (Exercise e : mExercises) {
             if (e.getName().equals(name)) {
-                return e;
+                mExercise.setValue(e);
+                return;
             }
         }
 
         Log.wtf(TAG, "The selected exercise is not part of the internal exercises.");
-        return mExerciseTypes.get(0);
+        mExercise.setValue(mExercises.get(0));
+    }
+
+    @Override
+    public Goal getGoal() {
+        int id = -1;
+        for (int i = 0; i < mGoalsChipGroup.getChildCount(); ++i) {
+            Chip crt = (Chip)mGoalsChipGroup.getChildAt(i);
+            if (crt.getId() == mGoalsChipGroup.getCheckedChipId()) {
+                id = mGoals.get(i).getId();
+                break;
+            }
+        }
+
+        if (id != -1) {
+            for (Goal g : mGoals) {
+                if (g.getId() == id) {
+                    return g;
+                }
+            }
+        }
+
+        Log.wtf(TAG, "Could not find the selected goal in the internal list.");
+        return null;
     }
 }

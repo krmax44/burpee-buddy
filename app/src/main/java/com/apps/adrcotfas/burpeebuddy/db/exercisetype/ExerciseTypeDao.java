@@ -12,18 +12,18 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface ExerciseTypeDao {
 
-    @Query("select * from ExerciseType")
-    LiveData<List<ExerciseType>> getAll();
+    @Query("select * from Exercise")
+    LiveData<List<Exercise>> getAll();
 
-    @Query("select * from ExerciseType where name = :name")
-    ExerciseType getExercise(String name);
-
-    @Insert(onConflict = REPLACE)
-    void addExercise(ExerciseType exerciseType);
+    @Query("select * from Exercise where name = :name")
+    Exercise getExercise(String name);
 
     @Insert(onConflict = REPLACE)
-    void insertAll(List<ExerciseType> exerciseTypes);
+    void addExercise(Exercise exercise);
 
-    @Query("delete from ExerciseType where name = :name")
+    @Insert(onConflict = REPLACE)
+    void insertAll(List<Exercise> exercises);
+
+    @Query("delete from Exercise where name = :name")
     void delete(String name);
 }
