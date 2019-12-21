@@ -12,10 +12,10 @@ import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
         mCoordinatorLayout = findViewById(R.id.top_coordinator);
 
-        ExtendedFloatingActionButton startButton = findViewById(R.id.start_button);
+        MaterialButton startButton = findViewById(R.id.start_button);
         startButton.setOnClickListener(v -> onStartButtonClicked());
     }
 
