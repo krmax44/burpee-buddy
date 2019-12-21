@@ -19,9 +19,6 @@ import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeConverter;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.main.MainActivity;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 
@@ -32,9 +29,6 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     private static final String TAG = "WorkoutFragment";
     private WorkoutViewMvc mViewMvc;
-
-    private ExerciseType mExerciseType;
-    private Goal mGoal;
 
     public WorkoutFragment() {}
 
@@ -58,12 +52,12 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
                              Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
 
-        mExerciseType = ExerciseTypeConverter.getGoalFromInt(
-                WorkoutFragmentArgs.fromBundle(getArguments()).getExerciseType());
-        mGoal = WorkoutFragmentArgs.fromBundle(getArguments()).getGoal();
-
         mViewMvc = new WorkoutViewMvcImpl(inflater, container);
         EventBus.getDefault().register(this);
+
+        BuddyApplication.getWorkoutManager().getWorkout().totalReps.observe(getViewLifecycleOwner(),
+                reps -> onRepCompleted(reps));
+
         return mViewMvc.getRootView();
     }
 
@@ -74,8 +68,6 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         mViewMvc.registerListener(this);
         if (!WorkoutService.isStarted) {
             startWorkout();
-        } else {
-            mViewMvc.updateCounter(BuddyApplication.getWorkoutManager().getNumberOfReps());
         }
     }
 
@@ -133,10 +125,9 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         }
     }
 
-    @Subscribe
-    public void onMessageEvent(Events.RepCompletedEvent event) {
-        Log.d(TAG, "RepCompletedEvent: " + event.size + " reps");
-        mViewMvc.updateCounter(event.size);
+    public void onRepCompleted(int reps) {
+        Log.d(TAG, "RepCompletedEvent: " + reps + " reps");
+        mViewMvc.updateCounter(reps);
     }
 
     @Subscribe

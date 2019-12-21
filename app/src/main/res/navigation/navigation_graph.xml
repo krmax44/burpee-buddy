@@ -26,10 +26,10 @@
         tools:layout="@layout/fragment_workout">
         <argument
             android:name="exerciseType"
-            app:argType="integer" />
+            app:argType="integer"/>
         <argument
             android:name="goal"
-            app:argType="com.apps.adrcotfas.burpeebuddy.db.goals.Goal" />
+            app:argType="com.apps.adrcotfas.burpeebuddy.db.goals.Goal"/>
     </fragment>
     <fragment
         android:id="@+id/myProfileFragment"

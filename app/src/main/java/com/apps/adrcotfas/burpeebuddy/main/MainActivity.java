@@ -55,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutEvent event) {
-        WorkoutFinishedDialog.getInstance(BuddyApplication.getWorkoutManager().getNumberOfReps())
+        WorkoutFinishedDialog.getInstance(
+                BuddyApplication.getWorkoutManager().getWorkout().totalReps.getValue())
                 .show(getSupportFragmentManager(), TAG);
     }
 }

@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
@@ -15,6 +16,9 @@ import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
+import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeConverter;
+import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 
 import org.greenrobot.eventbus.EventBus;
@@ -32,12 +36,21 @@ public class WorkoutService extends LifecycleService {
     private static final String TAG = "WorkoutService";
     public static boolean isStarted = false;
     private static int PRE_WORKOUT_COUNTDOWN_SECONDS = (int) TimeUnit.SECONDS.toMillis(5);
+
     private PreWorkoutCountdown preWorkoutCountdown;
+    private Bundle mExtras;
 
     private void onStartWorkout() {
         Log.d(TAG, "onStartWorkout");
         getNotificationHelper().setReps(0);
-        getWorkoutManager().start();
+
+        final ExerciseType type = ExerciseTypeConverter.getExerciseTypeFromInt(
+                WorkoutFragmentArgs.fromBundle(mExtras).getExerciseType());
+        final Goal goal = WorkoutFragmentArgs.fromBundle(mExtras).getGoal();
+
+        getWorkoutManager().start(type, goal);
+        getWorkoutManager().getWorkout().totalReps.observe(this, reps -> onRepCompleted(reps));
+
         getRepCounter().register(getWorkoutManager());
         Timer.start();
     }
@@ -71,6 +84,7 @@ public class WorkoutService extends LifecycleService {
                 break;
             case Actions.START:
                 if (!isStarted) {
+                    mExtras = intent.getExtras();
                     isStarted = true;
                     getMediaPlayer().init();
                     preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
@@ -93,7 +107,7 @@ public class WorkoutService extends LifecycleService {
             onStop();
         }
         getRepCounter().unregister();
-        getWorkoutManager().resetWorkout();
+        getWorkoutManager().reset();
         super.onDestroy();
     }
 
@@ -120,21 +134,24 @@ public class WorkoutService extends LifecycleService {
         getNotificationHelper().setElapsedTime(event.seconds);
     }
 
-    @Subscribe
-    public void onMessageEvent(Events.RepCompletedEvent event) {
-        Log.d(TAG, "RepCompletedEvent: " + event.size + " reps");
+    private void onRepCompleted(int reps) {
+        Log.d(TAG, "RepCompletedEvent: " + reps  + " reps");
+
+        if (reps == 0) {
+            return;
+        }
 
         if (SettingsHelper.wakeupEnabled()
-                && (event.size % SettingsHelper.getWakeUpInterval() == 0)) {
+                && (reps % SettingsHelper.getWakeUpInterval() == 0)) {
             Power.turnOnScreen(this);
         }
         if (SettingsHelper.specialSoundEnabled()
-                && (event.size % SettingsHelper.getSpecialSoundInterval() == 0)){
+                && (reps % SettingsHelper.getSpecialSoundInterval() == 0)){
             getMediaPlayer().play(REP_COMPLETE_SPECIAL);
         } else if (SettingsHelper.soundEnabled()){
             getMediaPlayer().play(REP_COMPLETE);
         }
-        getNotificationHelper().setReps(event.size);
+        getNotificationHelper().setReps(reps);
     }
 
     private NotificationHelper getNotificationHelper() {
