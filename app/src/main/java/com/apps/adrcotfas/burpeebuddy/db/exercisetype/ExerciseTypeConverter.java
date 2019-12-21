@@ -7,7 +7,7 @@ import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.INVALI
 public class ExerciseTypeConverter {
 
     @TypeConverter
-    public ExerciseType getGoalFromInt(int data) {
+    public static ExerciseType getGoalFromInt(int data) {
         for (ExerciseType type : ExerciseType.values()) {
             if (type.getValue() == data) {
                 return type;
@@ -17,7 +17,7 @@ public class ExerciseTypeConverter {
     }
 
     @TypeConverter
-    public int getIntFromGoal(ExerciseType type) {
+    public static int getIntFromGoal(ExerciseType type) {
         return type.getValue();
     }
 }

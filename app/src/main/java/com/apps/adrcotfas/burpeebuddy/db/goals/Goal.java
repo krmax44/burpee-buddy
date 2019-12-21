@@ -1,11 +1,14 @@
 package com.apps.adrcotfas.burpeebuddy.db.goals;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 @Entity
-public class Goal {
+public class Goal implements Parcelable {
 
     /**
      * Time oriented goal
@@ -46,9 +49,6 @@ public class Goal {
         return id;
     }
 
-    @PrimaryKey(autoGenerate = true)
-    int id;
-
     public GoalType getType() {
         return type;
     }
@@ -68,6 +68,9 @@ public class Goal {
     public int getDurationBreak() {
         return duration_break;
     }
+
+    @PrimaryKey(autoGenerate = true)
+    int id;
 
     @TypeConverters(GoalTypeConverter.class)
     private GoalType type;
@@ -92,4 +95,44 @@ public class Goal {
      * The break duration between sets in seconds
      */
     int duration_break;
+
+
+    /**
+     * Parcelable stuff bellow
+     */
+    protected Goal(Parcel in) {
+        id = in.readInt();
+        type = GoalTypeConverter.getGoalFromInt(in.readInt());
+        sets = in.readInt();
+        reps = in.readInt();
+        duration = in.readInt();
+        duration_break = in.readInt();
+    }
+
+    public static final Creator<Goal> CREATOR = new Creator<Goal>() {
+        @Override
+        public Goal createFromParcel(Parcel in) {
+            return new Goal(in);
+        }
+
+        @Override
+        public Goal[] newArray(int size) {
+            return new Goal[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(type.getValue());
+        dest.writeInt(sets);
+        dest.writeInt(reps);
+        dest.writeInt(duration);
+        dest.writeInt(duration_break);
+    }
 }

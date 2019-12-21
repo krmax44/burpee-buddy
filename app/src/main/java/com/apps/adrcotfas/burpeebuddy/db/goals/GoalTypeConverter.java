@@ -7,7 +7,7 @@ import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalType.INVALID;
 public class GoalTypeConverter {
 
     @TypeConverter
-    public GoalType getGoalFromInt(int data) {
+    public static GoalType getGoalFromInt(int data) {
         for (GoalType goal : GoalType.values()) {
             if (goal.getValue() == data) {
                 return goal;
@@ -17,7 +17,7 @@ public class GoalTypeConverter {
     }
 
     @TypeConverter
-    public int getIntFromGoal(GoalType goal) {
+    public static int getIntFromGoal(GoalType goal) {
         return goal.getValue();
     }
 }

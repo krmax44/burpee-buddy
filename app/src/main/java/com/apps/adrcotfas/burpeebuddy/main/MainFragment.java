@@ -30,6 +30,8 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     private static final String TAG = "MainFragment";
     private MainViewMvc mViewMvc;
 
+    private ExerciseType mExerciseType;
+
     public MainFragment() {}
 
     @Override
@@ -49,15 +51,14 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                         mViewMvc.updateExerciseTypes(exerciseTypes));
 
         mViewMvc.getExercise().observe(getViewLifecycleOwner(), exercise -> {
-
             LiveData<List<Goal>> goalsLd = new MutableLiveData<>();
+            mExerciseType = exercise.getType();
 
-            ExerciseType type = exercise.getType();
-            if (COUNTABLE.equals(type)) {
+            if (COUNTABLE.equals(mExerciseType)) {
                 goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getCountableGoals();
-            } else if (TIME_BASED.equals(type)) {
+            } else if (TIME_BASED.equals(mExerciseType)) {
                 goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.TIME_BASED);
-            } else if (REP_BASED.equals(type)) {
+            } else if (REP_BASED.equals(mExerciseType)) {
                 goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.AMRAP);
             }
             goalsLd.observe(getViewLifecycleOwner(),
@@ -86,7 +87,9 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
     @Override
     public void onStartButtonClicked() {
-        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_workout);
+        MainFragmentDirections.ActionMainToWorkout action =
+                MainFragmentDirections.actionMainToWorkout(mExerciseType.getValue(), mViewMvc.getGoal());
+        NavHostFragment.findNavController(this).navigate(action);
     }
 
     @Override
