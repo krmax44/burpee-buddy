@@ -14,7 +14,6 @@ import com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.bl.RepCounter;
 import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
-import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeConverter;
@@ -48,20 +47,20 @@ public class WorkoutService extends LifecycleService {
                 WorkoutFragmentArgs.fromBundle(mExtras).getExerciseType());
         final Goal goal = WorkoutFragmentArgs.fromBundle(mExtras).getGoal();
 
+        getRepCounter().register(getWorkoutManager());
         getWorkoutManager().start(type, goal);
         getWorkoutManager().getWorkout().totalReps.observe(this, reps -> onRepCompleted(reps));
-
-        getRepCounter().register(getWorkoutManager());
-        Timer.start();
+        getWorkoutManager().getTimer().getElapsedSeconds().observe(this, seconds -> onTimerTick(seconds));
     }
 
     private void onStop() {
         Log.d(TAG, "onStop");
         isStarted = false;
         preWorkoutCountdown.cancel();
+        getWorkoutManager().getTimer().getElapsedSeconds().removeObservers(this);
+        getWorkoutManager().getTimer().stop();
         stopForeground(true);
         stopSelf();
-        Timer.stop();
         getMediaPlayer().play(COUNTDOWN_LONG);
         // workaround to make sure that the sound played above is audible
         new Handler().postDelayed(() -> getMediaPlayer().stop(), 1000);
@@ -128,10 +127,9 @@ public class WorkoutService extends LifecycleService {
         Log.d(TAG, "PreWorkoutCountdownFinished");
     }
 
-    @Subscribe
-    public void onMessageEvent(Events.TimerTickEvent event) {
-        Log.d(TAG, "TimerTickEvent: " + event.seconds + " seconds");
-        getNotificationHelper().setElapsedTime(event.seconds);
+    public void onTimerTick(int seconds) {
+        Log.d(TAG, "TimerTickEvent: " + seconds + " seconds");
+        getNotificationHelper().setElapsedTime(seconds);
     }
 
     private void onRepCompleted(int reps) {

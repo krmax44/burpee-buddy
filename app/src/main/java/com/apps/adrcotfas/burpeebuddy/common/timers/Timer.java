@@ -1,8 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.common.timers;
 
-import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
-
-import org.greenrobot.eventbus.EventBus;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,25 +12,33 @@ import io.reactivex.schedulers.Schedulers;
 
 public class Timer {
 
-    private static Disposable mDisposable;
-    private static int elapsedSeconds;
+    private Observable<Long> mObservable;
+    private Disposable mDisposable;
 
-    public static void start(){
-        mDisposable = Observable.timer(1, TimeUnit.SECONDS, Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+    private MutableLiveData<Integer> elapsedSeconds = new MutableLiveData<>(0);
+
+    public Timer() {
+        mObservable = Observable.timer(1, TimeUnit.SECONDS, Schedulers.computation());
+    }
+
+    public void start(){
+        mDisposable = mObservable.observeOn(AndroidSchedulers.mainThread())
                 .repeat()
                 .subscribe(tick -> {
-                    ++elapsedSeconds;
-                    EventBus.getDefault().post(new Events.TimerTickEvent(elapsedSeconds));
+                    elapsedSeconds.setValue(elapsedSeconds.getValue() + 1);
                 }, throwable -> {
                     // handle error
                 });
     }
 
-    public static void stop(){
+    public void stop(){
         if (mDisposable != null) {
             mDisposable.dispose();
         }
-        elapsedSeconds = 0;
+        elapsedSeconds.setValue(0);
+    }
+
+    public LiveData<Integer> getElapsedSeconds() {
+        return elapsedSeconds;
     }
 }

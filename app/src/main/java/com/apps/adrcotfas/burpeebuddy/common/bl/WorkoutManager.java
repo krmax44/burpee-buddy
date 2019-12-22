@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
+import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.workout.InProgressWorkout;
@@ -7,11 +8,16 @@ import com.apps.adrcotfas.burpeebuddy.workout.InProgressWorkout;
 public class WorkoutManager implements RepCounter.Listener{
 
     private InProgressWorkout mWorkout = new InProgressWorkout();
+    private Timer mTimer;
 
     /**
      * A workaround to skip the first rep because it's not a real, just the sensor changing state.
      */
     private boolean skipFirstRep;
+
+    public WorkoutManager() {
+        mTimer = new Timer();
+    }
 
     @Override
     public void onRepCompleted() {
@@ -54,6 +60,7 @@ public class WorkoutManager implements RepCounter.Listener{
         mWorkout.type = type;
         mWorkout.goal = goal;
         skipFirstRep = true;
+        mTimer.start();
     }
 
     public void reset() {
@@ -62,5 +69,9 @@ public class WorkoutManager implements RepCounter.Listener{
 
     public InProgressWorkout getWorkout() {
         return mWorkout;
+    }
+
+    public Timer getTimer() {
+        return mTimer;
     }
 }
