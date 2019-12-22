@@ -91,6 +91,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     private void startWorkout() {
         Intent startIntent = new Intent(getActivity(), WorkoutService.class);
+        startIntent.putExtras(getArguments());
         startIntent.setAction(Actions.START);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getActivity().startForegroundService(startIntent);
