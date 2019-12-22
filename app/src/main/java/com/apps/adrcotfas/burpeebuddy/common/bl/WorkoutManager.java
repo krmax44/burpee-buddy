@@ -1,5 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
+import android.content.Context;
+
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
@@ -7,16 +9,19 @@ import com.apps.adrcotfas.burpeebuddy.workout.InProgressWorkout;
 
 public class WorkoutManager implements RepCounter.Listener{
 
-    private InProgressWorkout mWorkout = new InProgressWorkout();
+    private InProgressWorkout mWorkout;
     private Timer mTimer;
+    private RepCounter mRepCounter;
 
     /**
      * A workaround to skip the first rep because it's not a real, just the sensor changing state.
      */
     private boolean skipFirstRep;
 
-    public WorkoutManager() {
+    public WorkoutManager(Context context) {
         mTimer = new Timer();
+        mRepCounter = new RepCounter(context);
+        mWorkout = new InProgressWorkout();
     }
 
     @Override
@@ -57,6 +62,7 @@ public class WorkoutManager implements RepCounter.Listener{
     }
 
     public void start(ExerciseType type, Goal goal) {
+        getRepCounter().register(this);
         mWorkout.type = type;
         mWorkout.goal = goal;
         skipFirstRep = true;
@@ -65,6 +71,7 @@ public class WorkoutManager implements RepCounter.Listener{
 
     public void reset() {
         mWorkout.reset();
+        getRepCounter().unregister();
     }
 
     public InProgressWorkout getWorkout() {
@@ -73,5 +80,9 @@ public class WorkoutManager implements RepCounter.Listener{
 
     public Timer getTimer() {
         return mTimer;
+    }
+
+    public RepCounter getRepCounter() {
+        return mRepCounter;
     }
 }

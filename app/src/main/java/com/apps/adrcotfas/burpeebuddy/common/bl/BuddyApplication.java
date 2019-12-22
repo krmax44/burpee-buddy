@@ -14,7 +14,6 @@ public class BuddyApplication extends Application {
 
     private static BuddyApplication INSTANCE;
     private static WorkoutManager mWorkoutManager;
-    private static RepCounter mRepCounter;
     private static NotificationHelper mNotificationHelper;
     private static SoundPlayer mMediaPlayer;
 
@@ -22,10 +21,6 @@ public class BuddyApplication extends Application {
 
     public static NotificationHelper getNotificationHelper() {
         return mNotificationHelper;
-    }
-
-    public static RepCounter getRepCounter() {
-        return mRepCounter;
     }
 
     public static WorkoutManager getWorkoutManager() {
@@ -55,8 +50,7 @@ public class BuddyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         INSTANCE = this;
-        mWorkoutManager = new WorkoutManager();
-        mRepCounter = new RepCounter(this);
+        mWorkoutManager = new WorkoutManager(this);
         mNotificationHelper = new NotificationHelper(this);
         mMediaPlayer = new SoundPlayer(this);
 

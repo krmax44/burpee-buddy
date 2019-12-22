@@ -47,7 +47,6 @@ public class WorkoutService extends LifecycleService {
                 WorkoutFragmentArgs.fromBundle(mExtras).getExerciseType());
         final Goal goal = WorkoutFragmentArgs.fromBundle(mExtras).getGoal();
 
-        getRepCounter().register(getWorkoutManager());
         getWorkoutManager().start(type, goal);
         getWorkoutManager().getWorkout().totalReps.observe(this, reps -> onRepCompleted(reps));
         getWorkoutManager().getTimer().getElapsedSeconds().observe(this, seconds -> onTimerTick(seconds));
@@ -105,7 +104,6 @@ public class WorkoutService extends LifecycleService {
         if (isStarted) {
             onStop();
         }
-        getRepCounter().unregister();
         getWorkoutManager().reset();
         super.onDestroy();
     }
@@ -158,10 +156,6 @@ public class WorkoutService extends LifecycleService {
 
     private WorkoutManager getWorkoutManager() {
         return BuddyApplication.getWorkoutManager();
-    }
-
-    private RepCounter getRepCounter() {
-        return BuddyApplication.getRepCounter();
     }
 
     private SoundPlayer getMediaPlayer() {
