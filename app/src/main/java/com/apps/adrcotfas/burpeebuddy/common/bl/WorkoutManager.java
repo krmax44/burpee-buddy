@@ -39,27 +39,26 @@ public class WorkoutManager implements RepCounter.Listener{
             return;
         }
 
-        // REP_based stuff bellow
-
         mWorkout.crtSetReps.setValue(mWorkout.crtSetReps.getValue() + 1);
         mWorkout.totalReps.setValue(mWorkout.totalReps.getValue() + 1);
 
         int crtReps = mWorkout.crtSetReps.getValue();
         int crtSet = mWorkout.crtSet.getValue();
 
-        EventBus.getDefault().post(new Events.RepComplete(crtReps));
-
         if (crtReps < mWorkout.goal.getReps()) {
             Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps.getValue() + "/" + mWorkout.goal.getReps());
+            EventBus.getDefault().post(new Events.RepComplete(crtReps));
         } else if (crtSet < mWorkout.goal.getSets()) {
             mWorkout.crtSetReps.setValue(0);
             mWorkout.crtSet.setValue(crtSet + 1);
             Timber.tag(TAG).d("set finished " + mWorkout.crtSet.getValue() + "/" + mWorkout.goal.getSets());
             mTimer.stop();
+            EventBus.getDefault().post(new Events.RepComplete(crtReps, true));
             EventBus.getDefault().post(new Events.SetComplete());
         } else {
             Timber.tag(TAG).d("Workout finished");
             mWorkout.state = State.FINISHED;
+            EventBus.getDefault().post(new Events.RepComplete(crtReps, true));
             EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
         }
 
