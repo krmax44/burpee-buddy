@@ -1,11 +1,15 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.workout.InProgressWorkout;
+import com.apps.adrcotfas.burpeebuddy.workout.State;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class WorkoutManager implements RepCounter.Listener{
 
@@ -30,22 +34,32 @@ public class WorkoutManager implements RepCounter.Listener{
             skipFirstRep = false;
             return;
         }
-        mWorkout.crtSetReps.setValue(mWorkout.crtSetReps.getValue() + 1);
-        mWorkout.totalReps.setValue(mWorkout.totalReps.getValue() + 1);
+
+        // REP_based stuff bellow
+        int crtReps = mWorkout.crtSetReps.getValue();
+        int crtSet = mWorkout.crtSet.getValue();
+
+        if (crtReps < mWorkout.goal.getReps()) {
+            mWorkout.crtSetReps.setValue(crtReps + 1);
+            mWorkout.totalReps.setValue(mWorkout.totalReps.getValue() + 1);
+        } else if (crtSet < mWorkout.goal.getSets()) {
+            mWorkout.crtSetReps.setValue(1);
+            mWorkout.totalReps.setValue(mWorkout.totalReps.getValue() + 1);
+            mWorkout.crtSet.setValue(crtSet + 1);
+            //TODO: notification, trigger break(unregister RepCounter), update fragment etc
+        }
+
+        if (mWorkout.crtSet.getValue() == mWorkout.goal.getSets()
+                && mWorkout.crtSetReps.getValue() == mWorkout.goal.getReps()) {
+            mWorkout.state = State.FINISHED;
+            EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
+        }
+
+        Log.v("WTF", "| set: " + mWorkout.crtSet.getValue() + "| reps: " + mWorkout.crtSetReps.getValue()
+                + "| total: " + mWorkout.totalReps.getValue());
 
         /**
-         * REP based:
-         *
-         *  if (reps < goal.reps)
-         *     ++reps
-         *  else if (crtSet < goal.sets)
-         *     ++crtSet
-         *              -> notification, trigger break, update fragment etc
-         *  else
-         *      show finished dialog
-         *
          * TIME based:
-         * TODO: move timer here
          * if (duration < goal.duration)
          *  - update duration
          *  else if (crtSet < goal.sets)
@@ -62,6 +76,7 @@ public class WorkoutManager implements RepCounter.Listener{
     }
 
     public void start(ExerciseType type, Goal goal) {
+        //TODO: register only if relevant
         getRepCounter().register(this);
         mWorkout.type = type;
         mWorkout.goal = goal;

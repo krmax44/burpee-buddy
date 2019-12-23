@@ -14,13 +14,17 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.workout.State;
+import com.apps.adrcotfas.burpeebuddy.workout.WorkoutFinishedDialog;
 
 import java.util.List;
 
+import static com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication.getWorkoutManager;
 import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.COUNTABLE;
 import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.REP_BASED;
 import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.TIME_BASED;
@@ -64,6 +68,15 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
             goalsLd.observe(getViewLifecycleOwner(),
                     goals -> mViewMvc.updateGoals(goals));
         });
+
+        // when navigating from Workout to Main
+        if (MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
+            Log.v(TAG, "show finished dialog");
+            WorkoutFinishedDialog.getInstance(
+                    BuddyApplication.getWorkoutManager().getWorkout().totalReps.getValue())
+                    .show(getActivity().getSupportFragmentManager(), TAG);
+            getWorkoutManager().getWorkout().state = State.INACTIVE;
+        }
 
         return mViewMvc.getRootView();
     }

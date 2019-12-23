@@ -5,11 +5,14 @@ import android.content.ContextWrapper;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 
 import java.io.IOException;
+
+import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.COUNTDOWN_LONG;
 
 public class SoundPlayer extends ContextWrapper {
 
@@ -65,5 +68,11 @@ public class SoundPlayer extends ContextWrapper {
 
     public void stop() {
         mMediaPlayer.release();
+    }
+
+    public void onWorkoutStop() {
+        play(COUNTDOWN_LONG);
+        // workaround to make sure that the sound played above is audible
+        new Handler().postDelayed(this::stop, 1000);
     }
 }

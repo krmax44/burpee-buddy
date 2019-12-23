@@ -97,6 +97,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/add_workout_button"
         android:layout_marginBottom="12dp"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:text="@string/start_workout"/>
 
     <!--    anchor for the snack-->

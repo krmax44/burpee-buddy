@@ -29,11 +29,15 @@ public class WorkoutFinishedDialog extends DialogFragment {
             message = "Congratulations!\nYou have completed " + reps + " reps.";
         }
 
-        return new AlertDialog.Builder(getActivity())
+        Dialog d = new AlertDialog.Builder(getActivity())
             .setTitle("Workout finished")
             .setMessage(message)
-                .setPositiveButton(android.R.string.ok,
-                        (dialog, which) -> {})
+            .setCancelable(false)
+            .setPositiveButton(android.R.string.ok,
+                    (dialog, which) -> {
+                    })
             .create();
+        d.setCanceledOnTouchOutside(false);
+        return d;
     }
 }

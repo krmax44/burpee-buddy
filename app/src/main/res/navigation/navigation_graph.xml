@@ -10,6 +10,10 @@
         android:name="com.apps.adrcotfas.burpeebuddy.main.MainFragment"
         android:label="@string/title_main"
         tools:layout="@layout/fragment_main">
+        <argument
+            android:name="showFinishedDialog"
+            android:defaultValue="false"
+            app:argType="boolean" />
         <action
             android:id="@+id/action_main_to_workout"
             app:destination="@id/workoutFragment"
@@ -30,6 +34,16 @@
         <argument
             android:name="goal"
             app:argType="com.apps.adrcotfas.burpeebuddy.db.goals.Goal"/>
+        <action
+            android:id="@+id/action_workout_to_main"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@+id/mainFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            />
     </fragment>
     <fragment
         android:id="@+id/myProfileFragment"
@@ -45,10 +59,4 @@
         android:name="com.apps.adrcotfas.burpeebuddy.leaderboard.LeaderboardFragment"
         android:label="@string/title_leaderboard"
         tools:layout="@layout/fragment_leaderboard" />
-
-    <dialog
-        android:id="@+id/workoutFinishedDialog"
-        android:name="com.apps.adrcotfas.burpeebuddy.workout.WorkoutFinishedDialog"
-        android:label="WorkoutFinishedDialog">
-    </dialog>
 </navigation>

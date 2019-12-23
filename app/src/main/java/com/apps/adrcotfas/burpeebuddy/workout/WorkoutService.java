@@ -2,7 +2,6 @@ package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.lifecycle.LifecycleService;
@@ -11,7 +10,6 @@ import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.timers.PreWorkoutCountdown;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper;
-import com.apps.adrcotfas.burpeebuddy.common.bl.RepCounter;
 import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
@@ -33,7 +31,6 @@ import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.REP_CO
 
 public class WorkoutService extends LifecycleService {
     private static final String TAG = "WorkoutService";
-    public static boolean isStarted = false;
     private static int PRE_WORKOUT_COUNTDOWN_SECONDS = (int) TimeUnit.SECONDS.toMillis(5);
 
     private PreWorkoutCountdown preWorkoutCountdown;
@@ -41,6 +38,7 @@ public class WorkoutService extends LifecycleService {
 
     private void onStartWorkout() {
         Log.d(TAG, "onStartWorkout");
+
         getNotificationHelper().setReps(0);
 
         final ExerciseType type = ExerciseTypeConverter.getExerciseTypeFromInt(
@@ -52,59 +50,52 @@ public class WorkoutService extends LifecycleService {
         getWorkoutManager().getTimer().getElapsedSeconds().observe(this, seconds -> onTimerTick(seconds));
     }
 
-    private void onStop() {
-        Log.d(TAG, "onStop");
-        isStarted = false;
+    private void onStopWorkout() {
+        Log.d(TAG, "onStopWorkout");
+        getWorkoutManager().getWorkout().state = State.INACTIVE;
+        stopInternal();
+    }
+
+    private void onFinishedWorkout() {
+        // TODO: show finished notification
+        Log.d(TAG, "onStopWorkout");
+        getWorkoutManager().getWorkout().state = State.FINISHED;
+        stopInternal();
+    }
+
+    private void stopInternal() {
         preWorkoutCountdown.cancel();
         getWorkoutManager().getTimer().getElapsedSeconds().removeObservers(this);
         getWorkoutManager().getTimer().stop();
+        getMediaPlayer().onWorkoutStop();
+
         stopForeground(true);
         stopSelf();
-        getMediaPlayer().play(COUNTDOWN_LONG);
-        // workaround to make sure that the sound played above is audible
-        new Handler().postDelayed(() -> getMediaPlayer().stop(), 1000);
-        EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
     }
 
     @Override
     public synchronized int onStartCommand(final Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+        EventBus.getDefault().register(this);
 
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
+        getWorkoutManager().reset();
+        getWorkoutManager().getWorkout().state = State.ACTIVE;
+        mExtras = intent.getExtras();
+        getMediaPlayer().init();
 
-        switch (intent.getAction()) {
-            case Actions.STOP:
-                if (isStarted) {
-                    onStop();
-                }
-                break;
-            case Actions.START:
-                if (!isStarted) {
-                    mExtras = intent.getExtras();
-                    isStarted = true;
-                    getMediaPlayer().init();
-                    preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
-                    preWorkoutCountdown.start();
-                    startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build());
-                    getNotificationHelper().setTitle("Get ready"); //TODO: extract string
-                }
-                break;
-        }
+        //TODO: move to WorkoutManager
+        preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
+        preWorkoutCountdown.start();
+        startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build());
+        getNotificationHelper().setTitle("Get ready"); //TODO: extract string
 
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this);
-        }
-        if (isStarted) {
-            onStop();
-        }
-        getWorkoutManager().reset();
+        Log.d(TAG, "onDestroy");
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -115,14 +106,22 @@ public class WorkoutService extends LifecycleService {
         if (event.seconds == 0) {
             getMediaPlayer().play(COUNTDOWN_LONG);
             onStartWorkout();
+            //TODO: extract to constants or to Settings
         } else if (event.seconds <= 3) {
             getMediaPlayer().play(COUNTDOWN);
         }
     }
 
     @Subscribe
-    public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
-        Log.d(TAG, "PreWorkoutCountdownFinished");
+    public void onMessageEvent(Events.StopWorkoutEvent event) {
+        Log.d(TAG, "FinishedWorkoutEvent");
+        onStopWorkout();
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.FinishedWorkoutEvent event) {
+        Log.d(TAG, "FinishedWorkoutEvent");
+        onFinishedWorkout();
     }
 
     public void onTimerTick(int seconds) {
@@ -136,7 +135,6 @@ public class WorkoutService extends LifecycleService {
         if (reps == 0) {
             return;
         }
-
         if (SettingsHelper.wakeupEnabled()
                 && (reps % SettingsHelper.getWakeUpInterval() == 0)) {
             Power.turnOnScreen(this);

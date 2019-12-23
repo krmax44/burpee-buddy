@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
 public class Events {
-    public static class PreWorkoutCountdownFinished {}
 
     public static class PreWorkoutCountdownTickEvent {
         public PreWorkoutCountdownTickEvent(int seconds) {
@@ -10,19 +9,15 @@ public class Events {
         public int seconds;
     }
 
-    public static class TimerTickEvent {
-        public TimerTickEvent(int elapsedSeconds) {
-            this.seconds = elapsedSeconds;
-        }
-        public int seconds;
-    }
+    public static class PreWorkoutCountdownFinished {}
 
-    public static class RepCompletedEvent {
-        public RepCompletedEvent(int size) {
-            this.size = size;
-        }
-        public int size;
-    }
+    /**
+     * When the user presses a stop button
+     */
+    public static class StopWorkoutEvent {}
 
+    /**
+     * When the reps or time based goal is achieved
+     */
     public static class FinishedWorkoutEvent {}
 }

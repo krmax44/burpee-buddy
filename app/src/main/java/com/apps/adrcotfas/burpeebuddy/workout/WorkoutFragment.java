@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
@@ -68,13 +67,15 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         Log.v(TAG, "onResume");
         super.onResume();
         mViewMvc.registerListener(this);
-        if (!WorkoutService.isStarted) {
+
+        final State state = BuddyApplication.getWorkoutManager().getWorkout().state;
+
+        if (state.equals(State.INACTIVE)) {
             startWorkout();
+        } else if (state.equals(State.FINISHED)) {
+            navigateToMainAndShowFinishDialog();
         }
     }
-
-    // TODO: unregister from certain events like update countdown timer event in onStop
-    // because we're working with the display off
 
     @Override
     public void onDestroy() {
@@ -87,28 +88,16 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onStopButtonClicked() {
-        //TODO open finished dialog, save to ROOM etc
-        stopWorkout();
+        EventBus.getDefault().post(new Events.StopWorkoutEvent());
     }
 
     private void startWorkout() {
         Intent startIntent = new Intent(getActivity(), WorkoutService.class);
         startIntent.putExtras(getArguments());
-        startIntent.setAction(Actions.START);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getActivity().startForegroundService(startIntent);
         } else {
             getActivity().startService(startIntent);
-        }
-    }
-
-    private void stopWorkout() {
-        Intent stopIntent = new Intent(getActivity(), WorkoutService.class);
-        stopIntent.setAction(Actions.STOP);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getActivity().startForegroundService(stopIntent);
-        } else {
-            getActivity().startService(stopIntent);
         }
     }
 
@@ -140,7 +129,17 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutEvent event) {
-        NavHostFragment.findNavController(this)
-                .popBackStack(R.id.mainFragment, false);
+        navigateToMainAndShowFinishDialog();
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.StopWorkoutEvent event) {
+        navigateToMainAndShowFinishDialog();
+    }
+
+    private void navigateToMainAndShowFinishDialog() {
+        WorkoutFragmentDirections.ActionWorkoutToMain action = WorkoutFragmentDirections.actionWorkoutToMain();
+        action.setShowFinishedDialog(true);
+        NavHostFragment.findNavController(this).navigate(action);
     }
 }

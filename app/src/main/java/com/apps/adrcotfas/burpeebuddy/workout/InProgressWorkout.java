@@ -8,10 +8,12 @@ import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 
 public class InProgressWorkout {
 
+    public State state = State.INACTIVE;
+
     public ExerciseType type;
     public Goal goal;
 
-    public MutableLiveData<Integer> crtSet = new MutableLiveData<>(0);
+    public MutableLiveData<Integer> crtSet = new MutableLiveData<>(1);
 
     public MutableLiveData<Integer> crtSetReps = new MutableLiveData<>(0);
     public MutableLiveData<Integer> totalReps = new MutableLiveData<>(0);
@@ -26,7 +28,7 @@ public class InProgressWorkout {
     public void reset() {
         this.type = ExerciseType.INVALID;
         this.goal = new Goal(GoalType.INVALID, 0, 0, 0, 0);
-        crtSet.setValue(0);
+        crtSet.setValue(1);
         crtSetReps.setValue(0);
         totalReps.setValue(0);
         crtDuration.setValue(0);
