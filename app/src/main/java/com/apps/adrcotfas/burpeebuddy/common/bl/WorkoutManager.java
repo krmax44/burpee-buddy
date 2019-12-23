@@ -11,14 +11,10 @@ import com.apps.adrcotfas.burpeebuddy.workout.State;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.concurrent.TimeUnit;
-
 import timber.log.Timber;
 
 public class WorkoutManager implements RepCounter.Listener{
     private static final String TAG = "WorkoutManager";
-
-    private static int PRE_WORKOUT_COUNTDOWN_SECONDS = (int) TimeUnit.SECONDS.toMillis(5);
 
     private InProgressWorkout mWorkout;
     private PreWorkoutTimer mPreWorkoutTimer;
@@ -44,22 +40,25 @@ public class WorkoutManager implements RepCounter.Listener{
         }
 
         // REP_based stuff bellow
+
+        mWorkout.crtSetReps.setValue(mWorkout.crtSetReps.getValue() + 1);
+        mWorkout.totalReps.setValue(mWorkout.totalReps.getValue() + 1);
+
         int crtReps = mWorkout.crtSetReps.getValue();
         int crtSet = mWorkout.crtSet.getValue();
 
+        EventBus.getDefault().post(new Events.RepComplete(crtReps));
+
         if (crtReps < mWorkout.goal.getReps()) {
-            mWorkout.crtSetReps.setValue(crtReps + 1);
-            mWorkout.totalReps.setValue(mWorkout.totalReps.getValue() + 1);
             Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps.getValue() + "/" + mWorkout.goal.getReps());
         } else if (crtSet < mWorkout.goal.getSets()) {
-            mWorkout.crtSetReps.setValue(1);
-            mWorkout.totalReps.setValue(mWorkout.totalReps.getValue() + 1);
+            mWorkout.crtSetReps.setValue(0);
             mWorkout.crtSet.setValue(crtSet + 1);
             Timber.tag(TAG).d("set finished " + mWorkout.crtSet.getValue() + "/" + mWorkout.goal.getSets());
-            //TODO: notification, trigger break(unregister RepCounter), update fragment etc
-        }
-        if (mWorkout.crtSet.getValue() == mWorkout.goal.getSets()
-                && mWorkout.crtSetReps.getValue() == mWorkout.goal.getReps()) {
+            mTimer.stop();
+            EventBus.getDefault().post(new Events.SetComplete());
+        } else {
+            Timber.tag(TAG).d("Workout finished");
             mWorkout.state = State.FINISHED;
             EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
         }
@@ -81,18 +80,20 @@ public class WorkoutManager implements RepCounter.Listener{
          */
     }
 
-    public void start(ExerciseType type, Goal goal) {
-        //TODO: register only if relevant
-        getRepCounter().register(this);
+    public void init(ExerciseType type, Goal goal) {
         mWorkout.type = type;
         mWorkout.goal = goal;
+    }
+
+    public void start() {
+        //TODO: register only if relevant
+        getRepCounter().register(this);
         skipFirstRep = true;
         mTimer.start();
     }
 
     public void reset() {
         mWorkout.reset();
-        getRepCounter().unregister();
     }
 
     public InProgressWorkout getWorkout() {
@@ -107,8 +108,8 @@ public class WorkoutManager implements RepCounter.Listener{
         return mRepCounter;
     }
 
-    public void startPreWorkoutTimer() {
-        mPreWorkoutTimer = new PreWorkoutTimer(PRE_WORKOUT_COUNTDOWN_SECONDS);
+    public void startPreWorkoutTimer(long millis) {
+        mPreWorkoutTimer = new PreWorkoutTimer(millis);
         mPreWorkoutTimer.start();
     }
 

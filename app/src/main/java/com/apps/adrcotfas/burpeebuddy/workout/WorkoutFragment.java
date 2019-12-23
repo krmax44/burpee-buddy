@@ -55,11 +55,6 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         mViewMvc = new WorkoutViewMvcImpl(inflater, container);
         EventBus.getDefault().register(this);
 
-        BuddyApplication.getWorkoutManager().getWorkout().totalReps.observe(
-                getViewLifecycleOwner(), reps -> onRepCompleted(reps));
-        BuddyApplication.getWorkoutManager().getTimer().getElapsedSeconds().observe(
-                getViewLifecycleOwner(), seconds -> onTimerTick(seconds));
-
         return mViewMvc.getRootView();
     }
 
@@ -115,12 +110,14 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         }
     }
 
-    private void onRepCompleted(int reps) {
-        mViewMvc.updateCounter(reps);
+    @Subscribe
+    public void onMessageEvent(Events.RepComplete event) {
+        mViewMvc.updateCounter(event.reps);
     }
 
-    private void onTimerTick(int seconds) {
-        mViewMvc.updateTimer(seconds);
+    @Subscribe
+    public void onMessageEvent(Events.TimerTickEvent event) {
+        mViewMvc.updateTimer(event.seconds);
     }
 
     @Subscribe

@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
-import android.os.Bundle;
 
 import androidx.lifecycle.LifecycleService;
 
@@ -19,6 +18,8 @@ import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.concurrent.TimeUnit;
+
 import timber.log.Timber;
 
 import static com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper.WORKOUT_NOTIFICATION_ID;
@@ -29,21 +30,14 @@ import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.REP_CO
 
 public class WorkoutService extends LifecycleService {
     private static final String TAG = "WorkoutService";
-
-    private Bundle mExtras;
+    private static int PRE_WORKOUT_COUNTDOWN_SECONDS = (int) TimeUnit.SECONDS.toMillis(5);
 
     private void onStartWorkout() {
         Timber.tag(TAG).d( "onStartWorkout");
 
         getNotificationHelper().setReps(0);
 
-        final ExerciseType type = ExerciseTypeConverter.getExerciseTypeFromInt(
-                WorkoutFragmentArgs.fromBundle(mExtras).getExerciseType());
-        final Goal goal = WorkoutFragmentArgs.fromBundle(mExtras).getGoal();
-
-        getWorkoutManager().start(type, goal);
-        getWorkoutManager().getWorkout().totalReps.observe(this, reps -> onRepCompleted(reps));
-        getWorkoutManager().getTimer().getElapsedSeconds().observe(this, seconds -> onTimerTick(seconds));
+        getWorkoutManager().start();
     }
 
     private void onStopWorkout() {
@@ -60,8 +54,8 @@ public class WorkoutService extends LifecycleService {
     }
 
     private void stopInternal() {
+        getWorkoutManager().getRepCounter().unregister();
         getWorkoutManager().getPreWorkoutTimer().cancel();
-        getWorkoutManager().getTimer().getElapsedSeconds().removeObservers(this);
         getWorkoutManager().getTimer().stop();
         getMediaPlayer().onWorkoutStop();
 
@@ -75,11 +69,16 @@ public class WorkoutService extends LifecycleService {
         EventBus.getDefault().register(this);
 
         getWorkoutManager().reset();
+        final ExerciseType type = ExerciseTypeConverter.getExerciseTypeFromInt(
+                WorkoutFragmentArgs.fromBundle(intent.getExtras()).getExerciseType());
+        final Goal goal = WorkoutFragmentArgs.fromBundle(intent.getExtras()).getGoal();
+
+        getWorkoutManager().init(type, goal);
         getWorkoutManager().getWorkout().state = State.ACTIVE;
-        mExtras = intent.getExtras();
+
         getMediaPlayer().init();
 
-        getWorkoutManager().startPreWorkoutTimer();
+        getWorkoutManager().startPreWorkoutTimer(PRE_WORKOUT_COUNTDOWN_SECONDS);
         startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build());
         getNotificationHelper().setTitle("Get ready"); //TODO: extract string
 
@@ -106,6 +105,23 @@ public class WorkoutService extends LifecycleService {
     }
 
     @Subscribe
+    public void onMessageEvent(Events.SetComplete event) {
+
+        Timber.tag(TAG).d( "onSetCompleted");
+        // - wake up screen
+
+        // - unregister RepCounter
+        getWorkoutManager().getRepCounter().unregister();
+
+        //TODO play sound informing the amount of seconds
+        getMediaPlayer().play(COUNTDOWN);
+
+        // - start break with PreWorkoutCountTimer
+        getWorkoutManager().startPreWorkoutTimer(
+                TimeUnit.SECONDS.toMillis(getWorkoutManager().getWorkout().goal.getDurationBreak()));
+    }
+
+    @Subscribe
     public void onMessageEvent(Events.StopWorkoutEvent event) {
         Timber.tag(TAG).d( "FinishedWorkoutEvent");
         onStopWorkout();
@@ -114,28 +130,31 @@ public class WorkoutService extends LifecycleService {
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutEvent event) {
         Timber.tag(TAG).d( "FinishedWorkoutEvent");
+        Power.turnOnScreen(this);
         onFinishedWorkout();
     }
 
-    public void onTimerTick(int seconds) {
-        getNotificationHelper().setElapsedTime(seconds);
+    @Subscribe
+    public void onMessageEvent(Events.TimerTickEvent event) {
+        getNotificationHelper().setElapsedTime(event.seconds);
     }
 
-    private void onRepCompleted(int reps) {
-        if (reps == 0) {
+    @Subscribe
+    public void onMessageEvent(Events.RepComplete event) {
+        if (event.reps == 0) {
             return;
         }
         if (SettingsHelper.wakeupEnabled()
-                && (reps % SettingsHelper.getWakeUpInterval() == 0)) {
+                && (event.reps  % SettingsHelper.getWakeUpInterval() == 0)) {
             Power.turnOnScreen(this);
         }
         if (SettingsHelper.specialSoundEnabled()
-                && (reps % SettingsHelper.getSpecialSoundInterval() == 0)){
+                && (event.reps  % SettingsHelper.getSpecialSoundInterval() == 0)){
             getMediaPlayer().play(REP_COMPLETE_SPECIAL);
         } else if (SettingsHelper.soundEnabled()){
             getMediaPlayer().play(REP_COMPLETE);
         }
-        getNotificationHelper().setReps(reps);
+        getNotificationHelper().setReps(event.reps);
     }
 
     private NotificationHelper getNotificationHelper() {
