@@ -24,6 +24,8 @@ import com.apps.adrcotfas.burpeebuddy.workout.WorkoutFinishedDialog;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 import static com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication.getWorkoutManager;
 import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.COUNTABLE;
 import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.REP_BASED;
@@ -40,14 +42,14 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
     @Override
     public void onStart() {
-        Log.v(TAG, "onStart");
+        Timber.tag(TAG).d( "onStart");
         super.onStart();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
+        Timber.tag(TAG).d( "onCreateView");
         mViewMvc = new MainViewMvcImpl(inflater, container);
 
         AppDatabase.getDatabase(getContext()).exerciseTypeDao().getAll().observe(
@@ -71,7 +73,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
         // when navigating from Workout to Main
         if (MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
-            Log.v(TAG, "show finished dialog");
+            Timber.tag(TAG).d( "show finished dialog");
             WorkoutFinishedDialog.getInstance(
                     BuddyApplication.getWorkoutManager().getWorkout().totalReps.getValue())
                     .show(getActivity().getSupportFragmentManager(), TAG);
@@ -83,7 +85,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
     @Override
     public void onResume() {
-        Log.v(TAG, "onResume");
+        Timber.tag(TAG).d( "onResume");
         super.onResume();
         mViewMvc.registerListener(this);
         mViewMvc.showIntroduction();
@@ -91,7 +93,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
     @Override
     public void onDestroy() {
-        Log.v(TAG, "onDestroy");
+        Timber.tag(TAG).d( "onDestroy");
         if (mViewMvc != null){
             mViewMvc.unregisterListener(this);
         }

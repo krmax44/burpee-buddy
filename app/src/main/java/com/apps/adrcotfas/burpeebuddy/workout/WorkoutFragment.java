@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,8 @@ import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import timber.log.Timber;
+
 public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener {
 
     private static final String TAG = "WorkoutFragment";
@@ -33,7 +34,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onAttach(@NonNull Context context) {
-        Log.v(TAG, "onAttach");
+        Timber.tag(TAG).d( "onAttach");
         super.onAttach(context);
         ((MainActivity)getActivity()).setBottomNavigationVisibility(View.INVISIBLE);
 
@@ -49,7 +50,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
+        Timber.tag(TAG).d( "onCreateView");
 
         mViewMvc = new WorkoutViewMvcImpl(inflater, container);
         EventBus.getDefault().register(this);
@@ -64,7 +65,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onResume() {
-        Log.v(TAG, "onResume");
+        Timber.tag(TAG).d( "onResume");
         super.onResume();
         mViewMvc.registerListener(this);
 
@@ -79,7 +80,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onDestroy() {
-        Log.v(TAG, "onDestroy");
+        Timber.tag(TAG).d( "onDestroy");
         mViewMvc.unregisterListener(this);
         EventBus.getDefault().unregister(this);
         ((MainActivity)getActivity()).setBottomNavigationVisibility(View.VISIBLE);
@@ -103,27 +104,22 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
-        Log.d(TAG, "PreWorkoutCountdownTickEvent: " + event.seconds);
         mViewMvc.updateTimer(event.seconds);
     }
 
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
-        Log.d(TAG, "PreWorkoutCountdownFinished");
         //TODO switch to timer mode depending on workout type
-
         if (SettingsHelper.autoLockEnabled() && Power.isScreenOn(getActivity())) {
             Power.lockScreen((AppCompatActivity) getActivity());
         }
     }
 
-    public void onRepCompleted(int reps) {
-        Log.d(TAG, "RepCompletedEvent: " + reps + " reps");
+    private void onRepCompleted(int reps) {
         mViewMvc.updateCounter(reps);
     }
 
-    public void onTimerTick(int seconds) {
-        Log.d(TAG, "TimerTickEvent: " + seconds);
+    private void onTimerTick(int seconds) {
         mViewMvc.updateTimer(seconds);
     }
 

@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.apps.adrcotfas.burpeebuddy.common.timers.PreWorkoutTimer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
@@ -14,7 +13,11 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
+
 public class WorkoutManager implements RepCounter.Listener{
+    private static final String TAG = "WorkoutManager";
+
     private static int PRE_WORKOUT_COUNTDOWN_SECONDS = (int) TimeUnit.SECONDS.toMillis(5);
 
     private InProgressWorkout mWorkout;
@@ -47,21 +50,19 @@ public class WorkoutManager implements RepCounter.Listener{
         if (crtReps < mWorkout.goal.getReps()) {
             mWorkout.crtSetReps.setValue(crtReps + 1);
             mWorkout.totalReps.setValue(mWorkout.totalReps.getValue() + 1);
+            Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps.getValue() + "/" + mWorkout.goal.getReps());
         } else if (crtSet < mWorkout.goal.getSets()) {
             mWorkout.crtSetReps.setValue(1);
             mWorkout.totalReps.setValue(mWorkout.totalReps.getValue() + 1);
             mWorkout.crtSet.setValue(crtSet + 1);
+            Timber.tag(TAG).d("set finished " + mWorkout.crtSet.getValue() + "/" + mWorkout.goal.getSets());
             //TODO: notification, trigger break(unregister RepCounter), update fragment etc
         }
-
         if (mWorkout.crtSet.getValue() == mWorkout.goal.getSets()
                 && mWorkout.crtSetReps.getValue() == mWorkout.goal.getReps()) {
             mWorkout.state = State.FINISHED;
             EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
         }
-
-        Log.v("WTF", "| set: " + mWorkout.crtSet.getValue() + "| reps: " + mWorkout.crtSetReps.getValue()
-                + "| total: " + mWorkout.totalReps.getValue());
 
         /**
          * TIME based:

@@ -6,11 +6,12 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
-import android.util.Log;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 
 import java.io.IOException;
+
+import timber.log.Timber;
 
 import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.COUNTDOWN_LONG;
 
@@ -53,7 +54,6 @@ public class SoundPlayer extends ContextWrapper {
             mMediaPlayer.prepare();
 
             mMediaPlayer.setOnPreparedListener(mp -> {
-                Log.i(TAG, "OnPrepareListener was called");
                 // TODO: check duration of custom ringtones which may be much longer than notification sounds.
                 // If it's n seconds long and we're in continuous mode,
                 // schedule a stop after x seconds.
@@ -61,7 +61,7 @@ public class SoundPlayer extends ContextWrapper {
             });
 
         } catch (SecurityException | IOException e) {
-            Log.wtf(TAG, e.getMessage());
+            Timber.tag(TAG).wtf(e.getMessage());
             mMediaPlayer.release();
         }
     }

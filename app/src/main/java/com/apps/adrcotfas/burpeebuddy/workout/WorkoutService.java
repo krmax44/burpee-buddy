@@ -2,7 +2,6 @@ package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.lifecycle.LifecycleService;
 
@@ -20,6 +19,8 @@ import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import timber.log.Timber;
+
 import static com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper.WORKOUT_NOTIFICATION_ID;
 import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.COUNTDOWN;
 import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.COUNTDOWN_LONG;
@@ -32,7 +33,7 @@ public class WorkoutService extends LifecycleService {
     private Bundle mExtras;
 
     private void onStartWorkout() {
-        Log.d(TAG, "onStartWorkout");
+        Timber.tag(TAG).d( "onStartWorkout");
 
         getNotificationHelper().setReps(0);
 
@@ -46,14 +47,14 @@ public class WorkoutService extends LifecycleService {
     }
 
     private void onStopWorkout() {
-        Log.d(TAG, "onStopWorkout");
+        Timber.tag(TAG).d( "onStopWorkout");
         getWorkoutManager().getWorkout().state = State.INACTIVE;
         stopInternal();
     }
 
     private void onFinishedWorkout() {
         // TODO: show finished notification
-        Log.d(TAG, "onStopWorkout");
+        Timber.tag(TAG).d( "onFinishedWorkout");
         getWorkoutManager().getWorkout().state = State.FINISHED;
         stopInternal();
     }
@@ -87,14 +88,13 @@ public class WorkoutService extends LifecycleService {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        Timber.tag(TAG).d( "onDestroy");
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
-        Log.d(TAG, "PreWorkoutCountdownTickEvent: " + event.seconds);
         getNotificationHelper().setElapsedTime(event.seconds);
         if (event.seconds == 0) {
             getMediaPlayer().play(COUNTDOWN_LONG);
@@ -107,24 +107,21 @@ public class WorkoutService extends LifecycleService {
 
     @Subscribe
     public void onMessageEvent(Events.StopWorkoutEvent event) {
-        Log.d(TAG, "FinishedWorkoutEvent");
+        Timber.tag(TAG).d( "FinishedWorkoutEvent");
         onStopWorkout();
     }
 
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutEvent event) {
-        Log.d(TAG, "FinishedWorkoutEvent");
+        Timber.tag(TAG).d( "FinishedWorkoutEvent");
         onFinishedWorkout();
     }
 
     public void onTimerTick(int seconds) {
-        Log.d(TAG, "TimerTickEvent: " + seconds + " seconds");
         getNotificationHelper().setElapsedTime(seconds);
     }
 
     private void onRepCompleted(int reps) {
-        Log.d(TAG, "RepCompletedEvent: " + reps  + " reps");
-
         if (reps == 0) {
             return;
         }

@@ -7,8 +7,11 @@ import android.content.SharedPreferences;
 
 import androidx.navigation.NavDeepLinkBuilder;
 
+import com.apps.adrcotfas.burpeebuddy.BuildConfig;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
+
+import timber.log.Timber;
 
 public class BuddyApplication extends Application {
 
@@ -53,8 +56,11 @@ public class BuddyApplication extends Application {
         mWorkoutManager = new WorkoutManager(this);
         mNotificationHelper = new NotificationHelper(this);
         mMediaPlayer = new SoundPlayer(this);
-
         mPrivatePreferences =
                 getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
     }
 }

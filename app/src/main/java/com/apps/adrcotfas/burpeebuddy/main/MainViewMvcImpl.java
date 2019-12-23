@@ -1,6 +1,5 @@
 package com.apps.adrcotfas.burpeebuddy.main;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -20,6 +19,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.goalToString;
 
@@ -132,7 +133,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         }
 
         if (name.isEmpty()) {
-            Log.wtf(TAG, "No exercise was selected.");
+            Timber.tag(TAG).wtf("No exercise was selected.");
             mExercise.setValue(mExercises.get(0));
             return;
         }
@@ -144,7 +145,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             }
         }
 
-        Log.wtf(TAG, "The selected exercise is not part of the internal exercises.");
+        Timber.tag(TAG).wtf( "The selected exercise is not part of the internal exercises.");
         mExercise.setValue(mExercises.get(0));
     }
 
@@ -167,7 +168,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             }
         }
 
-        Log.wtf(TAG, "Could not find the selected goal in the internal list.");
+        Timber.tag(TAG).wtf( "Could not find the selected goal in the internal list.");
         return null;
     }
 }

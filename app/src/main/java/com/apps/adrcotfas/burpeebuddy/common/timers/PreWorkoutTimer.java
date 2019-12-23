@@ -1,13 +1,14 @@
 package com.apps.adrcotfas.burpeebuddy.common.timers;
 
 import android.os.CountDownTimer;
-import android.util.Log;
 
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
 
 public class PreWorkoutTimer extends CountDownTimer {
 
@@ -23,7 +24,7 @@ public class PreWorkoutTimer extends CountDownTimer {
 
     @Override
     public void onTick(long millisUntilFinished) {
-        Log.d(TAG, "onTick: " + millisUntilFinished);
+        Timber.tag(TAG).v("onTick: " + millisUntilFinished);
         // workaround for a bug in CountDownTimer which causes
         // onTick to be called twice inside a countDownInterval
         if (millisUntilFinished < 100) {
