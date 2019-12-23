@@ -7,7 +7,6 @@ import android.util.Log;
 import androidx.lifecycle.LifecycleService;
 
 import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
-import com.apps.adrcotfas.burpeebuddy.common.timers.PreWorkoutCountdown;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
@@ -21,8 +20,6 @@ import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.concurrent.TimeUnit;
-
 import static com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper.WORKOUT_NOTIFICATION_ID;
 import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.COUNTDOWN;
 import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.COUNTDOWN_LONG;
@@ -31,9 +28,7 @@ import static com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundType.REP_CO
 
 public class WorkoutService extends LifecycleService {
     private static final String TAG = "WorkoutService";
-    private static int PRE_WORKOUT_COUNTDOWN_SECONDS = (int) TimeUnit.SECONDS.toMillis(5);
 
-    private PreWorkoutCountdown preWorkoutCountdown;
     private Bundle mExtras;
 
     private void onStartWorkout() {
@@ -64,7 +59,7 @@ public class WorkoutService extends LifecycleService {
     }
 
     private void stopInternal() {
-        preWorkoutCountdown.cancel();
+        getWorkoutManager().getPreWorkoutTimer().cancel();
         getWorkoutManager().getTimer().getElapsedSeconds().removeObservers(this);
         getWorkoutManager().getTimer().stop();
         getMediaPlayer().onWorkoutStop();
@@ -83,9 +78,7 @@ public class WorkoutService extends LifecycleService {
         mExtras = intent.getExtras();
         getMediaPlayer().init();
 
-        //TODO: move to WorkoutManager
-        preWorkoutCountdown = new PreWorkoutCountdown(PRE_WORKOUT_COUNTDOWN_SECONDS);
-        preWorkoutCountdown.start();
+        getWorkoutManager().startPreWorkoutTimer();
         startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build());
         getNotificationHelper().setTitle("Get ready"); //TODO: extract string
 

@@ -9,15 +9,15 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
 
-public class PreWorkoutCountdown extends CountDownTimer {
+public class PreWorkoutTimer extends CountDownTimer {
 
-    private static final String TAG = "PreWorkoutCountdown";
+    private static final String TAG = "PreWorkoutTimer";
     /**
      * @param millisInFuture    The number of millis in the future from the call
      *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
      *                          is called.
      */
-    public PreWorkoutCountdown(long millisInFuture) {
+    public PreWorkoutTimer(long millisInFuture) {
         super(millisInFuture, 1000);
     }
 

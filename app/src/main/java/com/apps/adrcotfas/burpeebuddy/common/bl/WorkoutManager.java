@@ -3,6 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.common.bl;
 import android.content.Context;
 import android.util.Log;
 
+import com.apps.adrcotfas.burpeebuddy.common.timers.PreWorkoutTimer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
@@ -11,9 +12,13 @@ import com.apps.adrcotfas.burpeebuddy.workout.State;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.concurrent.TimeUnit;
+
 public class WorkoutManager implements RepCounter.Listener{
+    private static int PRE_WORKOUT_COUNTDOWN_SECONDS = (int) TimeUnit.SECONDS.toMillis(5);
 
     private InProgressWorkout mWorkout;
+    private PreWorkoutTimer mPreWorkoutTimer;
     private Timer mTimer;
     private RepCounter mRepCounter;
 
@@ -99,5 +104,14 @@ public class WorkoutManager implements RepCounter.Listener{
 
     public RepCounter getRepCounter() {
         return mRepCounter;
+    }
+
+    public void startPreWorkoutTimer() {
+        mPreWorkoutTimer = new PreWorkoutTimer(PRE_WORKOUT_COUNTDOWN_SECONDS);
+        mPreWorkoutTimer.start();
+    }
+
+    public PreWorkoutTimer getPreWorkoutTimer() {
+        return mPreWorkoutTimer;
     }
 }
