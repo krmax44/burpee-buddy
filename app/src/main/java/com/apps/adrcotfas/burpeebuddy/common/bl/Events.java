@@ -1,14 +1,8 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
+import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
+
 public class Events {
-
-    public static class PreWorkoutCountdownTickEvent {
-        public int seconds;
-
-        public PreWorkoutCountdownTickEvent(int seconds) {
-            this.seconds = seconds;
-        }
-    }
 
     public static class PreWorkoutCountdownFinished {}
 
@@ -28,9 +22,11 @@ public class Events {
 
     public static class TimerTickEvent {
         public int seconds;
+        public TimerType type;
 
-        public TimerTickEvent(int seconds) {
+        public TimerTickEvent(TimerType type, int seconds) {
             this.seconds = seconds;
+            this.type = type;
         }
     }
 

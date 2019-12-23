@@ -10,6 +10,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class Timer {
 
@@ -22,10 +23,9 @@ public class Timer {
                 .repeat()
                 .subscribe(tick -> {
                     ++elapsedSeconds;
-                    EventBus.getDefault().post(new Events.TimerTickEvent(elapsedSeconds));
-                }, throwable -> {
-                    // handle error
-                });
+                    EventBus.getDefault().post(
+                            new Events.TimerTickEvent(TimerType.COUNT_UP, elapsedSeconds));
+                }, throwable -> Timber.wtf("Something is wrong here."));
     }
 
     public void stop(){

@@ -10,6 +10,7 @@ import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.common.bl.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
+import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeConverter;
@@ -56,7 +57,7 @@ public class WorkoutService extends LifecycleService {
 
     private void stopInternal() {
         getWorkoutManager().getRepCounter().unregister();
-        getWorkoutManager().getPreWorkoutTimer().cancel();
+        getWorkoutManager().getCountDownTimer().cancel();
         getWorkoutManager().getTimer().stop();
 
         // workaround to make sure that the sound played above is audible and the player released
@@ -96,18 +97,6 @@ public class WorkoutService extends LifecycleService {
     }
 
     @Subscribe
-    public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
-        getNotificationHelper().setElapsedTime(event.seconds);
-        if (event.seconds == 0) {
-            getMediaPlayer().play(COUNTDOWN_LONG);
-            onStartWorkout();
-            //TODO: extract to constants or to Settings
-        } else if (event.seconds <= 3) {
-            getMediaPlayer().play(COUNTDOWN);
-        }
-    }
-
-    @Subscribe
     public void onMessageEvent(Events.StopWorkoutEvent event) {
         Timber.tag(TAG).d( "FinishedWorkoutEvent");
         onStopWorkout();
@@ -123,6 +112,16 @@ public class WorkoutService extends LifecycleService {
     @Subscribe
     public void onMessageEvent(Events.TimerTickEvent event) {
         getNotificationHelper().setElapsedTime(event.seconds);
+
+        if (event.type.equals(TimerType.PRE_WORKOUT_COUNT_DOWN)) {
+            if (event.seconds == 0) {
+                getMediaPlayer().play(COUNTDOWN_LONG);
+                onStartWorkout();
+                //TODO: extract to constants or to Settings
+            } else if (event.seconds <= 3) {
+                getMediaPlayer().play(COUNTDOWN);
+            }
+        }
     }
 
     @Subscribe
@@ -148,7 +147,6 @@ public class WorkoutService extends LifecycleService {
     public void onMessageEvent(Events.SetComplete event) {
         Timber.tag(TAG).d( "onSetCompleted");
         Power.turnOnScreen(this);
-        getWorkoutManager().getRepCounter().unregister();
 
         new Handler().postDelayed(() -> getMediaPlayer().play(REST), 1000);
         getWorkoutManager().startPreWorkoutTimer(

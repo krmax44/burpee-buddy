@@ -2,23 +2,32 @@ package com.apps.adrcotfas.burpeebuddy.common.bl;
 
 import android.content.Context;
 
-import com.apps.adrcotfas.burpeebuddy.common.timers.PreWorkoutTimer;
+import com.apps.adrcotfas.burpeebuddy.common.timers.CountDownTimer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
+import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.workout.InProgressWorkout;
 import com.apps.adrcotfas.burpeebuddy.workout.State;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.concurrent.TimeUnit;
+
 import timber.log.Timber;
 
-public class WorkoutManager implements RepCounter.Listener{
+import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.COUNTABLE;
+import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.INVALID;
+import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.REP_BASED;
+import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.TIME_BASED;
+
+public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Listener{
     private static final String TAG = "WorkoutManager";
 
     private InProgressWorkout mWorkout;
-    private PreWorkoutTimer mPreWorkoutTimer;
     private Timer mTimer;
+    private CountDownTimer mCountDownTimer;
     private RepCounter mRepCounter;
 
     /**
@@ -45,50 +54,65 @@ public class WorkoutManager implements RepCounter.Listener{
         int crtReps = mWorkout.crtSetReps.getValue();
         int crtSet = mWorkout.crtSet.getValue();
 
-        if (crtReps < mWorkout.goal.getReps()) {
-            Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps.getValue() + "/" + mWorkout.goal.getReps());
+        if (getGoalType().equals(GoalType.REP_BASED)) {
+            if (crtReps < mWorkout.goal.getReps()) {
+                Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps.getValue() + "/" + mWorkout.goal.getReps());
+                EventBus.getDefault().post(new Events.RepComplete(crtReps));
+            } else if (crtSet < mWorkout.goal.getSets()) {
+                getRepCounter().unregister();
+                mWorkout.crtSetReps.setValue(0);
+                mWorkout.crtSet.setValue(crtSet + 1);
+                Timber.tag(TAG).d("set finished " + mWorkout.crtSet.getValue() + "/" + mWorkout.goal.getSets());
+                mTimer.stop();
+                EventBus.getDefault().post(new Events.RepComplete(crtReps, true));
+                EventBus.getDefault().post(new Events.SetComplete());
+            } else {
+                Timber.tag(TAG).d("Workout finished");
+                mWorkout.state = State.FINISHED;
+                EventBus.getDefault().post(new Events.RepComplete(crtReps, true));
+                EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
+            }
+        } else if (getGoalType().equals(GoalType.AMRAP)) {
+            Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps.getValue());
             EventBus.getDefault().post(new Events.RepComplete(crtReps));
-        } else if (crtSet < mWorkout.goal.getSets()) {
-            mWorkout.crtSetReps.setValue(0);
-            mWorkout.crtSet.setValue(crtSet + 1);
-            Timber.tag(TAG).d("set finished " + mWorkout.crtSet.getValue() + "/" + mWorkout.goal.getSets());
-            mTimer.stop();
-            EventBus.getDefault().post(new Events.RepComplete(crtReps, true));
-            EventBus.getDefault().post(new Events.SetComplete());
-        } else {
-            Timber.tag(TAG).d("Workout finished");
-            mWorkout.state = State.FINISHED;
-            EventBus.getDefault().post(new Events.RepComplete(crtReps, true));
-            EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
         }
-
-        /**
-         * TIME based:
-         * if (duration < goal.duration)
-         *  - update duration
-         *  else if (crtSet < goal.sets)
-         *      ++crtSet -> notification, break, update fragment etc
-         *  else
-         *      show finished dialog
-         *
-         *  AMRAP_C:
-         *  - like time but with counting of reps
-         *
-         *  AMRAP:
-         *  - like time but with manually entering the reps in a dialog
-         */
     }
 
     public void init(ExerciseType type, Goal goal) {
+        if (type.equals(INVALID)) {
+            throw new IllegalArgumentException("Invalid exercise type");
+        }
         mWorkout.type = type;
         mWorkout.goal = goal;
     }
 
     public void start() {
-        //TODO: register only if relevant
-        getRepCounter().register(this);
-        skipFirstRep = true;
-        mTimer.start();
+        // push-ups and burpees
+        if (mWorkout.type.equals(COUNTABLE)) {
+            getRepCounter().register(this);
+            skipFirstRep = true;
+            if (getGoalType().equals(GoalType.REP_BASED)) {
+                mTimer.start();
+            } else if (getGoalType().equals(GoalType.AMRAP)) {
+                mCountDownTimer = new CountDownTimer(
+                        TimerType.COUNT_DOWN,
+                        TimeUnit.SECONDS.toMillis(mWorkout.goal.getDuration()),
+                        this);
+                mCountDownTimer.start();
+            }
+        } else if (mWorkout.type.equals(TIME_BASED) && getGoalType().equals(GoalType.TIME_BASED)) {
+            mCountDownTimer = new CountDownTimer(
+                    TimerType.COUNT_DOWN,
+                    TimeUnit.SECONDS.toMillis(mWorkout.goal.getDuration()),
+                    this);
+            mCountDownTimer.start();
+        } else if (mWorkout.type.equals(REP_BASED) && getGoalType().equals(GoalType.AMRAP)) {
+                // countdown for pull-ups with dialog to enter current reps
+        }
+    }
+
+    private GoalType getGoalType() {
+        return mWorkout.goal.getType();
     }
 
     public void reset() {
@@ -108,11 +132,22 @@ public class WorkoutManager implements RepCounter.Listener{
     }
 
     public void startPreWorkoutTimer(long millis) {
-        mPreWorkoutTimer = new PreWorkoutTimer(millis);
-        mPreWorkoutTimer.start();
+        mCountDownTimer = new CountDownTimer(TimerType.PRE_WORKOUT_COUNT_DOWN, millis);
+        mCountDownTimer.start();
     }
 
-    public PreWorkoutTimer getPreWorkoutTimer() {
-        return mPreWorkoutTimer;
+    public CountDownTimer getCountDownTimer() {
+        return mCountDownTimer;
+    }
+
+    @Override
+    public void onFinishedAmrapSet() {
+        getWorkout().crtSet.setValue(getWorkout().crtSet.getValue() + 1);
+        if (getWorkout().crtSet.getValue() <= getWorkout().goal.getSets()) {
+            BuddyApplication.getWorkoutManager().getRepCounter().unregister();
+            EventBus.getDefault().post(new Events.SetComplete());
+        } else {
+            EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
+        }
     }
 }

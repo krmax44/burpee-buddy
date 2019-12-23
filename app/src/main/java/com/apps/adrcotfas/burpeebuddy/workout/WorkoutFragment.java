@@ -98,13 +98,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     }
 
     @Subscribe
-    public void onMessageEvent(Events.PreWorkoutCountdownTickEvent event) {
-        mViewMvc.updateTimer(event.seconds);
-    }
-
-    @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
-        //TODO switch to timer mode depending on workout type
         if (SettingsHelper.autoLockEnabled() && Power.isScreenOn(getActivity())) {
             Power.lockScreen((AppCompatActivity) getActivity());
         }
