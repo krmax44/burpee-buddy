@@ -2,13 +2,14 @@ package com.apps.adrcotfas.burpeebuddy.main;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.MutableLiveData;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.Exercise;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.google.android.material.button.MaterialButton;
@@ -56,6 +57,13 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
         mCoordinatorLayout = findViewById(R.id.top_coordinator);
 
+        FrameLayout editExercises = findViewById(R.id.edit_exercises);
+        editExercises.setOnClickListener(v -> {
+            for (Listener listener : getListeners()) {
+                listener.onEditExercisesClicked();
+            }
+        });
+
         MaterialButton startButton = findViewById(R.id.start_button);
         startButton.setOnClickListener(v -> onStartButtonClicked());
     }
@@ -90,7 +98,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         mExerciseTypeChipGroup.removeAllViews();
         for (Exercise w : mExercises) {
             Chip c = new Chip(getContext());
-            c.setText(w.getName());
+            c.setText(w.name);
 
             ChipDrawable d = ChipDrawable.createFromAttributes(
                     getContext(), null, 0,
@@ -139,7 +147,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         }
 
         for (Exercise e : mExercises) {
-            if (e.getName().equals(name)) {
+            if (e.name.equals(name)) {
                 mExercise.setValue(e);
                 return;
             }

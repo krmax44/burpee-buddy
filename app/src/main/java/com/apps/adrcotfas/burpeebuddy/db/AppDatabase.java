@@ -7,9 +7,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.Exercise;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeDao;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeFactory;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseTypeDao;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseTypeFactory;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalDao;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalFactory;
@@ -65,5 +65,11 @@ public abstract class AppDatabase extends RoomDatabase {
             getDatabase(context).goalDao().insertAll(
                     GoalFactory.getDefaultGoals());
             });
+    }
+
+    // TODO: maybe move these methods to separate ViewModels
+    public static void editVisibility(Context context, String exercise, boolean visibility) {
+        mExecutorService.execute(()
+                -> getDatabase(context).exerciseTypeDao().editVisibility(exercise, visibility));
     }
 }

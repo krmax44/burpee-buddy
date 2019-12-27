@@ -1,8 +1,8 @@
-package com.apps.adrcotfas.burpeebuddy.db.exercisetype;
+package com.apps.adrcotfas.burpeebuddy.db.exercise;
 
 import androidx.room.TypeConverter;
 
-import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.INVALID;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.INVALID;
 
 public class ExerciseTypeConverter {
 

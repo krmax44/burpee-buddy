@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.db.exercisetype;
+package com.apps.adrcotfas.burpeebuddy.db.exercise;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -18,6 +18,9 @@ public interface ExerciseTypeDao {
     @Query("select * from Exercise where name = :name")
     Exercise getExercise(String name);
 
+    @Query("select * from Exercise where visible = 1")
+    LiveData<List<Exercise>> getAllVisible();
+
     @Insert(onConflict = REPLACE)
     void addExercise(Exercise exercise);
 
@@ -26,4 +29,10 @@ public interface ExerciseTypeDao {
 
     @Query("delete from Exercise where name = :name")
     void delete(String name);
+
+    @Query("update Exercise SET `order` = :order WHERE name = :name")
+    void editOrder(String name, int order);
+
+    @Query("update Exercise SET visible= :visibility WHERE name = :name")
+    void editVisibility(String name, boolean visibility);
 }

@@ -3,7 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.main;
 import androidx.lifecycle.MutableLiveData;
 
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.Exercise;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 
 import java.util.List;
@@ -28,5 +28,6 @@ public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
     public interface Listener {
         void onStartButtonClicked();
         void onDisabledChipClicked();
+        void onEditExercisesClicked();
     }
 }

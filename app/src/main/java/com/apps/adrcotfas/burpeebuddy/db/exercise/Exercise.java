@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.db.exercisetype;
+package com.apps.adrcotfas.burpeebuddy.db.exercise;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
@@ -15,44 +15,25 @@ public class Exercise {
      */
     @PrimaryKey
     @NonNull
-    private String name;
+    public String name;
 
     @TypeConverters(ExerciseTypeConverter.class)
     @NonNull
-    private ExerciseType type;
+    public ExerciseType type;
 
     /**
      * Index of the color used to represent this workout type.
      */
-    private int color;
+    public int color;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public ExerciseType getType() {
-        return type;
-    }
-
-    public void setType(ExerciseType type) {
-        this.type = type;
-    }
-
-    public int getColor() {
-        return color;
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
+    public boolean visible;
+    public int order;
 
     public Exercise(String name, ExerciseType type) {
         this.name = name;
         this.type = type;
         this.color = 0; //TODO: implement this
+        this.visible = true;
+        this.order = 0;
     }
 }

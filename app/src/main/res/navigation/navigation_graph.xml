@@ -21,6 +21,13 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_main_to_edit_exercises"
+            app:destination="@id/editExercisesFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -59,4 +66,14 @@
         android:name="com.apps.adrcotfas.burpeebuddy.leaderboard.LeaderboardFragment"
         android:label="@string/title_leaderboard"
         tools:layout="@layout/fragment_leaderboard" />
+    <fragment
+        android:id="@+id/editExercisesFragment"
+        android:name="com.apps.adrcotfas.burpeebuddy.main.edit_exercises.ExercisesFragment"
+        android:label="EditExercisesFragment" >
+        <action
+            android:id="@+id/action_edit_exercises_tomain"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@+id/mainFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

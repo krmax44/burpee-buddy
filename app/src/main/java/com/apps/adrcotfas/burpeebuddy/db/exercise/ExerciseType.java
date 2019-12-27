@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.db.exercisetype;
+package com.apps.adrcotfas.burpeebuddy.db.exercise;
 
 public enum ExerciseType {
 

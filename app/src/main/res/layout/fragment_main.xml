@@ -6,17 +6,34 @@
     android:layout_height="match_parent"
     tools:context=".main.MainFragment">
 
-    <TextView
-        android:id="@+id/exercise_type_title"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/exercise_section"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="24dp"
-        android:text="Exercise"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/exercise_type_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="Exercise"
+            android:textSize="30dp"
+            android:textStyle="bold"/>
+
+        <include layout="@layout/button_edit"
+            android:id="@+id/edit_exercises"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
 
     <ScrollView
         android:id="@+id/exercise_type_container"
@@ -25,7 +42,7 @@
         android:maxHeight="200dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/exercise_type_title">
+        app:layout_constraintTop_toBottomOf="@id/exercise_section">
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/exercise_type"
             android:layout_width="match_parent"
@@ -42,17 +59,33 @@
             app:singleSelection="true"/>
     </ScrollView>
 
-    <TextView
-        android:id="@+id/goal_title"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/goal_section"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exercise_type_container"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="24dp"
-        android:text="Goal"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/exercise_type_container"/>
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/goal_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Goal"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <include layout="@layout/button_edit"
+            android:id="@+id/edit_goals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -60,7 +93,7 @@
         android:maxHeight="200dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/goal_title">
+        app:layout_constraintTop_toBottomOf="@id/goal_section">
         <!--    TODO: extract to styles -->
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/goal_type"

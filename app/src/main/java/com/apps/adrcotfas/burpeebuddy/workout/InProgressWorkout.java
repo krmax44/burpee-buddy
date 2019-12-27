@@ -2,7 +2,7 @@ package com.apps.adrcotfas.burpeebuddy.workout;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 

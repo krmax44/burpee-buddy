@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.common.viewmvc;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 public abstract class BaseViewMvc implements ViewMvc {
@@ -14,6 +15,10 @@ public abstract class BaseViewMvc implements ViewMvc {
 
     public Context getContext() {
         return getRootView().getContext();
+    }
+
+    public Drawable getDrawable(int id) {
+        return getContext().getResources().getDrawable(id);
     }
 
     protected void setRootView(View view) {

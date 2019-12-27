@@ -6,9 +6,9 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.Exercise;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeConverter;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseTypeConverter;
 
 import static androidx.room.ForeignKey.CASCADE;
 

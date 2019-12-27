@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.main;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.workout.State;
@@ -26,10 +25,11 @@ import java.util.List;
 
 import timber.log.Timber;
 
+import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication.getWorkoutManager;
-import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.COUNTABLE;
-import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.REP_BASED;
-import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.TIME_BASED;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.COUNTABLE;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.REP_BASED;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
 public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
@@ -52,13 +52,13 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         Timber.tag(TAG).d( "onCreateView");
         mViewMvc = new MainViewMvcImpl(inflater, container);
 
-        AppDatabase.getDatabase(getContext()).exerciseTypeDao().getAll().observe(
+        AppDatabase.getDatabase(getContext()).exerciseTypeDao().getAllVisible().observe(
                 getViewLifecycleOwner(), exerciseTypes ->
                         mViewMvc.updateExerciseTypes(exerciseTypes));
 
         mViewMvc.getExercise().observe(getViewLifecycleOwner(), exercise -> {
             LiveData<List<Goal>> goalsLd = new MutableLiveData<>();
-            mExerciseType = exercise.getType();
+            mExerciseType = exercise.type;
 
             if (COUNTABLE.equals(mExerciseType)) {
                 goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getCountableGoals();
@@ -86,8 +86,10 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
     @Override
     public void onResume() {
-        Timber.tag(TAG).d( "onResume");
         super.onResume();
+        Timber.tag(TAG).d( "onResume");
+        //TODO extract to settings
+        getActivity().getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
         mViewMvc.registerListener(this);
         mViewMvc.showIntroduction();
     }
@@ -106,6 +108,11 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         MainFragmentDirections.ActionMainToWorkout action =
                 MainFragmentDirections.actionMainToWorkout(mExerciseType.getValue(), mViewMvc.getGoal());
         NavHostFragment.findNavController(this).navigate(action);
+    }
+
+    @Override
+    public void onEditExercisesClicked() {
+        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_edit_exercises);
     }
 
     @Override

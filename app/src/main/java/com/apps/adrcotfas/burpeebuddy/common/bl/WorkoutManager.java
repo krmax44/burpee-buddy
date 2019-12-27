@@ -5,7 +5,7 @@ import android.content.Context;
 import com.apps.adrcotfas.burpeebuddy.common.timers.CountDownTimer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.workout.InProgressWorkout;
@@ -17,10 +17,10 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.COUNTABLE;
-import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.INVALID;
-import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.REP_BASED;
-import static com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType.TIME_BASED;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.COUNTABLE;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.INVALID;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.REP_BASED;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
 public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Listener{
     private static final String TAG = "WorkoutManager";

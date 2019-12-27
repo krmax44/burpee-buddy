@@ -12,8 +12,8 @@ import com.apps.adrcotfas.burpeebuddy.common.bl.WorkoutManager;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.exercisetype.ExerciseTypeConverter;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseTypeConverter;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 
