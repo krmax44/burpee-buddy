@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.main.edit_exercises.dialog;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -127,7 +127,7 @@ public class AddEditExerciseDialog extends DialogFragment {
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.ok,
                         (dialog, which) -> {
-                            if (mExerciseName == null || mExerciseName.length() == 0) {
+                            if (nameEditText.getText() == null || nameEditText.getText().length() == 0) {
                                 nameEditTextLayout.setError(getString(R.string.exercise_dialog_name_error));
                                 return;
                             }

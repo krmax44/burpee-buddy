@@ -1,8 +1,7 @@
-package com.apps.adrcotfas.burpeebuddy.main.edit_exercises;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises;
 
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.ItemTouchHelper;

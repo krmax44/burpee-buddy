@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.main.edit_exercises;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.main.edit_exercises.dialog.AddEditExerciseDialog;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.dialog.AddEditExerciseDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

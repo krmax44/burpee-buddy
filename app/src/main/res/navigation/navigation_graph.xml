@@ -68,7 +68,7 @@
         tools:layout="@layout/fragment_leaderboard" />
     <fragment
         android:id="@+id/editExercisesFragment"
-        android:name="com.apps.adrcotfas.burpeebuddy.main.edit_exercises.ExercisesFragment"
+        android:name="com.apps.adrcotfas.burpeebuddy.edit_exercises.ExercisesFragment"
         android:label="EditExercisesFragment" >
         <action
             android:id="@+id/action_edit_exercises_tomain"

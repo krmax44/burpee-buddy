@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.main.edit_exercises;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.common.recyclerview.ItemTouchHelperAdapter;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.main.edit_exercises.item.ExercisesItemViewMvc;
-import com.apps.adrcotfas.burpeebuddy.main.edit_exercises.item.ExercisesItemViewMvcImpl;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.item.ExercisesItemViewMvc;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.item.ExercisesItemViewMvcImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;

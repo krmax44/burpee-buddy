@@ -2,6 +2,7 @@ package com.apps.adrcotfas.burpeebuddy.db.exercise;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
@@ -34,6 +35,6 @@ public class Exercise {
         this.type = type;
         this.color = 0; //TODO: implement this
         this.visible = true;
-        this.order = 0;
+        this.order = Integer.MAX_VALUE;
     }
 }

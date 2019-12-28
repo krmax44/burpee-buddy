@@ -1,11 +1,11 @@
-package com.apps.adrcotfas.burpeebuddy.main.edit_exercises;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises;
 
 import android.os.Build;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.common.recyclerview.ItemTouchHelperViewHolder;
-import com.apps.adrcotfas.burpeebuddy.main.edit_exercises.item.ExercisesItemViewMvc;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.item.ExercisesItemViewMvc;
 
 class ExercisesViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 

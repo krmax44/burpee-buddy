@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.main.edit_exercises.item;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises.item;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
