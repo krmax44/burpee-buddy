@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_exercises.item;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises.items;
 
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;

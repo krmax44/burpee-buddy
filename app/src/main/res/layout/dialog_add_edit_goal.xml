@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkedButton="@id/rep_based">
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/rep_based"
+            android:text="Rep based"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/amrap"
+            android:text="AMRAP"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/time_based"
+            android:text="Time based"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </RadioGroup>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/sets_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="Sets" />
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/sets_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="150dp"
+            android:isScrollContainer="true"
+            android:min="1"
+            app:min="1"
+            android:max="10"
+            android:progress="3"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/reps_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/reps_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="Reps" />
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/reps_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="150dp"
+            android:isScrollContainer="true"
+            android:min="1"
+            app:min="1"
+            android:max="20"
+            android:progress="10"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/duration_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/duration_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="Duration" />
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/duration_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="150dp"
+            android:isScrollContainer="true"
+            android:min="1"
+            app:min="1"
+            android:max="20"
+            android:progress="2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/break_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/break_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="Break" />
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/break_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="150dp"
+            android:isScrollContainer="true"
+            android:min="1"
+            app:min="1"
+            android:max="6"
+            android:progress="1"/>
+    </LinearLayout>
+
+</LinearLayout>

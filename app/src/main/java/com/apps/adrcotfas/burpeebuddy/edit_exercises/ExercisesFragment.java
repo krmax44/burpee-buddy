@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.edit_exercises.dialog.AddEditExerciseDialog;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.dialogs.AddEditExerciseDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,11 +26,11 @@ public class ExercisesFragment extends Fragment implements ExercisesViewMvc.List
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mViewMvc = new ExercisesViewMcvImpl(inflater, container);
+        mViewMvc = new ExercisesViewMvcImpl(inflater, container);
 
-        AppDatabase.getDatabase(getContext()).exerciseTypeDao().getAll().observe(
-                getViewLifecycleOwner(), exerciseTypes ->
-                        mViewMvc.bindExercises(exerciseTypes));
+        AppDatabase.getDatabase(getContext()).exerciseDao().getAll().observe(
+                getViewLifecycleOwner(), exercises ->
+                        mViewMvc.bindExercises(exercises));
 
         return mViewMvc.getRootView();
     }

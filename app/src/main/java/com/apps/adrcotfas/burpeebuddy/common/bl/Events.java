@@ -2,6 +2,7 @@ package com.apps.adrcotfas.burpeebuddy.common.bl;
 
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
+import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 
 public class Events {
 
@@ -65,6 +66,31 @@ public class Events {
         public String name;
         public DeleteExercise(String name) {
             this.name = name;
+        }
+    }
+
+    public static class EditGoal {
+        public int id;
+        public Goal goal;
+
+        public EditGoal(int id, Goal goal) {
+            this.id = id;
+            this.goal = goal;
+        }
+    }
+
+    public static class AddGoal {
+        public Goal goal;
+
+        public AddGoal(Goal goal) {
+            this.goal = goal;
+        }
+    }
+
+    public static class DeleteGoal {
+        public int id;
+        public DeleteGoal(int id) {
+            this.id = id;
         }
     }
 }

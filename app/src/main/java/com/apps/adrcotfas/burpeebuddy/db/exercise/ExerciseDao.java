@@ -12,7 +12,7 @@ import java.util.List;
 import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
-public interface ExerciseTypeDao {
+public interface ExerciseDao {
 
     @Query("select * from Exercise ORDER BY `order`")
     LiveData<List<Exercise>> getAll();

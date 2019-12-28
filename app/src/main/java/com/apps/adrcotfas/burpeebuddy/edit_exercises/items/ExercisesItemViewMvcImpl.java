@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_exercises.item;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises.items;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -39,7 +39,6 @@ public class ExercisesItemViewMvcImpl extends BaseObservableViewMvc<ExercisesIte
         });
 
         findViewById(R.id.edit).setOnClickListener(v -> {
-            //TODO: open dialog, when the OK button is clicked, call l.onExerciseEditClicked
             for (Listener l : getListeners()) {
                 l.onExerciseEditClicked(mExercise);
             }

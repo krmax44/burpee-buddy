@@ -150,7 +150,7 @@ public class WorkoutService extends LifecycleService {
 
         new Handler().postDelayed(() -> getMediaPlayer().play(REST), 1000);
         getWorkoutManager().startPreWorkoutTimer(
-                TimeUnit.SECONDS.toMillis(getWorkoutManager().getWorkout().goal.getDurationBreak()));
+                TimeUnit.SECONDS.toMillis(getWorkoutManager().getWorkout().goal.duration_break));
     }
 
     private NotificationHelper getNotificationHelper() {

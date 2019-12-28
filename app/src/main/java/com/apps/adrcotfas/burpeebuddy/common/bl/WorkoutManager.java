@@ -55,14 +55,14 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
         int crtSet = mWorkout.crtSet.getValue();
 
         if (getGoalType().equals(GoalType.REP_BASED)) {
-            if (crtReps < mWorkout.goal.getReps()) {
-                Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps.getValue() + "/" + mWorkout.goal.getReps());
+            if (crtReps < mWorkout.goal.reps) {
+                Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps.getValue() + "/" + mWorkout.goal.reps);
                 EventBus.getDefault().post(new Events.RepComplete(crtReps));
-            } else if (crtSet < mWorkout.goal.getSets()) {
+            } else if (crtSet < mWorkout.goal.sets) {
                 getRepCounter().unregister();
                 mWorkout.crtSetReps.setValue(0);
                 mWorkout.crtSet.setValue(crtSet + 1);
-                Timber.tag(TAG).d("set finished " + mWorkout.crtSet.getValue() + "/" + mWorkout.goal.getSets());
+                Timber.tag(TAG).d("set finished " + mWorkout.crtSet.getValue() + "/" + mWorkout.goal.sets);
                 mTimer.stop();
                 EventBus.getDefault().post(new Events.RepComplete(crtReps, true));
                 EventBus.getDefault().post(new Events.SetComplete());
@@ -96,14 +96,14 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
             } else if (getGoalType().equals(GoalType.AMRAP)) {
                 mCountDownTimer = new CountDownTimer(
                         TimerType.COUNT_DOWN,
-                        TimeUnit.SECONDS.toMillis(mWorkout.goal.getDuration()),
+                        TimeUnit.SECONDS.toMillis(mWorkout.goal.duration),
                         this);
                 mCountDownTimer.start();
             }
         } else if (mWorkout.type.equals(TIME_BASED) && getGoalType().equals(GoalType.TIME_BASED)) {
             mCountDownTimer = new CountDownTimer(
                     TimerType.COUNT_DOWN,
-                    TimeUnit.SECONDS.toMillis(mWorkout.goal.getDuration()),
+                    TimeUnit.SECONDS.toMillis(mWorkout.goal.duration),
                     this);
             mCountDownTimer.start();
         } else if (mWorkout.type.equals(REP_BASED) && getGoalType().equals(GoalType.AMRAP)) {
@@ -112,7 +112,7 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
     }
 
     private GoalType getGoalType() {
-        return mWorkout.goal.getType();
+        return mWorkout.goal.type;
     }
 
     public void reset() {
@@ -143,7 +143,7 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
     @Override
     public void onFinishedAmrapSet() {
         getWorkout().crtSet.setValue(getWorkout().crtSet.getValue() + 1);
-        if (getWorkout().crtSet.getValue() <= getWorkout().goal.getSets()) {
+        if (getWorkout().crtSet.getValue() <= getWorkout().goal.sets) {
             BuddyApplication.getWorkoutManager().getRepCounter().unregister();
             EventBus.getDefault().post(new Events.SetComplete());
         } else {

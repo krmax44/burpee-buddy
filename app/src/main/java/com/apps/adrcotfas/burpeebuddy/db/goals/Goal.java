@@ -10,12 +10,46 @@ import androidx.room.TypeConverters;
 @Entity
 public class Goal implements Parcelable {
 
+    public static int DEFAULT_SETS = 3;
+    public static int DEFAULT_REPS = 10;
+    public static int DEFAULT_DURATION = 60;
+    public static int DEFAULT_BREAK = 30;
+
+    @PrimaryKey(autoGenerate = true)
+    public int id;
+
+    @TypeConverters(GoalTypeConverter.class)
+    public GoalType type;
+
+    /**
+     * The number of sets for an exercise
+     */
+    public int sets;
+
+    /**
+     * The number of reps per set for an exercise.
+     * This is not used for time based exercises
+     */
+    public int reps;
+
+    /**
+     * The workout duration per set in seconds
+     */
+    public int duration;
+
+    /**
+     * The break duration between sets in seconds
+     */
+    public int duration_break;
+
+    public int color;
+
     /**
      * Time oriented goal
      * e.g. Plank 3 x 1 minute plank with 30 seconds between sets
      */
     public static Goal getTimeBasedGoal(int sets, int duration, int duration_break) {
-        return new Goal(GoalType.TIME_BASED, sets, 0, duration, duration_break);
+        return new Goal(GoalType.TIME_BASED, sets, DEFAULT_REPS, duration, duration_break);
 
     }
 
@@ -24,7 +58,7 @@ public class Goal implements Parcelable {
      * e.g. Burpees 3 x 25 reps
      */
     public static Goal getRepBasedGoal(int sets, int reps, int duration_break) {
-        return new Goal(GoalType.REP_BASED, sets, reps, 0, duration_break);
+        return new Goal(GoalType.REP_BASED, sets, reps, DEFAULT_DURATION, duration_break);
     }
 
     /**
@@ -32,7 +66,7 @@ public class Goal implements Parcelable {
      * e.g. burpees or pull-ups 3 x AMRAP 3 minute
      */
     public static Goal getAmrapBasedGoal(int sets, int duration, int duration_break) {
-        return new Goal(GoalType.AMRAP, sets, 0, duration, duration_break);
+        return new Goal(GoalType.AMRAP, sets, DEFAULT_REPS, duration, duration_break);
 
     }
 
@@ -43,66 +77,15 @@ public class Goal implements Parcelable {
         this.reps = reps;
         this.duration = duration;
         this.duration_break = duration_break;
+        this.color = 0;
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public GoalType getType() {
-        return type;
-    }
-
-    public int getSets() {
-        return sets;
-    }
-
-    public int getReps() {
-        return reps;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public int getDurationBreak() {
-        return duration_break;
-    }
-
-    @PrimaryKey(autoGenerate = true)
-    int id;
-
-    @TypeConverters(GoalTypeConverter.class)
-    private GoalType type;
-
-    /**
-     * The number of sets for an exercise
-     */
-    private int sets;
-
-    /**
-     * The number of reps per set for an exercise.
-     * This is not used for time based exercises
-     */
-    private int reps;
-
-    /**
-     * The workout duration per set in seconds
-     */
-    private int duration;
-
-    /**
-     * The break duration between sets in seconds
-     */
-    int duration_break;
-
 
     /**
      * Parcelable stuff bellow
      */
     protected Goal(Parcel in) {
         id = in.readInt();
-        type = GoalTypeConverter.getGoalFromInt(in.readInt());
+        type = GoalTypeConverter.getGoalTypeFromInt(in.readInt());
         sets = in.readInt();
         reps = in.readInt();
         duration = in.readInt();

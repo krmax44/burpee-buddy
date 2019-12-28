@@ -64,6 +64,13 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             }
         });
 
+        FrameLayout editGoals = findViewById(R.id.edit_goals);
+        editGoals.setOnClickListener(v -> {
+            for (Listener listener : getListeners()) {
+                listener.onEditGoalsClicked();
+            }
+        });
+
         MaterialButton startButton = findViewById(R.id.start_button);
         startButton.setOnClickListener(v -> onStartButtonClicked());
     }
@@ -163,14 +170,14 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         for (int i = 0; i < mGoalsChipGroup.getChildCount(); ++i) {
             Chip crt = (Chip)mGoalsChipGroup.getChildAt(i);
             if (crt.getId() == mGoalsChipGroup.getCheckedChipId()) {
-                id = mGoals.get(i).getId();
+                id = mGoals.get(i).id;
                 break;
             }
         }
 
         if (id != -1) {
             for (Goal g : mGoals) {
-                if (g.getId() == id) {
+                if (g.id == id) {
                     return g;
                 }
             }

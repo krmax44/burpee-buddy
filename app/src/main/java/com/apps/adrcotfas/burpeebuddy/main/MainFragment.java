@@ -52,7 +52,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         Timber.tag(TAG).d( "onCreateView");
         mViewMvc = new MainViewMvcImpl(inflater, container);
 
-        AppDatabase.getDatabase(getContext()).exerciseTypeDao().getAllVisible().observe(
+        AppDatabase.getDatabase(getContext()).exerciseDao().getAllVisible().observe(
                 getViewLifecycleOwner(), exerciseTypes ->
                         mViewMvc.updateExerciseTypes(exerciseTypes));
 
@@ -112,7 +112,12 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
     @Override
     public void onEditExercisesClicked() {
-        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_edit_exercises);
+        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_exercises);
+    }
+
+    @Override
+    public void onEditGoalsClicked() {
+        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_goals);
     }
 
     @Override

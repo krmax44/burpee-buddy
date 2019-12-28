@@ -8,24 +8,24 @@ public class GoalToString {
     public static String goalToString(Goal goal) {
         String s = "";
 
-        final int sets = goal.getSets();
-        GoalType goalType = goal.getType();
+        final int sets = goal.sets;
+        GoalType goalType = goal.type;
         if (goalType.equals(AMRAP)) {
             s += sets == 1 ? "" : sets + " x ";
             s += "AMRAP ";
-            s += formatSeconds(goal.getDuration());
+            s += formatSeconds(goal.duration);
         } else if (goalType.equals(TIME_BASED)) {
             s += sets == 1 ? "" : sets + " x ";
-            s += formatSeconds(goal.getDuration());
+            s += formatSeconds(goal.duration);
         } else if (goalType.equals(REP_BASED)) {
             s += sets == 1 ? "" : sets + " x ";
-            s += goal.getReps() + " reps";
+            s += goal.reps + " reps";
         }
 
         return s;
     }
 
-    private static String formatSeconds(int seconds) {
+    public static String formatSeconds(int seconds) {
 
         final int minutes = seconds / 60;
         final int hours = minutes / 60;

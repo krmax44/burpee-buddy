@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.common.recyclerview.ItemTouchHelperAdapter;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.edit_exercises.item.ExercisesItemViewMvc;
-import com.apps.adrcotfas.burpeebuddy.edit_exercises.item.ExercisesItemViewMvcImpl;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.items.ExercisesItemViewMvc;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.items.ExercisesItemViewMvcImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +24,6 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     private List<Exercise> mExercises = new ArrayList<>();
 
     public interface Listener {
-        void onExerciseAddClicked();
         void onVisibilityToggle(String exercise, boolean visible);
         void onExerciseEditClicked(Exercise exercise);
         void onDragStarted(ExercisesViewHolder viewHolder);

@@ -43,7 +43,7 @@ public class SoundPlayer extends ContextWrapper {
                 mMediaPlayer.start();
             });
 
-        } catch (SecurityException | IOException e) {
+        } catch (IllegalStateException | SecurityException | IOException e) {
             Timber.tag(TAG).wtf(e.getMessage());
             mMediaPlayer.release();
         }

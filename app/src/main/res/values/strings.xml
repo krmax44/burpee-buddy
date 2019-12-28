@@ -27,4 +27,8 @@
     <string name="delete">Delete</string>
     <string name="exercise_dialog_edit_exercise">Edit exercise</string>
     <string name="exercise_dialog_add_exercise">Add exercise</string>
+    <string name="goal_dialog_break">Break</string>
+    <string name="goal_dialog_duration">Duration</string>
+    <string name="goal_dialog_reps">Reps</string>
+    <string name="goal_dialog_sets">Sets</string>
 </resources>

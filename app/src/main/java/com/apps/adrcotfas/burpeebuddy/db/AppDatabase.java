@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseTypeDao;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseDao;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseTypeFactory;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalDao;
@@ -51,7 +51,7 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract WorkoutDao workoutDao();
-    public abstract ExerciseTypeDao exerciseTypeDao();
+    public abstract ExerciseDao exerciseDao();
     public abstract GoalDao goalDao();
 
     /**
@@ -60,7 +60,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static void populateExercises(Context context) {
         mExecutorService.execute(() -> {
-            getDatabase(context).exerciseTypeDao().insertAll(
+            getDatabase(context).exerciseDao().insertAll(
                     ExerciseTypeFactory.getDefaultWorkouts());
             getDatabase(context).goalDao().insertAll(
                     GoalFactory.getDefaultGoals());
@@ -70,17 +70,17 @@ public abstract class AppDatabase extends RoomDatabase {
     // TODO: maybe move these methods to separate ViewModels
     public static void editVisibility(Context context, String exercise, boolean visibility) {
         mExecutorService.execute(()
-                -> getDatabase(context).exerciseTypeDao().editVisibility(exercise, visibility));
+                -> getDatabase(context).exerciseDao().editVisibility(exercise, visibility));
     }
 
     public static void editExerciseOrder(Context context, String name, int i) {
         mExecutorService.execute(()
-                -> getDatabase(context).exerciseTypeDao().editOrder(name, i));
+                -> getDatabase(context).exerciseDao().editOrder(name, i));
     }
 
     public static void editExercise(Context context, String name, Exercise exercise) {
         mExecutorService.execute(()
-                -> getDatabase(context).exerciseTypeDao().editExercise(
+                -> getDatabase(context).exerciseDao().editExercise(
                 name,
                 exercise.name,
                 exercise.type,
@@ -89,11 +89,29 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public static void addExercise(Context context, Exercise exercise) {
         mExecutorService.execute(()
-                -> getDatabase(context).exerciseTypeDao().addExercise(exercise));
+                -> getDatabase(context).exerciseDao().addExercise(exercise));
     }
 
     public static void deleteExercise(Context context, String name) {
         mExecutorService.execute(()
-                -> getDatabase(context).exerciseTypeDao().delete(name));
+                -> getDatabase(context).exerciseDao().delete(name));
+    }
+
+    public static void addGoal(Context context, Goal goal) {
+        mExecutorService.execute(()
+                -> getDatabase(context).goalDao()
+                .addGoal(goal));
+    }
+
+    public static void editGoal(Context context, int id, Goal goal) {
+        mExecutorService.execute(()
+                -> getDatabase(context).goalDao()
+                .editGoal(id, goal.type, goal.sets, goal.reps, goal.duration, goal.duration_break));
+    }
+
+    public static void deleteGoal(Context context, int id) {
+        mExecutorService.execute(()
+                -> getDatabase(context).goalDao()
+                .deleteGoal(id));
     }
 }

@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_exercises.dialog;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises.dialogs;
 
 import android.app.Dialog;
 import android.os.Bundle;

@@ -12,11 +12,11 @@ public class GoalFactory {
         goals.add(Goal.getRepBasedGoal(4, 15, 30));
         goals.add(Goal.getRepBasedGoal(5, 20, 30));
 
-        goals.add(Goal.getAmrapBasedGoal(3, 10, 7));
+        goals.add(Goal.getAmrapBasedGoal(3, 30, 30));
         goals.add(Goal.getAmrapBasedGoal(4, 60, 30));
         goals.add(Goal.getAmrapBasedGoal(5, 60, 30));
 
-        goals.add(Goal.getTimeBasedGoal(3, 10, 7));
+        goals.add(Goal.getTimeBasedGoal(3, 30, 30));
         goals.add(Goal.getTimeBasedGoal(3, 60, 30));
         goals.add(Goal.getTimeBasedGoal(3, 90, 30));
         return goals;

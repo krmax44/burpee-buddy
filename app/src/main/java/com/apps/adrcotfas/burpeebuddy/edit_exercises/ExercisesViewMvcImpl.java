@@ -17,7 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExercisesViewMcvImpl
+public class ExercisesViewMvcImpl
         extends BaseObservableViewMvc<ExercisesViewMvc.Listener>
         implements ExercisesViewMvc, ExercisesAdapter.Listener {
 
@@ -27,10 +27,10 @@ public class ExercisesViewMcvImpl
 
     private List<Exercise> mExercises = new ArrayList<>();
 
-    public ExercisesViewMcvImpl(LayoutInflater inflater, ViewGroup parent) {
-        setRootView(inflater.inflate(R.layout.fragment_edit_chips, parent, false));
+    public ExercisesViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
+        setRootView(inflater.inflate(R.layout.fragment_add_edit, parent, false));
 
-        mRecyclerView = findViewById(R.id.recycler_exercises);
+        mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new ExercisesAdapter(inflater, this);
         mRecyclerView.setAdapter(mAdapter);
@@ -51,13 +51,6 @@ public class ExercisesViewMcvImpl
     public void bindExercises(List<Exercise> exercises) {
         mAdapter.bindExercises(exercises);
         mExercises = exercises;
-    }
-
-    @Override
-    public void onExerciseAddClicked() {
-        for (Listener l : getListeners()) {
-            l.onExerciseAddClicked();
-        }
     }
 
     @Override
