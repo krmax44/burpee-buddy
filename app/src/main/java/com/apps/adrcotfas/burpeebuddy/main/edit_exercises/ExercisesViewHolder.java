@@ -8,11 +8,12 @@ import com.apps.adrcotfas.burpeebuddy.common.recyclerview.ItemTouchHelperViewHol
 import com.apps.adrcotfas.burpeebuddy.main.edit_exercises.item.ExercisesItemViewMvc;
 
 class ExercisesViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
+
+    private final ExercisesItemViewMvc mViewMvc;
+
     public ExercisesItemViewMvc getViewMvc() {
         return mViewMvc;
     }
-
-    private final ExercisesItemViewMvc mViewMvc;
 
     public ExercisesViewHolder(ExercisesItemViewMvc viewMvc) {
         super(viewMvc.getRootView());

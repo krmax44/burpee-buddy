@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
 import java.util.List;
 
@@ -32,6 +34,10 @@ public interface ExerciseTypeDao {
 
     @Query("update Exercise SET `order` = :order WHERE name = :name")
     void editOrder(String name, int order);
+
+    @TypeConverters(ExerciseTypeConverter.class)
+    @Query("update Exercise SET `name` = :newName, 'type' = :type, 'color' = :color WHERE name = :name")
+    void editExercise(String name, String newName, ExerciseType type, int color);
 
     @Query("update Exercise SET visible= :visibility WHERE name = :name")
     void editVisibility(String name, boolean visibility);

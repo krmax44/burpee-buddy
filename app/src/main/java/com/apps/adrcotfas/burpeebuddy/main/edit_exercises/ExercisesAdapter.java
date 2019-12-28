@@ -24,8 +24,9 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     private List<Exercise> mExercises = new ArrayList<>();
 
     public interface Listener {
+        void onExerciseAddClicked();
         void onVisibilityToggle(String exercise, boolean visible);
-        void onExerciseEdit(String exercise, Exercise newExercise);
+        void onExerciseEditClicked(Exercise exercise);
         void onDragStarted(ExercisesViewHolder viewHolder);
         void onExercisesRearranged(List<Exercise> exercises);
     }
@@ -69,8 +70,13 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     }
 
     @Override
-    public void onExerciseEdit(String exercise, Exercise newExercise) {
-        mListener.onExerciseEdit(exercise, newExercise);
+    public void onExerciseAddClicked() {
+        mListener.onExerciseAddClicked();
+    }
+
+    @Override
+    public void onExerciseEditClicked(Exercise exercise) {
+        mListener.onExerciseEditClicked(exercise);
     }
 
     @Override

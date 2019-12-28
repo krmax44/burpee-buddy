@@ -64,7 +64,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     ExerciseTypeFactory.getDefaultWorkouts());
             getDatabase(context).goalDao().insertAll(
                     GoalFactory.getDefaultGoals());
-            });
+        });
     }
 
     // TODO: maybe move these methods to separate ViewModels
@@ -76,5 +76,24 @@ public abstract class AppDatabase extends RoomDatabase {
     public static void editExerciseOrder(Context context, String name, int i) {
         mExecutorService.execute(()
                 -> getDatabase(context).exerciseTypeDao().editOrder(name, i));
+    }
+
+    public static void editExercise(Context context, String name, Exercise exercise) {
+        mExecutorService.execute(()
+                -> getDatabase(context).exerciseTypeDao().editExercise(
+                name,
+                exercise.name,
+                exercise.type,
+                exercise.color));
+    }
+
+    public static void addExercise(Context context, Exercise exercise) {
+        mExecutorService.execute(()
+                -> getDatabase(context).exerciseTypeDao().addExercise(exercise));
+    }
+
+    public static void deleteExercise(Context context, String name) {
+        mExecutorService.execute(()
+                -> getDatabase(context).exerciseTypeDao().delete(name));
     }
 }

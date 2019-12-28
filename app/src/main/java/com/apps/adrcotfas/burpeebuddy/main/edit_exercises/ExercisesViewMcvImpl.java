@@ -2,6 +2,7 @@ package com.apps.adrcotfas.burpeebuddy.main.edit_exercises;
 
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -40,13 +41,24 @@ public class ExercisesViewMcvImpl
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        // fab.setOnClickListener(); show dialog, then call
+        fab.setOnClickListener(v -> {
+            for (Listener l : getListeners()) {
+                l.onExerciseAddClicked();
+            }
+        });
     }
 
     @Override
     public void bindExercises(List<Exercise> exercises) {
         mAdapter.bindExercises(exercises);
         mExercises = exercises;
+    }
+
+    @Override
+    public void onExerciseAddClicked() {
+        for (Listener l : getListeners()) {
+            l.onExerciseAddClicked();
+        }
     }
 
     @Override
@@ -57,9 +69,9 @@ public class ExercisesViewMcvImpl
     }
 
     @Override
-    public void onExerciseEdit(String exercise, Exercise newExercise) {
+    public void onExerciseEditClicked(Exercise exercise) {
         for (Listener l : getListeners()) {
-            l.onExerciseEdit(exercise, newExercise);
+            l.onExerciseEditClicked(exercise);
         }
     }
 

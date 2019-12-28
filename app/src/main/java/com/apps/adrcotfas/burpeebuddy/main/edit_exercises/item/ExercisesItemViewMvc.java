@@ -9,7 +9,7 @@ import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 public interface ExercisesItemViewMvc extends ObservableViewMvc<ExercisesItemViewMvc.Listener> {
 
     public interface Listener {
-        void onExerciseEdit(String exercise, Exercise newExercise);
+        void onExerciseEditClicked(Exercise exercise);
         void onVisibilityToggle(String exercise, boolean visible);
     }
 

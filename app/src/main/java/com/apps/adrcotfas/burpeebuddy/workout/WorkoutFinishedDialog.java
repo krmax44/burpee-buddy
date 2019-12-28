@@ -29,6 +29,7 @@ public class WorkoutFinishedDialog extends DialogFragment {
             message = "Congratulations!\nYou have completed " + reps + " reps.";
         }
 
+        //Dialog d = new MaterialAlertDialogBuilder(getContext())
         Dialog d = new AlertDialog.Builder(getActivity())
             .setTitle("Workout finished")
             .setMessage(message)

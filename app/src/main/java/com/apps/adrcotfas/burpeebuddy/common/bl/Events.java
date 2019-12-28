@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.common.bl;
 
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 
 public class Events {
 
@@ -41,4 +42,29 @@ public class Events {
      * When the reps or time based goal is achieved
      */
     public static class FinishedWorkoutEvent {}
+
+    public static class EditExercise {
+        public String exerciseToEdit;
+        public Exercise exercise;
+
+        public EditExercise(String exerciseToEdit, Exercise exercise) {
+            this.exerciseToEdit = exerciseToEdit;
+            this.exercise = exercise;
+        }
+    }
+
+    public static class AddExercise {
+        public Exercise exercise;
+
+        public AddExercise(Exercise exercise) {
+            this.exercise = exercise;
+        }
+    }
+
+    public static class DeleteExercise {
+        public String name;
+        public DeleteExercise(String name) {
+            this.name = name;
+        }
+    }
 }

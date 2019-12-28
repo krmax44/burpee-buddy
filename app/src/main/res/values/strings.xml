@@ -16,4 +16,15 @@
     <string name="stop">STOP</string>
     <string name="database_name">buddy-db</string>
     <string name="add_workout">Add workout</string>
+    <string name="exercise_dialog_reps">Reps</string>
+    <string name="exercise_dialog_reps_proxy">Reps with proximity sensor</string>
+    <string name="exercise_dialog_weight">Weight</string>
+    <string name="exercise_dialog_distance">Distance</string>
+    <string name="exercise_dialog_time">Time</string>
+    <string name="exercise_dialog_metrics">Metrics</string>
+    <string name="exercise_dialog_exercise_name">Exercise name</string>
+    <string name="exercise_dialog_name_error">Please enter a valid name</string>
+    <string name="delete">Delete</string>
+    <string name="exercise_dialog_edit_exercise">Edit exercise</string>
+    <string name="exercise_dialog_add_exercise">Add exercise</string>
 </resources>

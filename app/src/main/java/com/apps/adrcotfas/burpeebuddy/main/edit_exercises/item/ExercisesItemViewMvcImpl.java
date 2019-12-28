@@ -39,10 +39,10 @@ public class ExercisesItemViewMvcImpl extends BaseObservableViewMvc<ExercisesIte
         });
 
         findViewById(R.id.edit).setOnClickListener(v -> {
-            //TODO: open dialog, when the OK button is clicked, call l.onExerciseEdit
-//            for (Listener l : getListeners()) {
-//                l.onExerciseEdit(mExercise);
-//            }
+            //TODO: open dialog, when the OK button is clicked, call l.onExerciseEditClicked
+            for (Listener l : getListeners()) {
+                l.onExerciseEditClicked(mExercise);
+            }
         });
     }
 
