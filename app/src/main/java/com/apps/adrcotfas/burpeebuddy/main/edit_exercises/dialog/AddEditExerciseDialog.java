@@ -57,7 +57,7 @@ public class AddEditExerciseDialog extends DialogFragment {
                 .inflate(R.layout.dialog_add_edit_exercise, null, false);
 
         final MaterialCheckBox repsBox = v.findViewById(R.id.reps);
-        final MaterialCheckBox proxyBox = v.findViewById(R.id.proxy_relevant);
+        final MaterialCheckBox proxyBox = v.findViewById(R.id.proxy);
         final TextInputLayout nameEditTextLayout = v.findViewById(R.id.name_layout);
         final TextInputEditText nameEditText = v.findViewById(R.id.name);
 

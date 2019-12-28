@@ -70,11 +70,6 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     }
 
     @Override
-    public void onExerciseAddClicked() {
-        mListener.onExerciseAddClicked();
-    }
-
-    @Override
     public void onExerciseEditClicked(Exercise exercise) {
         mListener.onExerciseEditClicked(exercise);
     }
