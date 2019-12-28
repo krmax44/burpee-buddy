@@ -72,4 +72,9 @@ public abstract class AppDatabase extends RoomDatabase {
         mExecutorService.execute(()
                 -> getDatabase(context).exerciseTypeDao().editVisibility(exercise, visibility));
     }
+
+    public static void editExerciseOrder(Context context, String name, int i) {
+        mExecutorService.execute(()
+                -> getDatabase(context).exerciseTypeDao().editOrder(name, i));
+    }
 }

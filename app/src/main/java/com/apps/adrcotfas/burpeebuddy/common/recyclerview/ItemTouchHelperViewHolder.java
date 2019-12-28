@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.common;
+package com.apps.adrcotfas.burpeebuddy.common.recyclerview;
 
 import androidx.recyclerview.widget.ItemTouchHelper;
 

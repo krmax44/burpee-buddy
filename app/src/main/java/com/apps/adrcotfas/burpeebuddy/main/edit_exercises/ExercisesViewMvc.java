@@ -11,7 +11,8 @@ public interface ExercisesViewMvc extends ObservableViewMvc<ExercisesViewMvc.Lis
 
     public interface Listener {
         void onAddExercise(Exercise exercise);
-        void onVisibilityToggle(String exercise, boolean visibility);
         void onExerciseEdit(String exercise, Exercise newExercise);
+        void onVisibilityToggle(String exercise, boolean visibility);
+        void onExercisesRearranged(List<Exercise> exercises);
     }
 }

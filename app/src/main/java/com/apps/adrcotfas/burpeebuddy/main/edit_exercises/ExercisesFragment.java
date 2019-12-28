@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 
+import java.util.List;
+
 public class ExercisesFragment extends Fragment implements ExercisesViewMvc.Listener {
     private ExercisesViewMvc mViewMvc;
 
@@ -48,6 +50,15 @@ public class ExercisesFragment extends Fragment implements ExercisesViewMvc.List
     @Override
     public void onVisibilityToggle(String exercise, boolean visibility) {
         AppDatabase.editVisibility(getContext(), exercise, visibility);
+    }
+
+    //TODO: to avoid clipping it may be needed to call this when the user navigates back
+    // instead of every time the user rearranges a row
+    @Override
+    public void onExercisesRearranged(List<Exercise> exercises) {
+        for (int i = 0; i < exercises.size(); ++i) {
+            AppDatabase.editExerciseOrder(getContext(), exercises.get(i).name, i);
+        }
     }
 
     @Override

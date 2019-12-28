@@ -4,10 +4,12 @@ package com.apps.adrcotfas.burpeebuddy.main.edit_exercises;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.common.recyclerview.SimpleItemTouchHelperCallback;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -21,6 +23,8 @@ public class ExercisesViewMcvImpl
 
     private RecyclerView mRecyclerView;
     private ExercisesAdapter mAdapter;
+    private ItemTouchHelper mItemTouchHelper;
+
     private List<Exercise> mExercises = new ArrayList<>();
 
     public ExercisesViewMcvImpl(LayoutInflater inflater, ViewGroup parent) {
@@ -30,6 +34,10 @@ public class ExercisesViewMcvImpl
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new ExercisesAdapter(inflater, this);
         mRecyclerView.setAdapter(mAdapter);
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         // fab.setOnClickListener(); show dialog, then call
@@ -52,6 +60,18 @@ public class ExercisesViewMcvImpl
     public void onExerciseEdit(String exercise, Exercise newExercise) {
         for (Listener l : getListeners()) {
             l.onExerciseEdit(exercise, newExercise);
+        }
+    }
+
+    @Override
+    public void onDragStarted(ExercisesViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
+    }
+
+    @Override
+    public void onExercisesRearranged(List<Exercise> exercises) {
+        for (Listener l : getListeners()) {
+            l.onExercisesRearranged(exercises);
         }
     }
 }

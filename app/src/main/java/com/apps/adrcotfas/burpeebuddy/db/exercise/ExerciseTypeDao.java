@@ -12,13 +12,13 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface ExerciseTypeDao {
 
-    @Query("select * from Exercise")
+    @Query("select * from Exercise ORDER BY `order`")
     LiveData<List<Exercise>> getAll();
 
     @Query("select * from Exercise where name = :name")
     Exercise getExercise(String name);
 
-    @Query("select * from Exercise where visible = 1")
+    @Query("select * from Exercise where visible = 1 ORDER BY `order`")
     LiveData<List<Exercise>> getAllVisible();
 
     @Insert(onConflict = REPLACE)

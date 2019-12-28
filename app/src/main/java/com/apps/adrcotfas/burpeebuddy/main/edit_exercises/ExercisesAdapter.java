@@ -1,30 +1,23 @@
 package com.apps.adrcotfas.burpeebuddy.main.edit_exercises;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.apps.adrcotfas.burpeebuddy.common.ItemTouchHelperAdapter;
+import com.apps.adrcotfas.burpeebuddy.common.recyclerview.ItemTouchHelperAdapter;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.main.edit_exercises.item.ExercisesItemViewMvc;
 import com.apps.adrcotfas.burpeebuddy.main.edit_exercises.item.ExercisesItemViewMvcImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.ExercisesViewHolder>
+public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
         implements ExercisesItemViewMvc.Listener, ItemTouchHelperAdapter {
-
-    static class ExercisesViewHolder extends RecyclerView.ViewHolder {
-        private final ExercisesItemViewMvc mViewMvc;
-
-        public ExercisesViewHolder(ExercisesItemViewMvc viewMvc) {
-            super(viewMvc.getRootView());
-            mViewMvc = viewMvc;
-        }
-    }
 
     private final LayoutInflater mInflater;
     private final Listener mListener;
@@ -33,6 +26,8 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
     public interface Listener {
         void onVisibilityToggle(String exercise, boolean visible);
         void onExerciseEdit(String exercise, Exercise newExercise);
+        void onDragStarted(ExercisesViewHolder viewHolder);
+        void onExercisesRearranged(List<Exercise> exercises);
     }
 
     public ExercisesAdapter(LayoutInflater inflater, Listener listener) {
@@ -53,9 +48,14 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
         return new ExercisesViewHolder(viewMvc);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull ExercisesViewHolder holder, int position) {
-        holder.mViewMvc.bindExercise(mExercises.get(position));
+        holder.getViewMvc().bindExercise(mExercises.get(position));
+        holder.getViewMvc().getScrollHandle().setOnTouchListener((v, event) -> {
+            mListener.onDragStarted(holder);
+            return false;
+        });
     }
 
     @Override
@@ -75,11 +75,20 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(mExercises, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(mExercises, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
     }
 
     @Override
     public void onClearView() {
-
+        mListener.onExercisesRearranged(mExercises);
     }
 }
