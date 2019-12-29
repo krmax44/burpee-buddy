@@ -30,6 +30,15 @@ public class Exercise {
     public boolean visible;
     public int order;
 
+    @Ignore
+    public Exercise() {
+        this.name = "";
+        this.type = ExerciseType.INVALID;
+        this.color = 0;
+        this.visible = true;
+        this.order = Integer.MAX_VALUE;
+    }
+
     public Exercise(String name, ExerciseType type) {
         this.name = name;
         this.type = type;

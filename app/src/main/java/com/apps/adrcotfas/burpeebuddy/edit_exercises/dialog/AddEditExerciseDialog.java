@@ -13,7 +13,6 @@ import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseTypeConverter;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
@@ -27,24 +26,18 @@ public class AddEditExerciseDialog extends DialogFragment {
 
     private static final String TAG = "AddEditExerciseDialog";
 
-    private static String KEY_NAME  = TAG + "_key_name";
-    private static String KEY_TYPE  = TAG + "_key_type";
-    private static String KEY_COLOR = TAG + "_key_color";
-
     private boolean mEditMode;
     /** only relevant in edit mode */
-    private String mExerciseName;
+    private Exercise mExercise;
 
     public static AddEditExerciseDialog getInstance(Exercise exercise, boolean editMode) {
         AddEditExerciseDialog dialog = new AddEditExerciseDialog();
         dialog.mEditMode = editMode;
 
-        Bundle args = new Bundle(3);
         if (editMode && exercise != null) {
-            args.putString(KEY_NAME, exercise.name);
-            args.putInt(KEY_TYPE, ExerciseTypeConverter.getIntFromExerciseType(exercise.type));
-            args.putInt(KEY_COLOR, exercise.color);
-            dialog.setArguments(args);
+            dialog.mExercise = exercise;
+        } else {
+            dialog.mExercise = new Exercise();
         }
         return dialog;
     }
@@ -99,24 +92,26 @@ public class AddEditExerciseDialog extends DialogFragment {
         });
 
         if(mEditMode) {
-            final String name = getArguments().getString(KEY_NAME);
-            mExerciseName = name;
-            nameEditText.setText(name);
+            nameEditText.setText(mExercise.name);
 
-            final ExerciseType type =
-                    ExerciseTypeConverter.getExerciseTypeFromInt(getArguments().getInt(KEY_TYPE));
-            if (type.equals(ExerciseType.TIME_BASED)) {
-                // do nothing
-            } else if (type.equals(ExerciseType.COUNTABLE)) {
-                proxyBox.setChecked(true);
-            } else if (type.equals(ExerciseType.REP_BASED)) {
-                repsBox.setChecked(true);
-            } else {
-                Timber.tag(TAG).wtf("Invalid exercise type.");
+            switch (mExercise.type) {
+                case TIME_BASED:
+                    // do nothing
+                    break;
+                case COUNTABLE:
+                    proxyBox.setChecked(true);
+                    break;
+                case REP_BASED:
+                    repsBox.setChecked(true);
+                    break;
+                default:
+                    Timber.tag(TAG).wtf("Invalid exercise type.");
+                    break;
             }
+
             b.setNeutralButton(getString(R.string.delete), ((dialog, which) -> {
                 //TODO: confirmation
-                EventBus.getDefault().post(new Events.DeleteExercise(mExerciseName));
+                EventBus.getDefault().post(new Events.DeleteExercise(mExercise.name));
             }));
         }
 
@@ -133,7 +128,7 @@ public class AddEditExerciseDialog extends DialogFragment {
                             }
                             EventBus.getDefault().post(mEditMode
                                     ? new Events.EditExercise(
-                                    mExerciseName,
+                                    mExercise.name,
                                     getCreatedExercise(
                                             nameEditText.getText().toString(),
                                             repsBox.isChecked(),

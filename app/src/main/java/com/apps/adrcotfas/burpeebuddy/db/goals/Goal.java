@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -68,6 +69,15 @@ public class Goal implements Parcelable {
     public static Goal getAmrapBasedGoal(int sets, int duration, int duration_break) {
         return new Goal(GoalType.AMRAP, sets, DEFAULT_REPS, duration, duration_break);
 
+    }
+
+    @Ignore
+    public Goal() {
+        this.type = GoalType.REP_BASED;
+        this.sets = DEFAULT_SETS;
+        this.reps = DEFAULT_REPS;
+        this.duration = DEFAULT_DURATION;
+        this.duration_break = DEFAULT_BREAK;
     }
 
     public Goal(GoalType type, int sets, int reps, int duration, int duration_break) {

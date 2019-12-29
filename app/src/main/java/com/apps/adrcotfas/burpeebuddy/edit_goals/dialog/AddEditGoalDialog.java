@@ -15,51 +15,31 @@ import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalTypeConverter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.radiobutton.MaterialRadioButton;
 
 import org.greenrobot.eventbus.EventBus;
 
-import static com.apps.adrcotfas.burpeebuddy.db.goals.Goal.DEFAULT_BREAK;
-import static com.apps.adrcotfas.burpeebuddy.db.goals.Goal.DEFAULT_DURATION;
-import static com.apps.adrcotfas.burpeebuddy.db.goals.Goal.DEFAULT_REPS;
-import static com.apps.adrcotfas.burpeebuddy.db.goals.Goal.DEFAULT_SETS;
 import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.formatSeconds;
 
 public class AddEditGoalDialog extends DialogFragment {
 
     private static final String TAG = "AddEditGoalDialog";
 
-    private static String KEY_TYPE = TAG + "_key_type";
-    private static String KEY_SETS = TAG + "_key_sets";
-    private static String KEY_REPS = TAG + "_key_reps";
-    private static String KEY_DURATION = TAG + "_key_duration";
-    private static String KEY_BREAK = TAG + "_key_break";
-
     private static int REPS_FACTOR = 5;
     private static int DURATION_FACTOR = 30;
 
     private boolean mEditMode;
-    private int mGoalId;
-    private Goal mCreatedGoal;
+    private Goal mGoal;
 
     public static AddEditGoalDialog getInstance(Goal goal, boolean editMode) {
         AddEditGoalDialog dialog = new AddEditGoalDialog();
         dialog.mEditMode = editMode;
 
-        Bundle args = new Bundle(5);
         if (editMode && goal != null) {
-            dialog.mGoalId = goal.id;
-            dialog.mCreatedGoal = goal;
-            args.putInt(KEY_TYPE, GoalTypeConverter.getIntFromGoal(goal.type));
-            args.putInt(KEY_SETS, goal.sets);
-            args.putInt(KEY_REPS, goal.reps);
-            args.putInt(KEY_DURATION, goal.duration);
-            args.putInt(KEY_BREAK, goal.duration_break);
-            dialog.setArguments(args);
+            dialog.mGoal = goal;
         } else {
-            dialog.mCreatedGoal  = new Goal(GoalType.REP_BASED, DEFAULT_SETS, DEFAULT_REPS, DEFAULT_DURATION, DEFAULT_BREAK);
+            dialog.mGoal = new Goal();
         }
         return dialog;
     }
@@ -75,7 +55,7 @@ public class AddEditGoalDialog extends DialogFragment {
 
         if(mEditMode) {
             b.setNeutralButton(getString(R.string.delete), ((dialog, which)
-                    -> EventBus.getDefault().post(new Events.DeleteGoal(mGoalId))));
+                    -> EventBus.getDefault().post(new Events.DeleteGoal(mGoal.id))));
         }
 
         Dialog d = b
@@ -83,8 +63,8 @@ public class AddEditGoalDialog extends DialogFragment {
                 .setTitle(mEditMode ? "Edit Goal" : "Add Goal")
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     EventBus.getDefault().post(mEditMode
-                            ? new Events.EditGoal(mGoalId, mCreatedGoal)
-                            : new Events.AddGoal(mCreatedGoal));
+                            ? new Events.EditGoal(mGoal.id, mGoal)
+                            : new Events.AddGoal(mGoal));
                 })
                 .setNegativeButton(android.R.string.cancel, ((dialog, which) -> {}))
                 .setView(v)
@@ -115,7 +95,7 @@ public class AddEditGoalDialog extends DialogFragment {
         setsSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int sets, boolean fromUser) {
-                mCreatedGoal.sets = sets;
+                mGoal.sets = sets;
                 setsDesc.setText(formatSetsDesc(sets));
                 breakContainer.setVisibility(sets == 1 ? View.GONE : View.VISIBLE);
             }
@@ -133,7 +113,7 @@ public class AddEditGoalDialog extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 int reps = progress * REPS_FACTOR;
-                mCreatedGoal.reps = reps;
+                mGoal.reps = reps;
                 repsDesc.setText(formatRepsDesc(reps));
             }
 
@@ -151,7 +131,7 @@ public class AddEditGoalDialog extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 final int seconds = progress * DURATION_FACTOR;
-                mCreatedGoal.duration = seconds;
+                mGoal.duration = seconds;
                 durationDesc.setText(formatDurationDesc(seconds));
             }
 
@@ -168,7 +148,7 @@ public class AddEditGoalDialog extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 final int seconds = progress * DURATION_FACTOR;
-                mCreatedGoal.duration_break = seconds;
+                mGoal.duration_break = seconds;
                 breakDesc.setText(formatBreakDesc(seconds));
             }
 
@@ -185,7 +165,7 @@ public class AddEditGoalDialog extends DialogFragment {
             if (isChecked) {
                 repsContainer.setVisibility(View.VISIBLE);
                 durationContainer.setVisibility(View.GONE);
-                mCreatedGoal.type = GoalType.REP_BASED;
+                mGoal.type = GoalType.REP_BASED;
             }
         });
 
@@ -193,7 +173,7 @@ public class AddEditGoalDialog extends DialogFragment {
             if (isChecked) {
                 repsContainer.setVisibility(View.GONE);
                 durationContainer.setVisibility(View.VISIBLE);
-                mCreatedGoal.type = GoalType.AMRAP;
+                mGoal.type = GoalType.AMRAP;
             }
         });
 
@@ -201,15 +181,15 @@ public class AddEditGoalDialog extends DialogFragment {
             if (isChecked) {
                 repsContainer.setVisibility(View.GONE);
                 durationContainer.setVisibility(View.VISIBLE);
-                mCreatedGoal.type = GoalType.TIME_BASED;
+                mGoal.type = GoalType.TIME_BASED;
             }
         });
 
         if(mEditMode) {
-            final int sets = getArguments().getInt(KEY_SETS);
-            final int reps = getArguments().getInt(KEY_REPS);
-            final int duration = getArguments().getInt(KEY_DURATION);
-            final int durationBreak = getArguments().getInt(KEY_BREAK);
+            final int sets = mGoal.sets;
+            final int reps = mGoal.reps;
+            final int duration = mGoal.duration;
+            final int durationBreak = mGoal.duration_break;
 
             final int repsProgress = reps / REPS_FACTOR;
             final int durationProgress = duration / DURATION_FACTOR;
@@ -239,8 +219,7 @@ public class AddEditGoalDialog extends DialogFragment {
                 breakSeekbar.setProgress(durationBreakProgress);
             }
 
-            GoalType goalType = GoalTypeConverter.getGoalTypeFromInt(getArguments().getInt(KEY_TYPE));
-            switch (goalType) {
+            switch (mGoal.type) {
                 case TIME_BASED:
                     durationRadio.setChecked(true);
                     repsContainer.setVisibility(View.GONE);
@@ -257,10 +236,10 @@ public class AddEditGoalDialog extends DialogFragment {
                     break;
             }
         } else {
-            setsDesc.setText(formatSetsDesc(mCreatedGoal.sets));
-            repsDesc.setText(formatRepsDesc(mCreatedGoal.reps));
-            durationDesc.setText(formatDurationDesc(mCreatedGoal.duration));
-            breakDesc.setText(formatBreakDesc(mCreatedGoal.duration_break));
+            setsDesc.setText(formatSetsDesc(mGoal.sets));
+            repsDesc.setText(formatRepsDesc(mGoal.reps));
+            durationDesc.setText(formatDurationDesc(mGoal.duration));
+            breakDesc.setText(formatBreakDesc(mGoal.duration_break));
             durationContainer.setVisibility(View.GONE);
         }
     }
