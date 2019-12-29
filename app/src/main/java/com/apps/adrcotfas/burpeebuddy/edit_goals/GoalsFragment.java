@@ -26,6 +26,7 @@ public class GoalsFragment extends Fragment implements GoalsViewMvc.Listener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        EventBus.getDefault().register(this);
         mViewMvc = new GoalsViewMvcImpl(inflater, container);
 
         AppDatabase.getDatabase(getContext()).goalDao().getAll().observe(
@@ -38,7 +39,6 @@ public class GoalsFragment extends Fragment implements GoalsViewMvc.Listener {
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
         mViewMvc.registerListener(this);
     }
 

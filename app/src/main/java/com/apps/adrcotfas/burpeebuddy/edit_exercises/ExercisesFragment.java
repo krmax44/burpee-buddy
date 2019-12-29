@@ -28,6 +28,7 @@ public class ExercisesFragment extends Fragment implements ExercisesViewMvc.List
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        EventBus.getDefault().register(this);
         mViewMvc = new ExercisesViewMvcImpl(inflater, container);
 
         AppDatabase.getDatabase(getContext()).exerciseDao().getAll().observe(
@@ -40,7 +41,6 @@ public class ExercisesFragment extends Fragment implements ExercisesViewMvc.List
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
         mViewMvc.registerListener(this);
     }
 
