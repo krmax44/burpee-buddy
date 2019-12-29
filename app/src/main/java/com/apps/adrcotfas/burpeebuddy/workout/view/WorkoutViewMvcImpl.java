@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.workout;
+package com.apps.adrcotfas.burpeebuddy.workout.view;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

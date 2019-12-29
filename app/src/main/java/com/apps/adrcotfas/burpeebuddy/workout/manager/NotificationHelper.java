@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.common.bl;
+package com.apps.adrcotfas.burpeebuddy.workout.manager;
 
 import android.annotation.TargetApi;
 import android.app.NotificationChannel;
@@ -11,6 +11,7 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.TimerFormat;
 
 public class NotificationHelper extends ContextWrapper {

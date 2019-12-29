@@ -3,7 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.db.exercise;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExerciseTypeFactory {
+public class ExerciseFactory {
 
     public final static String PUSHUPS = "push-ups";
     public final static String BURPEES = "burpees";

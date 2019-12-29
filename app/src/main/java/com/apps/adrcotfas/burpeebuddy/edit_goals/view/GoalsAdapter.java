@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_goals;
+package com.apps.adrcotfas.burpeebuddy.edit_goals.view;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -7,8 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
-import com.apps.adrcotfas.burpeebuddy.edit_goals.items.GoalsItemViewMvc;
-import com.apps.adrcotfas.burpeebuddy.edit_goals.items.GoalsItemViewMvcImpl;
+import com.apps.adrcotfas.burpeebuddy.edit_goals.GoalsViewHolder;
+import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsItemViewMvc;
+import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsItemViewMvcImpl;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_goals;
+package com.apps.adrcotfas.burpeebuddy.edit_goals.view;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -14,7 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-class GoalsViewMvcImpl
+public class GoalsViewMvcImpl
         extends BaseObservableViewMvc<GoalsViewMvc.Listener>
         implements GoalsViewMvc, GoalsAdapter.Listener {
 

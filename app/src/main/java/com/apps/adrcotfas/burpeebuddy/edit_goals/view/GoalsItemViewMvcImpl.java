@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_goals.items;
+package com.apps.adrcotfas.burpeebuddy.edit_goals.view;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

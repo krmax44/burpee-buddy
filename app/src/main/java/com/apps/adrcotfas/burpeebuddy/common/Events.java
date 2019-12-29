@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.common.bl;
+package com.apps.adrcotfas.burpeebuddy.common;
 
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;

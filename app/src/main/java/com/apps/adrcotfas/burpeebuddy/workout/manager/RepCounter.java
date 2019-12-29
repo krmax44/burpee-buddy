@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.common.bl;
+package com.apps.adrcotfas.burpeebuddy.workout.manager;
 
 import android.content.Context;
 import android.hardware.Sensor;

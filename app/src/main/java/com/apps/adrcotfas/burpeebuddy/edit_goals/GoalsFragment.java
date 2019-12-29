@@ -8,10 +8,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
+import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
-import com.apps.adrcotfas.burpeebuddy.edit_goals.dialogs.AddEditGoalDialog;
+import com.apps.adrcotfas.burpeebuddy.edit_goals.dialog.AddEditGoalDialog;
+import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsViewMvc;
+import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsViewMvcImpl;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

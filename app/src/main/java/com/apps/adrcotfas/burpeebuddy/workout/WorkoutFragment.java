@@ -14,11 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
-import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
+import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
+import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 import com.apps.adrcotfas.burpeebuddy.main.MainActivity;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
+import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
+import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewMvc;
+import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewMvcImpl;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseDao;
-import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseTypeFactory;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseFactory;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalDao;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalFactory;
@@ -61,7 +61,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public static void populateExercises(Context context) {
         mExecutorService.execute(() -> {
             getDatabase(context).exerciseDao().insertAll(
-                    ExerciseTypeFactory.getDefaultWorkouts());
+                    ExerciseFactory.getDefaultWorkouts());
             getDatabase(context).goalDao().insertAll(
                     GoalFactory.getDefaultGoals());
         });

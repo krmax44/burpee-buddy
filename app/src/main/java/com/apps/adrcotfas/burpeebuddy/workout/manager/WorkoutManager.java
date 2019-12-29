@@ -1,15 +1,15 @@
-package com.apps.adrcotfas.burpeebuddy.common.bl;
+package com.apps.adrcotfas.burpeebuddy.workout.manager;
 
 import android.content.Context;
 
+import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
+import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.common.timers.CountDownTimer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
-import com.apps.adrcotfas.burpeebuddy.workout.InProgressWorkout;
-import com.apps.adrcotfas.burpeebuddy.workout.State;
 
 import org.greenrobot.eventbus.EventBus;
 

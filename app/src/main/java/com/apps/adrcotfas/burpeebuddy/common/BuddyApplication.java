@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.common.bl;
+package com.apps.adrcotfas.burpeebuddy.common;
 
 import android.app.Application;
 import android.app.PendingIntent;
@@ -9,7 +9,9 @@ import androidx.navigation.NavDeepLinkBuilder;
 
 import com.apps.adrcotfas.burpeebuddy.BuildConfig;
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.workout.manager.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
+import com.apps.adrcotfas.burpeebuddy.workout.manager.WorkoutManager;
 
 import timber.log.Timber;
 

@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.main;
+package com.apps.adrcotfas.burpeebuddy.main.view;
 
 import androidx.lifecycle.MutableLiveData;
 

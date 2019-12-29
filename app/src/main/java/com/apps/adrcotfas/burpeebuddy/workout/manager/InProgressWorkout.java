@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.workout;
+package com.apps.adrcotfas.burpeebuddy.workout.manager;
 
 import androidx.lifecycle.MutableLiveData;
 

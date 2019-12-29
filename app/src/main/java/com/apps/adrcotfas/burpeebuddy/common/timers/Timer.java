@@ -1,6 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.common.timers;
 
-import com.apps.adrcotfas.burpeebuddy.common.bl.Events;
+import com.apps.adrcotfas.burpeebuddy.common.Events;
 
 import org.greenrobot.eventbus.EventBus;
 

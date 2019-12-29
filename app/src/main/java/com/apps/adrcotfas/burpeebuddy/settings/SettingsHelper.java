@@ -1,6 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.settings;
 
-import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
+import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 

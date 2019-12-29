@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_exercises;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises.view;
 
 
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.recyclerview.SimpleItemTouchHelperCallback;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.ExercisesAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;

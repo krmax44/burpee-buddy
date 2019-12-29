@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_goals;
+package com.apps.adrcotfas.burpeebuddy.edit_goals.view;
 
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;

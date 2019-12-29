@@ -13,20 +13,22 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication;
+import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
-import com.apps.adrcotfas.burpeebuddy.workout.State;
-import com.apps.adrcotfas.burpeebuddy.workout.WorkoutFinishedDialog;
+import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvc;
+import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvcImpl;
+import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
+import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutFinishedDialog;
 
 import java.util.List;
 
 import timber.log.Timber;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-import static com.apps.adrcotfas.burpeebuddy.common.bl.BuddyApplication.getWorkoutManager;
+import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.getWorkoutManager;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.COUNTABLE;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.REP_BASED;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;

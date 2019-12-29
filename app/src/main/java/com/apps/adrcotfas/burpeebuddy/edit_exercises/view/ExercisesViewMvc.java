@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_exercises;
+package com.apps.adrcotfas.burpeebuddy.edit_exercises.view;
 
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
