@@ -21,7 +21,7 @@ import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvc;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvcImpl;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
-import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutFinishedDialog;
+import com.apps.adrcotfas.burpeebuddy.workout.view.SetFinishedDialog;
 
 import java.util.List;
 
@@ -77,8 +77,8 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         if (getWorkoutManager().getWorkout().state != State.ACTIVE &&
                 MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
             Timber.tag(TAG).d( "show finished dialog");
-            WorkoutFinishedDialog.getInstance(
-                    BuddyApplication.getWorkoutManager().getWorkout().totalReps.getValue())
+            SetFinishedDialog.getInstance(
+                    BuddyApplication.getWorkoutManager().getWorkout())
                     .show(getActivity().getSupportFragmentManager(), TAG);
             getWorkoutManager().getWorkout().state = State.INACTIVE;
         }

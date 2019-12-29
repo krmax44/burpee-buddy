@@ -6,27 +6,27 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-public class WorkoutFinishedDialog extends DialogFragment {
+import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
 
-    private static String KEY_REPS = "reps";
-    public static WorkoutFinishedDialog getInstance(int reps) {
-        WorkoutFinishedDialog dialog = new WorkoutFinishedDialog();
-        Bundle args = new Bundle(1);
-        args.putInt(KEY_REPS, reps);
-        dialog.setArguments(args);
+public class SetFinishedDialog extends DialogFragment {
+
+    private InProgressWorkout mWorkout;
+    public static SetFinishedDialog getInstance(InProgressWorkout workout) {
+        SetFinishedDialog dialog = new SetFinishedDialog();
+        dialog.mWorkout = workout;
         return dialog;
     }
 
     @Override
     public final Dialog onCreateDialog(Bundle savedInstBundle) {
-        int reps = getArguments().getInt(KEY_REPS);
+
         String message;
-        if (reps == 0) {
+        if (mWorkout.totalReps == 0) {
             message = "No reps were completed.\nYou can do better next time!";
-        } else if (reps == 1){
+        } else if (mWorkout.totalReps == 1){
             message = "One rep was completed.\nYou can do better next time!";
         } else {
-            message = "Congratulations!\nYou have completed " + reps + " reps.";
+            message = "Congratulations!\nYou have completed " + mWorkout.totalReps + " reps.";
         }
 
         //Dialog d = new MaterialAlertDialogBuilder(getContext())

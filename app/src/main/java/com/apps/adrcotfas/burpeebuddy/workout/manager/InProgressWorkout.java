@@ -1,7 +1,5 @@
 package com.apps.adrcotfas.burpeebuddy.workout.manager;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
@@ -13,13 +11,13 @@ public class InProgressWorkout {
     public ExerciseType type;
     public Goal goal;
 
-    public MutableLiveData<Integer> crtSet = new MutableLiveData<>(1);
+    public int crtSet = 1;
 
-    public MutableLiveData<Integer> crtSetReps = new MutableLiveData<>(0);
-    public MutableLiveData<Integer> totalReps = new MutableLiveData<>(0);
+    public int crtSetReps = 0;
+    public int totalReps = 0;
 
-    public MutableLiveData<Integer> crtDuration = new MutableLiveData<>(0);
-    public MutableLiveData<Integer> totalDuration = new MutableLiveData<>(0);
+    public int crtDuration = 0;
+    public int totalDuration = 0;
 
     public InProgressWorkout() {
         reset();
@@ -28,10 +26,10 @@ public class InProgressWorkout {
     public void reset() {
         this.type = ExerciseType.INVALID;
         this.goal = new Goal(GoalType.INVALID, 0, 0, 0, 0);
-        crtSet.setValue(1);
-        crtSetReps.setValue(0);
-        totalReps.setValue(0);
-        crtDuration.setValue(0);
-        totalDuration.setValue(0);
+        crtSet = 1;
+        crtSetReps = 0;
+        totalReps = 0;
+        crtDuration = 0;
+        totalDuration = 0;
     }
 }

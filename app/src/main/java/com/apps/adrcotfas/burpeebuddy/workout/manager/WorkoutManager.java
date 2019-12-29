@@ -48,33 +48,30 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
             return;
         }
 
-        mWorkout.crtSetReps.setValue(mWorkout.crtSetReps.getValue() + 1);
-        mWorkout.totalReps.setValue(mWorkout.totalReps.getValue() + 1);
-
-        int crtReps = mWorkout.crtSetReps.getValue();
-        int crtSet = mWorkout.crtSet.getValue();
+        ++mWorkout.crtSetReps;
+        ++mWorkout.totalReps;
 
         if (getGoalType().equals(GoalType.REP_BASED)) {
-            if (crtReps < mWorkout.goal.reps) {
-                Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps.getValue() + "/" + mWorkout.goal.reps);
-                EventBus.getDefault().post(new Events.RepComplete(crtReps));
-            } else if (crtSet < mWorkout.goal.sets) {
+            if (mWorkout.crtSetReps < mWorkout.goal.reps) {
+                Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps + "/" + mWorkout.goal.reps);
+                EventBus.getDefault().post(new Events.RepComplete(mWorkout.crtSetReps));
+            } else if (mWorkout.crtSet < mWorkout.goal.sets) {
                 getRepCounter().unregister();
-                mWorkout.crtSetReps.setValue(0);
-                mWorkout.crtSet.setValue(crtSet + 1);
-                Timber.tag(TAG).d("set finished " + mWorkout.crtSet.getValue() + "/" + mWorkout.goal.sets);
+                ++mWorkout.crtSet;
+                Timber.tag(TAG).d("set finished " + mWorkout.crtSet + "/" + mWorkout.goal.sets);
                 mTimer.stop();
-                EventBus.getDefault().post(new Events.RepComplete(crtReps, true));
+                EventBus.getDefault().post(new Events.RepComplete(mWorkout.crtSetReps, true));
                 EventBus.getDefault().post(new Events.SetComplete());
+                mWorkout.crtSetReps = 0;
             } else {
                 Timber.tag(TAG).d("Workout finished");
                 mWorkout.state = State.FINISHED;
-                EventBus.getDefault().post(new Events.RepComplete(crtReps, true));
+                EventBus.getDefault().post(new Events.RepComplete(mWorkout.crtSetReps, true));
                 EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
             }
         } else if (getGoalType().equals(GoalType.AMRAP)) {
-            Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps.getValue());
-            EventBus.getDefault().post(new Events.RepComplete(crtReps));
+            Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps);
+            EventBus.getDefault().post(new Events.RepComplete(mWorkout.crtSetReps));
         }
     }
 
@@ -142,8 +139,8 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
 
     @Override
     public void onFinishedAmrapSet() {
-        getWorkout().crtSet.setValue(getWorkout().crtSet.getValue() + 1);
-        if (getWorkout().crtSet.getValue() <= getWorkout().goal.sets) {
+        ++getWorkout().crtSet;
+        if (getWorkout().crtSet <= getWorkout().goal.sets) {
             BuddyApplication.getWorkoutManager().getRepCounter().unregister();
             EventBus.getDefault().post(new Events.SetComplete());
         } else {
