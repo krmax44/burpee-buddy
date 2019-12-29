@@ -72,7 +72,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         });
 
         // when navigating from Workout to Main
-        if (getWorkoutManager().getWorkout().state == State.FINISHED &&
+        if (getWorkoutManager().getWorkout().state != State.ACTIVE &&
                 MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
             Timber.tag(TAG).d( "show finished dialog");
             WorkoutFinishedDialog.getInstance(
