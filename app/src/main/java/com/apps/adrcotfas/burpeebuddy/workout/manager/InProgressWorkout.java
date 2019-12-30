@@ -14,7 +14,7 @@ public class InProgressWorkout {
     public Exercise exercise;
     public Goal goal;
 
-    public int crtSet = 1;
+    public int crtSetIdx = 0;
 
     public List<Integer> reps = new ArrayList<>();
     public int totalReps = 0;
@@ -29,7 +29,7 @@ public class InProgressWorkout {
     public void reset() {
         this.exercise = new Exercise();
         this.goal = new Goal(GoalType.INVALID, 0, 0, 0, 0);
-        crtSet = 1;
+        crtSetIdx = 0;
         reps = new ArrayList<>();
         totalReps = 0;
         durations = new ArrayList<>();
@@ -41,11 +41,11 @@ public class InProgressWorkout {
         this.goal = goal;
 
         //TODO: maybe fix this in the future / index vs crt set
-        for (int i = 0; i <= goal.sets; ++i) {
+        for (int i = 0; i < goal.sets; ++i) {
             reps.add(i, 0);
         }
 
-        for (int i = 0; i <= goal.sets; ++i) {
+        for (int i = 0; i < goal.sets; ++i) {
             durations.add(i, 0);
         }
     }

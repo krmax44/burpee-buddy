@@ -54,23 +54,22 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
         }
 
         //TODO: refactoring needed
-        mWorkout.reps.set(mWorkout.crtSet, mWorkout.reps.get(mWorkout.crtSet) + 1);
+        mWorkout.reps.set(mWorkout.crtSetIdx, mWorkout.reps.get(mWorkout.crtSetIdx) + 1);
         ++mWorkout.totalReps;
 
         if (getGoalType().equals(GoalType.REP_BASED)) {
-            if (mWorkout.reps.get(mWorkout.crtSet) < mWorkout.goal.reps) {
-                Timber.tag(TAG).d("rep finished " + mWorkout.reps.get(mWorkout.crtSet) + "/" + mWorkout.goal.reps);
-                EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSet)));
-            } else if (mWorkout.crtSet < mWorkout.goal.sets) {
-
+            if (mWorkout.reps.get(mWorkout.crtSetIdx) < mWorkout.goal.reps) {
+                Timber.tag(TAG).d("rep finished " + mWorkout.reps.get(mWorkout.crtSetIdx) + "/" + mWorkout.goal.reps);
+                EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSetIdx)));
+            } else if (mWorkout.crtSetIdx + 1 < mWorkout.goal.sets) {
                 getRepCounter().unregister();
-                mWorkout.durations.set(mWorkout.crtSet, mTimer.elapsedSeconds);
-                mWorkout.totalDuration += mWorkout.durations.get(mWorkout.crtSet);
-                ++mWorkout.crtSet;
+                mWorkout.durations.set(mWorkout.crtSetIdx, mTimer.elapsedSeconds);
+                mWorkout.totalDuration += mWorkout.durations.get(mWorkout.crtSetIdx);
+                ++mWorkout.crtSetIdx;
 
-                Timber.tag(TAG).d("set finished " + mWorkout.crtSet + "/" + mWorkout.goal.sets);
+                Timber.tag(TAG).d("set finished " + mWorkout.crtSetIdx + 1 + "/" + mWorkout.goal.sets);
                 mTimer.stop();
-                EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSet), true));
+                EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSetIdx), true));
                 //TODO: if auto start break, then start break
                 if (true) {
                     EventBus.getDefault().post(new Events.SetFinished());
@@ -78,18 +77,19 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
                     EventBus.getDefault().post(new Events.StartBreak(mWorkout.goal.duration_break));
                 }
 
-                mWorkout.reps.set(mWorkout.crtSet, 0);
+                mWorkout.reps.set(mWorkout.crtSetIdx, 0);
             } else {
                 Timber.tag(TAG).d("Workout finished");
+                getRepCounter().unregister();
                 mWorkout.state = State.FINISHED;
 
-                mWorkout.durations.set(mWorkout.crtSet, mTimer.elapsedSeconds);
-                mWorkout.totalDuration += mWorkout.durations.get(mWorkout.crtSet);
+                mWorkout.durations.set(mWorkout.crtSetIdx, mTimer.elapsedSeconds);
+                mWorkout.totalDuration += mWorkout.durations.get(mWorkout.crtSetIdx);
 
                 mTimer.stop();
-                EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSet), true));
+                EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSetIdx), true));
 
-                ++mWorkout.crtSet;
+                ++mWorkout.crtSetIdx;
 
                 //TODO: if auto start break, then finish the workout
                 if (true) {
@@ -99,8 +99,8 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
                 }
             }
         } else if (getGoalType().equals(GoalType.AMRAP)) {
-            Timber.tag(TAG).d("rep finished " + mWorkout.reps.get(mWorkout.crtSet));
-            EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSet)));
+            Timber.tag(TAG).d("rep finished " + mWorkout.reps.get(mWorkout.crtSetIdx));
+            EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSetIdx)));
         }
     }
 
@@ -174,14 +174,13 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
      */
     @Override
     public void onFinishedAmrapSet() {
+        getRepCounter().unregister();
 
-        mWorkout.durations.set(mWorkout.crtSet, mWorkout.goal.duration);
-        mWorkout.totalDuration += mWorkout.durations.get(mWorkout.crtSet);
+        mWorkout.durations.set(mWorkout.crtSetIdx, mWorkout.goal.duration);
+        mWorkout.totalDuration += mWorkout.durations.get(mWorkout.crtSetIdx);
 
-        ++getWorkout().crtSet;
-        if (getWorkout().crtSet <= getWorkout().goal.sets) {
-            BuddyApplication.getWorkoutManager().getRepCounter().unregister();
-
+        ++getWorkout().crtSetIdx;
+        if (getWorkout().crtSetIdx != getWorkout().goal.sets) {
             //TODO: if auto start break, then start break
             if (true) {
                 EventBus.getDefault().post(new Events.SetFinished());

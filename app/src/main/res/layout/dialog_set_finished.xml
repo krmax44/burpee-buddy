@@ -44,19 +44,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:visibility="gone">
-
-            <TextView
-                android:id="@+id/crt_set"
-                style="@style/OverviewTextValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
             <TextView
                 style="style/OverviewTextDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Current" />
-
+            <TextView
+                android:id="@+id/crt_set"
+                style="@style/OverviewTextValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout
@@ -70,19 +67,16 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/crt_set_container"
             app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/prev_set"
-                style="@style/OverviewTextValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
             <TextView
                 style="style/OverviewTextDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Previous" />
-
+            <TextView
+                android:id="@+id/prev_set"
+                style="@style/OverviewTextValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout
@@ -96,19 +90,16 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/prev_set_container"
             app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/avg_pace"
-                style="@style/OverviewTextValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
             <TextView
                 style="style/OverviewTextDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Avg. pace" />
-
+            <TextView
+                android:id="@+id/avg_pace"
+                style="@style/OverviewTextValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout
@@ -122,19 +113,16 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/linearLayout9"
             app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/total_reps"
-                style="@style/OverviewTextValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
             <TextView
                 style="style/OverviewTextDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Total" />
-
+            <TextView
+                android:id="@+id/total_reps"
+                style="@style/OverviewTextValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -149,7 +137,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/reps_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="54dp"
+            android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:hint="reps"
             app:errorEnabled="true"

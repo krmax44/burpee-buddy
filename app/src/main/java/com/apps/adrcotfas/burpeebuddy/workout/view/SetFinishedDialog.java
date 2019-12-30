@@ -45,7 +45,7 @@ public class SetFinishedDialog extends DialogFragment {
     @Override
     public final Dialog onCreateDialog(Bundle savedInstBundle) {
 
-        mIsFinalSet = mWorkout.crtSet - 1 == mWorkout.goal.sets;
+        mIsFinalSet = mWorkout.crtSetIdx == mWorkout.goal.sets;
         mBreakDuration = mWorkout.goal.duration_break;
 
         final MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(getActivity());
@@ -72,7 +72,7 @@ public class SetFinishedDialog extends DialogFragment {
         }
 
         Dialog d = b
-            .setTitle("Set finished(" + (mWorkout.crtSet - 1) + "/" + mWorkout.goal.sets + ")")
+            .setTitle("Set finished(" + mWorkout.crtSetIdx + "/" + mWorkout.goal.sets + ")")
             .setCancelable(false)
             .setPositiveButton(mIsFinalSet ? getString(android.R.string.ok) : "Start break",
                     (dialog, which) -> EventBus.getDefault().post(mIsFinalSet
@@ -146,10 +146,11 @@ public class SetFinishedDialog extends DialogFragment {
 
     private void setupRepsEditText(View v) {
         TextView totalRepsText = v.findViewById(R.id.total_reps);
+        TextView avgPaceText = v.findViewById(R.id.avg_pace);
 
         TextInputLayout repsEditTextLayout = v.findViewById(R.id.reps_layout);
         TextInputEditText repsEditText = v.findViewById(R.id.reps);
-        repsEditText.setText(String.valueOf(mWorkout.reps.get(mWorkout.crtSet - 1)));
+        repsEditText.setText(String.valueOf(mWorkout.reps.get(mWorkout.crtSetIdx - 1)));
 
         repsEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -157,22 +158,32 @@ public class SetFinishedDialog extends DialogFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
+            // TODO: I should extract the controller logic from here (the modification of totalReps)
             @Override
             public void afterTextChanged(Editable s) {
                 AlertDialog dialog = (AlertDialog) getDialog();
+                int value = 0;
                 if (s.length() == 0) {
                     repsEditTextLayout.setError("reps");
                     if (dialog != null) {
                         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                     }
-                    totalRepsText.setText(String.valueOf(mWorkout.totalReps));
                 } else {
                     repsEditTextLayout.setError(null);
                     if (dialog != null) {
                         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                     }
-                    totalRepsText.setText(String.valueOf(mWorkout.totalReps + Integer.valueOf(s.toString())));
+                    value = Integer.valueOf(s.toString());
                 }
+                // remove previous reps from total
+                mWorkout.totalReps = mWorkout.totalReps - mWorkout.reps.get(mWorkout.crtSetIdx - 1);
+                // update crt set reps
+                mWorkout.reps.set(mWorkout.crtSetIdx - 1, value);
+                // update total reps
+                mWorkout.totalReps = mWorkout.totalReps + mWorkout.reps.get(mWorkout.crtSetIdx - 1);
+                // update views
+                avgPaceText.setText(getAvgPaceText());
+                totalRepsText.setText(String.valueOf(mWorkout.totalReps));
             }
         });
     }
@@ -183,42 +194,40 @@ public class SetFinishedDialog extends DialogFragment {
             return;
         }
 
-        v.findViewById(R.id.prev_set_container).setVisibility(mWorkout.crtSet == 2 ? View.GONE : View.VISIBLE);
+        v.findViewById(R.id.prev_set_container).setVisibility(
+                mWorkout.crtSetIdx == 1
+                        ? View.GONE
+                        : View.VISIBLE);
 
         TextView prevSetText = v.findViewById(R.id.prev_set);
         TextView totalRepsText = v.findViewById(R.id.total_reps);
         TextView avgPaceText = v.findViewById(R.id.avg_pace);
 
         if (type.equals(GoalType.AMRAP)) {
-            prevSetText.setText(String.valueOf(mWorkout.crtSet - 1 == 1
+            prevSetText.setText(String.valueOf(mWorkout.crtSetIdx == 1
                     ? 0
-                    : mWorkout.reps.get(mWorkout.crtSet - 1)));
+                    : mWorkout.reps.get(mWorkout.crtSetIdx - 2)));
             totalRepsText.setText(String.valueOf(mWorkout.totalReps));
             avgPaceText.setText(getAvgPaceText());
         } else if (type.equals(GoalType.REP_BASED)) {
             v.findViewById(R.id.crt_set_container).setVisibility(View.VISIBLE);
             TextView crtSetText = v.findViewById(R.id.crt_set);
-            crtSetText.setText(formatSeconds(mWorkout.durations.get(mWorkout.crtSet - 1)));
+            crtSetText.setText(formatSeconds(mWorkout.durations.get(mWorkout.crtSetIdx - 1)));
 
-            prevSetText.setText(mWorkout.crtSet - 1 == 1
+            prevSetText.setText(mWorkout.crtSetIdx == 1
                     ? String.valueOf(0)
-                    : formatSeconds(mWorkout.durations.get(mWorkout.crtSet - 2)));
+                    : formatSeconds(mWorkout.durations.get(mWorkout.crtSetIdx - 2)));
             totalRepsText.setText(formatSeconds(mWorkout.totalDuration));
             avgPaceText.setText(getAvgPaceText());
         }
     }
 
     private String getAvgPaceText() {
-        final double reps = mWorkout.reps.get(mWorkout.crtSet - 1);
+        final double reps = mWorkout.reps.get(mWorkout.crtSetIdx - 1);
         if (mIsFinalSet) {
-            double totalReps = reps;
-            for (int i = 0; i < mWorkout.goal.sets; ++i) {
-                totalReps += mWorkout.reps.get(i);
-            }
-            final double totalDuration = mWorkout.totalDuration;
-            return Math.round(totalReps * 60.0 * 10.0 / totalDuration) / 10.0 + " reps/min";
+            return Math.round(mWorkout.totalReps * 60.0 * 10.0 / mWorkout.totalDuration) / 10.0 + " reps/min";
         } else {
-            final double duration = mWorkout.durations.get(mWorkout.crtSet - 1);
+            final double duration = mWorkout.durations.get(mWorkout.crtSetIdx - 1);
             return Math.round(reps * 60.0 * 10.0 / duration) / 10.0 + " reps/min";
         }
     }
@@ -228,18 +237,6 @@ public class SetFinishedDialog extends DialogFragment {
         Chip chipGoal = v.findViewById(R.id.chip_goal);
         chipExercise.setText(mWorkout.exercise.name);
         chipGoal.setText(GoalToString.goalToString(mWorkout.goal));
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        AlertDialog dialog = (AlertDialog) getDialog();
-//        if (dialog != null) {
-//            TextInputEditText repsEditText = dialog.findViewById(R.id.reps);
-//            if (repsEditText.getText() == null || Integer.valueOf(repsEditText.getText().toString()) == 0) {
-//                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-//            }
-//        }
     }
 
     @NonNull
