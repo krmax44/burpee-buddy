@@ -15,7 +15,7 @@ import timber.log.Timber;
 public class Timer {
 
     private Disposable mDisposable;
-    private int elapsedSeconds;
+    public int elapsedSeconds;
 
     public void start(){
         mDisposable = Observable.timer(1, TimeUnit.SECONDS, Schedulers.computation())

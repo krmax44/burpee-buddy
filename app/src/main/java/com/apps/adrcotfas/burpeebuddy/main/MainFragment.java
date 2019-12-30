@@ -13,15 +13,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
-import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvc;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvcImpl;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
-import com.apps.adrcotfas.burpeebuddy.workout.view.SetFinishedDialog;
 
 import java.util.List;
 
@@ -38,7 +36,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     private static final String TAG = "MainFragment";
     private MainViewMvc mViewMvc;
 
-    private ExerciseType mExerciseType;
+    private Exercise mExercise;
 
     public MainFragment() {}
 
@@ -60,13 +58,13 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
         mViewMvc.getExercise().observe(getViewLifecycleOwner(), exercise -> {
             LiveData<List<Goal>> goalsLd = new MutableLiveData<>();
-            mExerciseType = exercise.type;
+            mExercise = exercise;
 
-            if (COUNTABLE.equals(mExerciseType)) {
+            if (COUNTABLE.equals(mExercise.type)) {
                 goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getCountableGoals();
-            } else if (TIME_BASED.equals(mExerciseType)) {
+            } else if (TIME_BASED.equals(mExercise.type)) {
                 goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.TIME_BASED);
-            } else if (REP_BASED.equals(mExerciseType)) {
+            } else if (REP_BASED.equals(mExercise.type)) {
                 goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.AMRAP);
             }
             goalsLd.observe(getViewLifecycleOwner(),
@@ -77,9 +75,10 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         if (getWorkoutManager().getWorkout().state != State.ACTIVE &&
                 MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
             Timber.tag(TAG).d( "show finished dialog");
-            SetFinishedDialog.getInstance(
-                    BuddyApplication.getWorkoutManager().getWorkout())
-                    .show(getActivity().getSupportFragmentManager(), TAG);
+            //TODO: refactoring
+//            SetFinishedDialog.getInstance(
+//                    BuddyApplication.getWorkoutManager().getWorkout())
+//                    .show(getActivity().getSupportFragmentManager(), TAG);
             getWorkoutManager().getWorkout().state = State.INACTIVE;
         }
 
@@ -108,7 +107,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     @Override
     public void onStartButtonClicked() {
         MainFragmentDirections.ActionMainToWorkout action =
-                MainFragmentDirections.actionMainToWorkout(mExerciseType.getValue(), mViewMvc.getGoal());
+                MainFragmentDirections.actionMainToWorkout(mExercise, mViewMvc.getGoal());
         NavHostFragment.findNavController(this).navigate(action);
     }
 

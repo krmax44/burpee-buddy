@@ -31,8 +31,8 @@
         android:label="@string/title_workout"
         tools:layout="@layout/fragment_workout">
         <argument
-            android:name="exerciseType"
-            app:argType="integer"/>
+            android:name="exercise"
+            app:argType="com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise"/>
         <argument
             android:name="goal"
             app:argType="com.apps.adrcotfas.burpeebuddy.db.goals.Goal"/>

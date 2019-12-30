@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleService;
 
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
@@ -74,11 +75,10 @@ public class WorkoutService extends LifecycleService {
         EventBus.getDefault().register(this);
 
         getWorkoutManager().reset();
-        final ExerciseType type = ExerciseTypeConverter.getExerciseTypeFromInt(
-                WorkoutFragmentArgs.fromBundle(intent.getExtras()).getExerciseType());
+        final Exercise exercise = WorkoutFragmentArgs.fromBundle(intent.getExtras()).getExercise();
         final Goal goal = WorkoutFragmentArgs.fromBundle(intent.getExtras()).getGoal();
 
-        getWorkoutManager().init(type, goal);
+        getWorkoutManager().init(exercise, goal);
         getWorkoutManager().getWorkout().state = State.ACTIVE;
 
         getMediaPlayer().init();
@@ -145,7 +145,7 @@ public class WorkoutService extends LifecycleService {
     }
 
     @Subscribe
-    public void onMessageEvent(Events.SetComplete event) {
+    public void onMessageEvent(Events.StartBreak event) {
         Timber.tag(TAG).d( "onSetCompleted");
         Power.turnOnScreen(this);
 

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_margin="32dp">
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_exercise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_goal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"/>
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/overview_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/crt_set_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/prev_set_container"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/crt_set"
+                style="@style/OverviewTextValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="style/OverviewTextDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/prev_set_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/linearLayout9"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/crt_set_container"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/prev_set"
+                style="@style/OverviewTextValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="style/OverviewTextDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Previous" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/linearLayout10"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/prev_set_container"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/avg_pace"
+                style="@style/OverviewTextValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="style/OverviewTextDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Avg. pace" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout9"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/total_reps"
+                style="@style/OverviewTextValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="style/OverviewTextDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/reps_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/reps_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="54dp"
+            android:layout_height="wrap_content"
+            android:hint="reps"
+            app:errorEnabled="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/reps_plus_one"
+            app:layout_constraintHorizontal_bias="0.5"
+            tools:layout_editor_absoluteY="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/reps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="3" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reps_plus_one"
+            android:layout_width="52dp"
+            android:layout_height="wrap_content"
+            android:text="+1"
+            android:textSize="@dimen/smallerTextSize"
+            android:singleLine="true"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/reps_layout"
+            app:layout_constraintEnd_toStartOf="@+id/reps_minus_one"
+            tools:layout_editor_absoluteY="22dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reps_minus_one"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:text="-1"
+            android:textSize="@dimen/smallerTextSize"
+            android:singleLine="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/reps_plus_one"
+            app:layout_constraintEnd_toStartOf="@+id/reps_multiply_2"
+            app:layout_constraintHorizontal_bias="0.5"
+            tools:layout_editor_absoluteY="22dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reps_multiply_2"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:text="*2"
+            android:textSize="@dimen/smallerTextSize"
+            android:textAllCaps="false"
+            android:singleLine="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/reps_minus_one"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            tools:layout_editor_absoluteY="18dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/break_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/break_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="Break" />
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/break_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="150dp"
+            android:isScrollContainer="true"
+            android:min="1"
+            app:min="1"
+            android:max="6"
+            android:progress="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/auto_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/auto_checkbox_text"
+            android:text="Automatically start break for workouts measured with the proximity sensor."
+            android:textSize="@dimen/smallerTextSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+</LinearLayout>

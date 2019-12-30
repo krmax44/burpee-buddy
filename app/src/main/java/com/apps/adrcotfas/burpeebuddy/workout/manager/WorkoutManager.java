@@ -7,6 +7,7 @@ import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.common.timers.CountDownTimer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
@@ -41,6 +42,10 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
         mWorkout = new InProgressWorkout();
     }
 
+    /**
+     * This is relevant only for exercises which can be measured with the proximity sensor
+     * ExerciseType == COUNTABLE
+     */
     @Override
     public void onRepCompleted() {
         if (skipFirstRep) {
@@ -48,44 +53,69 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
             return;
         }
 
-        ++mWorkout.crtSetReps;
+        //TODO: refactoring needed
+        mWorkout.reps.set(mWorkout.crtSet, mWorkout.reps.get(mWorkout.crtSet) + 1);
         ++mWorkout.totalReps;
 
         if (getGoalType().equals(GoalType.REP_BASED)) {
-            if (mWorkout.crtSetReps < mWorkout.goal.reps) {
-                Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps + "/" + mWorkout.goal.reps);
-                EventBus.getDefault().post(new Events.RepComplete(mWorkout.crtSetReps));
+            if (mWorkout.reps.get(mWorkout.crtSet) < mWorkout.goal.reps) {
+                Timber.tag(TAG).d("rep finished " + mWorkout.reps.get(mWorkout.crtSet) + "/" + mWorkout.goal.reps);
+                EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSet)));
             } else if (mWorkout.crtSet < mWorkout.goal.sets) {
+
                 getRepCounter().unregister();
+                mWorkout.durations.set(mWorkout.crtSet, mTimer.elapsedSeconds);
+                mWorkout.totalDuration += mWorkout.durations.get(mWorkout.crtSet);
                 ++mWorkout.crtSet;
+
                 Timber.tag(TAG).d("set finished " + mWorkout.crtSet + "/" + mWorkout.goal.sets);
                 mTimer.stop();
-                EventBus.getDefault().post(new Events.RepComplete(mWorkout.crtSetReps, true));
-                EventBus.getDefault().post(new Events.SetComplete());
-                mWorkout.crtSetReps = 0;
+                EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSet), true));
+                //TODO: if auto start break, then start break
+                if (true) {
+                    EventBus.getDefault().post(new Events.SetFinished());
+                } else {
+                    EventBus.getDefault().post(new Events.StartBreak(mWorkout.goal.duration_break));
+                }
+
+                mWorkout.reps.set(mWorkout.crtSet, 0);
             } else {
                 Timber.tag(TAG).d("Workout finished");
                 mWorkout.state = State.FINISHED;
-                EventBus.getDefault().post(new Events.RepComplete(mWorkout.crtSetReps, true));
-                EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
+
+                mWorkout.durations.set(mWorkout.crtSet, mTimer.elapsedSeconds);
+                mWorkout.totalDuration += mWorkout.durations.get(mWorkout.crtSet);
+
+                mTimer.stop();
+                EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSet), true));
+
+                ++mWorkout.crtSet;
+
+                //TODO: if auto start break, then finish the workout
+                if (true) {
+                    EventBus.getDefault().post(new Events.SetFinished());
+                } else {
+                    EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
+                }
             }
         } else if (getGoalType().equals(GoalType.AMRAP)) {
-            Timber.tag(TAG).d("rep finished " + mWorkout.crtSetReps);
-            EventBus.getDefault().post(new Events.RepComplete(mWorkout.crtSetReps));
+            Timber.tag(TAG).d("rep finished " + mWorkout.reps.get(mWorkout.crtSet));
+            EventBus.getDefault().post(new Events.RepComplete(mWorkout.reps.get(mWorkout.crtSet)));
         }
     }
 
-    public void init(ExerciseType type, Goal goal) {
-        if (type.equals(INVALID)) {
+    public void init(Exercise exercise, Goal goal) {
+        if (exercise.type.equals(INVALID)) {
             throw new IllegalArgumentException("Invalid exercise type");
         }
-        mWorkout.type = type;
-        mWorkout.goal = goal;
+        mWorkout.init(exercise, goal);
     }
 
     public void start() {
         // push-ups and burpees
-        if (mWorkout.type.equals(COUNTABLE)) {
+        ExerciseType type = mWorkout.exercise.type;
+
+        if (type.equals(COUNTABLE)) {
             getRepCounter().register(this);
             skipFirstRep = true;
             if (getGoalType().equals(GoalType.REP_BASED)) {
@@ -97,13 +127,13 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
                         this);
                 mCountDownTimer.start();
             }
-        } else if (mWorkout.type.equals(TIME_BASED) && getGoalType().equals(GoalType.TIME_BASED)) {
+        } else if (type.equals(TIME_BASED) && getGoalType().equals(GoalType.TIME_BASED)) {
             mCountDownTimer = new CountDownTimer(
                     TimerType.COUNT_DOWN,
                     TimeUnit.SECONDS.toMillis(mWorkout.goal.duration),
                     this);
             mCountDownTimer.start();
-        } else if (mWorkout.type.equals(REP_BASED) && getGoalType().equals(GoalType.AMRAP)) {
+        } else if (type.equals(REP_BASED) && getGoalType().equals(GoalType.AMRAP)) {
                 // countdown for pull-ups with dialog to enter current reps
         }
     }
@@ -137,14 +167,34 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
         return mCountDownTimer;
     }
 
+    /**
+     * This is relevant only for exercises which cannot be measured with the proximity sensor
+     * and are rep based
+     * ExerciseType == REP_BASED and GoalType == AMRAP
+     */
     @Override
     public void onFinishedAmrapSet() {
+
+        mWorkout.durations.set(mWorkout.crtSet, mWorkout.goal.duration);
+        mWorkout.totalDuration += mWorkout.durations.get(mWorkout.crtSet);
+
         ++getWorkout().crtSet;
         if (getWorkout().crtSet <= getWorkout().goal.sets) {
             BuddyApplication.getWorkoutManager().getRepCounter().unregister();
-            EventBus.getDefault().post(new Events.SetComplete());
+
+            //TODO: if auto start break, then start break
+            if (true) {
+                EventBus.getDefault().post(new Events.SetFinished());
+            } else {
+                EventBus.getDefault().post(new Events.StartBreak(mWorkout.goal.duration_break));
+            }
         } else {
-            EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
+            //TODO: if auto start break, then finish the workout
+            if (true) {
+                EventBus.getDefault().post(new Events.SetFinished());
+            } else {
+                EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 import com.apps.adrcotfas.burpeebuddy.main.MainActivity;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
+import com.apps.adrcotfas.burpeebuddy.workout.view.SetFinishedDialog;
 import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewMvc;
 import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewMvcImpl;
 
@@ -125,6 +126,12 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     @Subscribe
     public void onMessageEvent(Events.StopWorkoutEvent event) {
         navigateToMainAndShowFinishDialog();
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.SetFinished event) {
+        SetFinishedDialog.getInstance(BuddyApplication.getWorkoutManager().getWorkout())
+                .show(getActivity().getSupportFragmentManager(), TAG);
     }
 
     private void navigateToMainAndShowFinishDialog() {

@@ -32,7 +32,12 @@ public class Events {
         }
     }
 
-    public static class SetComplete {}
+    public static class StartBreak {
+        int duration;
+        public StartBreak(int duration) {
+            this.duration = duration;
+        }
+    }
 
     /**
      * When the user presses a stop button
@@ -92,5 +97,8 @@ public class Events {
         public DeleteGoal(int id) {
             this.id = id;
         }
+    }
+
+    public static class SetFinished {
     }
 }

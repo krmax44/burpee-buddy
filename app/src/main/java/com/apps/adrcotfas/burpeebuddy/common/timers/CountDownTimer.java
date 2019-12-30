@@ -15,6 +15,8 @@ public class CountDownTimer extends android.os.CountDownTimer {
         void onFinishedAmrapSet();
     }
 
+    public int seconds;
+
     private static final String TAG = "CountDownTimer";
     private Listener listener;
     private TimerType type;
@@ -41,6 +43,7 @@ public class CountDownTimer extends android.os.CountDownTimer {
         }
 
         final int seconds = (int) TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);
+        this.seconds = seconds;
         EventBus.getDefault().post(new Events.TimerTickEvent(type, seconds));
     }
 

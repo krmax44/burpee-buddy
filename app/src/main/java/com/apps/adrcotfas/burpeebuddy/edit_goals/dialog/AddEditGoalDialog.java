@@ -27,7 +27,7 @@ public class AddEditGoalDialog extends DialogFragment {
     private static final String TAG = "AddEditGoalDialog";
 
     private static int REPS_FACTOR = 5;
-    private static int DURATION_FACTOR = 30;
+    public static int DURATION_FACTOR = 30;
 
     private boolean mEditMode;
     private Goal mGoal;
