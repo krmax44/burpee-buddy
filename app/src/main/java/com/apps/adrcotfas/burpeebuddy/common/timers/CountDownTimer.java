@@ -12,7 +12,7 @@ import timber.log.Timber;
 public class CountDownTimer extends android.os.CountDownTimer {
 
     public interface Listener {
-        void onFinishedAmrapSet();
+        void onFinishedSet();
     }
 
     public int seconds;
@@ -52,7 +52,7 @@ public class CountDownTimer extends android.os.CountDownTimer {
         if (type.equals(TimerType.PRE_WORKOUT_COUNT_DOWN)) {
             EventBus.getDefault().post(new Events.PreWorkoutCountdownFinished());
         } else {
-            listener.onFinishedAmrapSet();
+            listener.onFinishedSet();
         }
     }
 }

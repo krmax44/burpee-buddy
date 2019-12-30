@@ -127,14 +127,13 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
                         this);
                 mCountDownTimer.start();
             }
-        } else if (type.equals(TIME_BASED) && getGoalType().equals(GoalType.TIME_BASED)) {
+        } else if ((type.equals(TIME_BASED) && getGoalType().equals(GoalType.TIME_BASED))
+                || (type.equals(REP_BASED) && getGoalType().equals(GoalType.AMRAP))) {
             mCountDownTimer = new CountDownTimer(
                     TimerType.COUNT_DOWN,
                     TimeUnit.SECONDS.toMillis(mWorkout.goal.duration),
                     this);
             mCountDownTimer.start();
-        } else if (type.equals(REP_BASED) && getGoalType().equals(GoalType.AMRAP)) {
-                // countdown for pull-ups with dialog to enter current reps
         }
     }
 
@@ -173,7 +172,7 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
      * ExerciseType == REP_BASED and GoalType == AMRAP
      */
     @Override
-    public void onFinishedAmrapSet() {
+    public void onFinishedSet() {
         getRepCounter().unregister();
 
         mWorkout.durations.set(mWorkout.crtSetIdx, mWorkout.goal.duration);
