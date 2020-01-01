@@ -76,7 +76,7 @@ public class SettingsHelper {
             return getDefaultSharedPreferences(BuddyApplication.getInstance())
                     .getBoolean(AUTO_START_BREAK_TIME_BASED, false);
         } else {
-            return false;
+            return true;
         }
     }
 
