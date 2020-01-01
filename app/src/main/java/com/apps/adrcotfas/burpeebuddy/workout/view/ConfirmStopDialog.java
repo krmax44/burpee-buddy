@@ -16,6 +16,7 @@ public class ConfirmStopDialog extends DialogFragment {
 
     @Override
     public final Dialog onCreateDialog(Bundle savedInstBundle) {
+        setCancelable(false);
         return new AlertDialog.Builder(getActivity())
                 .setTitle("Stop workout?")
                 .setMessage("Are you sure you want to stop this workout?")

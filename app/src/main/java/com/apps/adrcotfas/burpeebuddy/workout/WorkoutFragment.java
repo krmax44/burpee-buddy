@@ -84,10 +84,8 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
                 // the stop button or toggle button was pressed, the user left the app and returned
                 break;
             case SET_FINISHED:
-                navigateToFinishDialog();
-                break;
             case WORKOUT_FINISHED:
-                //TODO: last set: show finished dialog but with different title
+                navigateToFinishDialog();
                 break;
         }
     }

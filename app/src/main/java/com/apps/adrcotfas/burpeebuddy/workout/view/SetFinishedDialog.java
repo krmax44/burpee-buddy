@@ -46,6 +46,7 @@ public class SetFinishedDialog extends DialogFragment {
 
     @Override
     public final Dialog onCreateDialog(Bundle savedInstBundle) {
+        setCancelable(false);
         mWorkout = BuddyApplication.getWorkoutManager().getWorkout();
 
         mBreakDuration = mWorkout.goal.duration_break;
@@ -69,7 +70,6 @@ public class SetFinishedDialog extends DialogFragment {
 
         //TODO: add skip break button
         Dialog d = mBuilder
-                .setCancelable(false)
                 .setView(v)
                 .create();
         d.setCanceledOnTouchOutside(false);
@@ -96,12 +96,7 @@ public class SetFinishedDialog extends DialogFragment {
 
     private void setupButtonsAndTitle(View v) {
         final DialogInterface.OnClickListener goToMainListener =
-                (dialog, which) -> {
-            BuddyApplication.getWorkoutManager().getWorkout().state = State.INACTIVE;
-            EventBus.getDefault().post(new Events.StopWorkoutEvent());
-            NavHostFragment.findNavController(this)
-                            .navigate(R.id.action_set_finished_dialog_to_main);
-            };
+                (dialog, which) -> navigateToMain();
 
         switch (mWorkout.state) {
             case ACTIVE:
@@ -127,10 +122,18 @@ public class SetFinishedDialog extends DialogFragment {
                 //TODO: if autobreak, change the title to "Workout finished"
                 mBuilder.setTitle(getString(R.string.dialog_set_finished) + "(" + mWorkout.crtSetIdx + "/" + mWorkout.goal.sets + ")")
                         .setPositiveButton(android.R.string.ok, goToMainListener);
+                mBuilder.setOnCancelListener(dialog -> navigateToMain());
                 break;
             case INACTIVE:
                 // do nothing
         }
+    }
+
+    private void navigateToMain() {
+        BuddyApplication.getWorkoutManager().getWorkout().state = State.INACTIVE;
+        EventBus.getDefault().post(new Events.StopWorkoutEvent());
+        NavHostFragment.findNavController(this)
+                        .navigate(R.id.action_set_finished_dialog_to_main);
     }
 
     private void setupBreakSeekbar(View v) {
