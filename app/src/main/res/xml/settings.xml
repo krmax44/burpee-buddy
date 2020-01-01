@@ -53,4 +53,21 @@
         android:title="Auto lock screen when working out"
         android:summary="This needs a special permission and will force lock your device. It is recommended that you lock your phone manually to avoid accidental clicks."
         app:iconSpaceReserved="false"/>
+
+    <CheckBoxPreference
+        android:key="pref_auto_start_break_countable"
+        android:defaultValue="false"
+        android:persistent="true"
+        android:title="Auto start break"
+        android:summary="@string/auto_start_break_countable"
+        app:iconSpaceReserved="false"/>
+
+    <CheckBoxPreference
+        android:key="pref_auto_start_break_time_based"
+        android:defaultValue="false"
+        android:persistent="true"
+        android:title="Auto start break"
+        android:summary="@string/auto_start_break_time_based"
+        app:iconSpaceReserved="false"/>
+
 </PreferenceScreen>

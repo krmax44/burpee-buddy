@@ -31,4 +31,10 @@
     <string name="goal_dialog_duration">Duration</string>
     <string name="goal_dialog_reps">Reps</string>
     <string name="goal_dialog_sets">Sets</string>
+    <string name="auto_start_break_countable">Automatically start break for exercises measured with the proximity sensor.</string>
+    <string name="auto_start_break_time_based">Automatically start break for time based exercises without repetitions as relevant metric.</string>
+    <string name="dialog_stop_workout">Stop workout?</string>
+    <string name="dialog_set_finished">Set finished</string>
+    <string name="dialog_start_break">Start break</string>
+    <string name="dialog_reps_per_min">reps/min</string>
 </resources>

@@ -2,6 +2,8 @@ package com.apps.adrcotfas.burpeebuddy.workout.manager;
 
 import android.content.Context;
 
+import androidx.preference.Preference;
+
 import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.common.timers.CountDownTimer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.Timer;
@@ -10,6 +12,7 @@ import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -61,12 +64,12 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
                 Timber.tag(TAG).v("set finished " + getWorkout().crtSetIdx + 1 + "/" + getWorkout().goal.sets);
                 mTimer.stop();
                 EventBus.getDefault().post(new Events.RepComplete(getWorkout().reps.get(getWorkout().crtSetIdx)));
-                //TODO: if auto start break, then start break
-                if (true) {
+
+                if (SettingsHelper.autoStartBreak(getWorkout().exercise.type)) {
+                    EventBus.getDefault().post(new Events.StartBreak(getWorkout().goal.duration_break));
+                } else {
                     getWorkout().state = State.SET_FINISHED;
                     EventBus.getDefault().post(new Events.SetFinished());
-                } else {
-                    EventBus.getDefault().post(new Events.StartBreak(getWorkout().goal.duration_break));
                 }
 
                 getWorkout().reps.set(getWorkout().crtSetIdx, 0);
@@ -81,7 +84,6 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
 
                 ++getWorkout().crtSetIdx;
 
-                //TODO: if auto start break, then finish the workout
                 getWorkout().state = State.WORKOUT_FINISHED;
                 EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
             }
@@ -174,13 +176,12 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
         ++getWorkout().crtSetIdx;
 
         if (getWorkout().crtSetIdx != getWorkout().goal.sets) {
-            //TODO: if auto start break, then start break
-            if (true) {
-                getWorkout().state = State.SET_FINISHED;
-                EventBus.getDefault().post(new Events.SetFinished());
-            } else {
+            if (SettingsHelper.autoStartBreak(getWorkout().exercise.type)) {
                 getWorkout().state = State.BREAK_ACTIVE;
                 EventBus.getDefault().post(new Events.StartBreak(getWorkout().goal.duration_break));
+            } else {
+                getWorkout().state = State.SET_FINISHED;
+                EventBus.getDefault().post(new Events.SetFinished());
             }
         } else {
             getWorkout().state = State.WORKOUT_FINISHED;

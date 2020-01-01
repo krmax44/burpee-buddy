@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.settings;
 
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -14,6 +15,9 @@ public class SettingsHelper {
     public final static String SPECIAL_SOUND_INTERVAL = "pref_sound_special_reps";
     public final static String ENABLE_WAKEUP = "pref_enable_wakeup";
     public final static String WAKEUP_INTERVAL = "pref_wakeup_reps";
+
+    public final static String AUTO_START_BREAK_COUNTABLE = "pref_auto_start_break_countable";
+    public final static String AUTO_START_BREAK_TIME_BASED = "pref_auto_start_break_time_based";
 
     public static boolean autoLockEnabled() {
         return getDefaultSharedPreferences(BuddyApplication.getInstance())
@@ -64,4 +68,25 @@ public class SettingsHelper {
                 .putBoolean(SHOW_START_SNACK, value).apply();
     }
 
+    public static boolean autoStartBreak(ExerciseType type) {
+        if (type.equals(ExerciseType.COUNTABLE)) {
+            return getDefaultSharedPreferences(BuddyApplication.getInstance())
+                    .getBoolean(AUTO_START_BREAK_COUNTABLE, false);
+        } else if (type.equals(ExerciseType.TIME_BASED)) {
+            return getDefaultSharedPreferences(BuddyApplication.getInstance())
+                    .getBoolean(AUTO_START_BREAK_TIME_BASED, false);
+        } else {
+            return false;
+        }
+    }
+
+    public static void setAutoStartBreak(ExerciseType type, boolean autoStartBreak) {
+        if (type.equals(ExerciseType.COUNTABLE)) {
+            getDefaultSharedPreferences(BuddyApplication.getInstance()).edit()
+                    .putBoolean(AUTO_START_BREAK_COUNTABLE, autoStartBreak).apply();
+        } else if (type.equals(ExerciseType.TIME_BASED)) {
+            getDefaultSharedPreferences(BuddyApplication.getInstance()).edit()
+                    .putBoolean(AUTO_START_BREAK_TIME_BASED, autoStartBreak).apply();
+        }
+    }
 }
