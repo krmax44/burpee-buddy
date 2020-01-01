@@ -35,7 +35,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.greenrobot.eventbus.EventBus;
 
 import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.formatSeconds;
-import static com.apps.adrcotfas.burpeebuddy.edit_goals.dialog.AddEditGoalDialog.DURATION_FACTOR;
+import static com.apps.adrcotfas.burpeebuddy.edit_goals.dialog.AddEditGoalDialog.BREAK_DURATION_FACTOR;
 
 public class SetFinishedDialog extends DialogFragment {
 
@@ -142,12 +142,12 @@ public class SetFinishedDialog extends DialogFragment {
 
         AppCompatSeekBar breakSeekbar = v.findViewById(R.id.break_seekbar);
         TextView breakDesc = v.findViewById(R.id.break_title);
-        breakSeekbar.setProgress(mWorkout.goal.duration_break / DURATION_FACTOR);
+        breakSeekbar.setProgress(mWorkout.goal.duration_break / BREAK_DURATION_FACTOR);
 
         breakSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                final int seconds = progress * DURATION_FACTOR;
+                final int seconds = progress * BREAK_DURATION_FACTOR;
                 mBreakDuration = seconds;
                 breakDesc.setText(formatBreakDesc(seconds));
             }
@@ -157,7 +157,7 @@ public class SetFinishedDialog extends DialogFragment {
             public void onStopTrackingTouch(SeekBar seekBar){}
         });
 
-        if (mBreakDuration / DURATION_FACTOR == breakSeekbar.getProgress()) {
+        if (mBreakDuration / BREAK_DURATION_FACTOR == breakSeekbar.getProgress()) {
             breakDesc.setText(formatBreakDesc(mBreakDuration));
         }
     }

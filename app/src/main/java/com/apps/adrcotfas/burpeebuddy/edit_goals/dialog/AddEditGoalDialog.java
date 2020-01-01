@@ -28,6 +28,7 @@ public class AddEditGoalDialog extends DialogFragment {
 
     private static int REPS_FACTOR = 5;
     public static int DURATION_FACTOR = 30;
+    public static int BREAK_DURATION_FACTOR = 15;
 
     private boolean mEditMode;
     private Goal mGoal;
@@ -147,7 +148,7 @@ public class AddEditGoalDialog extends DialogFragment {
         breakSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                final int seconds = progress * DURATION_FACTOR;
+                final int seconds = progress * BREAK_DURATION_FACTOR;
                 mGoal.duration_break = seconds;
                 breakDesc.setText(formatBreakDesc(seconds));
             }
@@ -193,7 +194,7 @@ public class AddEditGoalDialog extends DialogFragment {
 
             final int repsProgress = reps / REPS_FACTOR;
             final int durationProgress = duration / DURATION_FACTOR;
-            final int durationBreakProgress = durationBreak / DURATION_FACTOR;
+            final int durationBreakProgress = durationBreak / BREAK_DURATION_FACTOR;
 
             if (sets == setsSeekbar.getProgress()) {
                 setsDesc.setText(formatSetsDesc(sets));
