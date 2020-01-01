@@ -79,19 +79,20 @@ public class SetFinishedDialog extends DialogFragment {
     private void setupAutoStartBreakCheckbox(View v) {
         final MaterialCheckBox checkBox = v.findViewById(R.id.auto_break_checkbox);
 
-        if (mWorkout.exercise.type == ExerciseType.COUNTABLE) {
-            checkBox.setText(R.string.auto_start_break_countable);
-        } else if (mWorkout.exercise.type == ExerciseType.TIME_BASED) {
-            checkBox.setText(R.string.auto_start_break_time_based
-            );
-        }
-        if (SettingsHelper.autoStartBreak(mWorkout.exercise.type)) {
+        if (SettingsHelper.autoStartBreak(mWorkout.exercise.type)
+                || mWorkout.crtSetIdx == mWorkout.goal.sets) {
             checkBox.setVisibility(View.GONE);
         } else {
             checkBox.setOnCheckedChangeListener((buttonView, isChecked)
                     -> SettingsHelper.setAutoStartBreak(mWorkout.exercise.type, isChecked));
         }
 
+        if (mWorkout.exercise.type == ExerciseType.COUNTABLE) {
+            checkBox.setText(R.string.auto_start_break_countable);
+        } else if (mWorkout.exercise.type == ExerciseType.TIME_BASED) {
+            checkBox.setText(R.string.auto_start_break_time_based
+            );
+        }
     }
 
     private void setupButtonsAndTitle(View v) {
