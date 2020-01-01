@@ -17,6 +17,7 @@ public class SettingsHelper {
     public final static String WAKEUP_INTERVAL = "pref_wakeup_reps";
 
     public final static String AUTO_START_BREAK_COUNTABLE = "pref_auto_start_break_countable";
+    public final static String AUTO_START_BREAK_UNCOUNTABLE = "pref_auto_start_break_uncountable";
     public final static String AUTO_START_BREAK_TIME_BASED = "pref_auto_start_break_time_based";
 
     public static boolean autoLockEnabled() {
@@ -69,19 +70,25 @@ public class SettingsHelper {
     }
 
     public static boolean autoStartBreak(ExerciseType type) {
-        if (type.equals(ExerciseType.COUNTABLE)) {
+        if (type.equals(ExerciseType.REP_BASED)) {
+            return getDefaultSharedPreferences(BuddyApplication.getInstance())
+                    .getBoolean(AUTO_START_BREAK_UNCOUNTABLE, false);
+        } else if (type.equals(ExerciseType.REP_BASED_COUNTABLE)) {
             return getDefaultSharedPreferences(BuddyApplication.getInstance())
                     .getBoolean(AUTO_START_BREAK_COUNTABLE, false);
         } else if (type.equals(ExerciseType.TIME_BASED)) {
             return getDefaultSharedPreferences(BuddyApplication.getInstance())
                     .getBoolean(AUTO_START_BREAK_TIME_BASED, false);
         } else {
-            return true;
+            return false;
         }
     }
 
     public static void setAutoStartBreak(ExerciseType type, boolean autoStartBreak) {
-        if (type.equals(ExerciseType.COUNTABLE)) {
+        if (type.equals(ExerciseType.REP_BASED)) {
+            getDefaultSharedPreferences(BuddyApplication.getInstance()).edit()
+                    .putBoolean(AUTO_START_BREAK_UNCOUNTABLE, autoStartBreak).apply();
+        } else if (type.equals(ExerciseType.REP_BASED_COUNTABLE)) {
             getDefaultSharedPreferences(BuddyApplication.getInstance()).edit()
                     .putBoolean(AUTO_START_BREAK_COUNTABLE, autoStartBreak).apply();
         } else if (type.equals(ExerciseType.TIME_BASED)) {

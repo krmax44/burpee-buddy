@@ -20,10 +20,6 @@ public interface GoalDao {
     @Query("select * from Goal where type = :type")
     LiveData<List<Goal>> getGoals(GoalType type);
 
-    @TypeConverters(GoalTypeConverter.class)
-    @Query("select * from Goal where type = 1 or type = 2") // REP_BASED(1) and AMRAP(2)
-    LiveData<List<Goal>> getCountableGoals();
-
     @Insert(onConflict = REPLACE)
     void addGoal(Goal goal);
 

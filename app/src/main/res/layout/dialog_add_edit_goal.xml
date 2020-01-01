@@ -15,11 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/amrap"
-            android:text="AMRAP"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/time_based"
             android:text="Time based"
             android:layout_width="match_parent"

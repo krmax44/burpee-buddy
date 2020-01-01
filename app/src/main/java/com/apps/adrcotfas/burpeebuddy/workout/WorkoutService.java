@@ -84,6 +84,12 @@ public class WorkoutService extends LifecycleService {
     }
 
     @Subscribe
+    public void onMessageEvent(Events.UserTriggeredFinishSet event) {
+        Timber.tag(TAG).d( "UserTriggeredFinishSet ");
+        getWorkoutManager().onFinishedSetManually();
+    }
+
+    @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutEvent event) {
         Timber.tag(TAG).d( "FinishedWorkoutEvent");
         Power.turnOnScreen(this);

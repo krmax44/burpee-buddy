@@ -55,6 +55,14 @@
         app:iconSpaceReserved="false"/>
 
     <CheckBoxPreference
+        android:key="pref_auto_start_break_uncountable"
+        android:defaultValue="false"
+        android:persistent="true"
+        android:title="Auto start break"
+        android:summary="@string/auto_start_break_uncountable"
+        app:iconSpaceReserved="false"/>
+
+    <CheckBoxPreference
         android:key="pref_auto_start_break_countable"
         android:defaultValue="false"
         android:persistent="true"

@@ -1,8 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.db.goals;
 
-import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalType.AMRAP;
-import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalType.REP_BASED;
-import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalType.TIME_BASED;
+import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalType.REPS;
+import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalType.TIME;
 
 public class GoalToString {
     public static String goalToString(Goal goal) {
@@ -10,14 +9,10 @@ public class GoalToString {
 
         final int sets = goal.sets;
         GoalType goalType = goal.type;
-        if (goalType.equals(AMRAP)) {
-            s += sets == 1 ? "" : sets + " x ";
-            s += "AMRAP ";
-            s += formatSeconds(goal.duration);
-        } else if (goalType.equals(TIME_BASED)) {
+        if (goalType.equals(TIME)) {
             s += sets == 1 ? "" : sets + " x ";
             s += formatSeconds(goal.duration);
-        } else if (goalType.equals(REP_BASED)) {
+        } else if (goalType.equals(REPS)) {
             s += sets == 1 ? "" : sets + " x ";
             s += goal.reps + " reps";
         }

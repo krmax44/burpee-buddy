@@ -97,4 +97,7 @@ public class Events {
 
     public static class ToggleWorkoutEvent {
     }
+
+    public static class UserTriggeredFinishSet {
+    }
 }

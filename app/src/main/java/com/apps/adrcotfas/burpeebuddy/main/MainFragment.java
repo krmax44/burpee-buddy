@@ -27,7 +27,7 @@ import timber.log.Timber;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.getWorkoutManager;
-import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.COUNTABLE;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.REP_BASED_COUNTABLE;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.REP_BASED;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
@@ -57,15 +57,13 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                         mViewMvc.updateExerciseTypes(exerciseTypes));
 
         mViewMvc.getExercise().observe(getViewLifecycleOwner(), exercise -> {
-            LiveData<List<Goal>> goalsLd = new MutableLiveData<>();
+            LiveData<List<Goal>> goalsLd;
             mExercise = exercise;
 
-            if (COUNTABLE.equals(mExercise.type)) {
-                goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getCountableGoals();
-            } else if (TIME_BASED.equals(mExercise.type)) {
-                goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.TIME_BASED);
-            } else if (REP_BASED.equals(mExercise.type)) {
-                goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.AMRAP);
+            if (mExercise.type.equals(TIME_BASED)) {
+                goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.TIME);
+            } else {
+                goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getAll();
             }
             goalsLd.observe(getViewLifecycleOwner(),
                     goals -> mViewMvc.updateGoals(goals));

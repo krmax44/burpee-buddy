@@ -76,7 +76,6 @@ public class AddEditGoalDialog extends DialogFragment {
 
     private void setupViews(View v) {
         MaterialRadioButton repBasedRadio = v.findViewById(R.id.rep_based);
-        MaterialRadioButton amrapRadio = v.findViewById(R.id.amrap);
         MaterialRadioButton durationRadio = v.findViewById(R.id.time_based);
 
         LinearLayout repsContainer = v.findViewById(R.id.reps_container);
@@ -166,15 +165,7 @@ public class AddEditGoalDialog extends DialogFragment {
             if (isChecked) {
                 repsContainer.setVisibility(View.VISIBLE);
                 durationContainer.setVisibility(View.GONE);
-                mGoal.type = GoalType.REP_BASED;
-            }
-        });
-
-        amrapRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                repsContainer.setVisibility(View.GONE);
-                durationContainer.setVisibility(View.VISIBLE);
-                mGoal.type = GoalType.AMRAP;
+                mGoal.type = GoalType.REPS;
             }
         });
 
@@ -182,7 +173,7 @@ public class AddEditGoalDialog extends DialogFragment {
             if (isChecked) {
                 repsContainer.setVisibility(View.GONE);
                 durationContainer.setVisibility(View.VISIBLE);
-                mGoal.type = GoalType.TIME_BASED;
+                mGoal.type = GoalType.TIME;
             }
         });
 
@@ -221,17 +212,13 @@ public class AddEditGoalDialog extends DialogFragment {
             }
 
             switch (mGoal.type) {
-                case TIME_BASED:
+                case TIME:
                     durationRadio.setChecked(true);
                     repsContainer.setVisibility(View.GONE);
                     break;
-                case REP_BASED:
+                case REPS:
                     repBasedRadio.setChecked(true);
                     durationContainer.setVisibility(View.GONE);
-                    break;
-                case AMRAP:
-                    amrapRadio.setChecked(true);
-                    repsContainer.setVisibility(View.GONE);
                     break;
                 case INVALID:
                     break;

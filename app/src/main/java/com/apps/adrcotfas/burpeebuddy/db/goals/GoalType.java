@@ -3,9 +3,8 @@ package com.apps.adrcotfas.burpeebuddy.db.goals;
 public enum GoalType {
 
     INVALID(-1),
-    TIME_BASED(0), // plank
-    REP_BASED(1),  // only for countable exercises
-    AMRAP(2);      // a variation of time based, can be used for REP_BASED and COUNTABLE exercises
+    TIME(0), // 3 x 1 min or 3 x AMRAP 3 min
+    REPS(1); // 4 x 15 reps
 
     public int getValue() {
         return value;

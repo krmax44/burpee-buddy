@@ -59,10 +59,10 @@ public class SetFinishedDialog extends DialogFragment {
         setupButtonsAndTitle(v);
         setupAutoStartBreakCheckbox(v);
 
-        v.findViewById(R.id.overview_container).setVisibility(View.VISIBLE);
-        setupOverview(v, mWorkout.goal.type);
+        setupOverview(v);
 
-        if (mWorkout.goal.type.equals(GoalType.AMRAP)) {
+        if (!mWorkout.exercise.type.equals(ExerciseType.TIME_BASED)
+                && mWorkout.goal.type.equals(GoalType.TIME)) {
             v.findViewById(R.id.reps_container).setVisibility(View.VISIBLE);
             setupRepsEditText(v);
             setupModifierButtons(v);
@@ -87,7 +87,9 @@ public class SetFinishedDialog extends DialogFragment {
                     -> SettingsHelper.setAutoStartBreak(mWorkout.exercise.type, isChecked));
         }
 
-        if (mWorkout.exercise.type == ExerciseType.COUNTABLE) {
+        if (mWorkout.exercise.type == ExerciseType.REP_BASED) {
+            checkBox.setText(R.string.auto_start_break_uncountable);
+        } else if (mWorkout.exercise.type == ExerciseType.REP_BASED_COUNTABLE) {
             checkBox.setText(R.string.auto_start_break_countable);
         } else if (mWorkout.exercise.type == ExerciseType.TIME_BASED) {
             checkBox.setText(R.string.auto_start_break_time_based
@@ -100,15 +102,6 @@ public class SetFinishedDialog extends DialogFragment {
                 (dialog, which) -> navigateToMain();
 
         switch (mWorkout.state) {
-            case ACTIVE:
-                throw new IllegalArgumentException("Invalid workout state" + mWorkout.state);
-            case PAUSED:
-                mIsFinalSet = true;
-                mBuilder.setTitle(getString(R.string.dialog_stop_workout))
-                        .setPositiveButton(android.R.string.ok, goToMainListener)
-                        .setNegativeButton(android.R.string.cancel,
-                                (dialog, which) -> EventBus.getDefault().post(new Events.ToggleWorkoutEvent()));
-                break;
             case SET_FINISHED:
                 mIsFinalSet = false;
                 setupBreakSeekbar(v);
@@ -125,7 +118,7 @@ public class SetFinishedDialog extends DialogFragment {
                         .setPositiveButton(android.R.string.ok, goToMainListener);
                 mBuilder.setOnCancelListener(dialog -> navigateToMain());
                 break;
-            case INACTIVE:
+            default:
                 // do nothing
         }
     }
@@ -238,8 +231,8 @@ public class SetFinishedDialog extends DialogFragment {
         });
     }
 
-    private void setupOverview(View v, GoalType type) {
-        if (mWorkout.state == State.PAUSED || type.equals(GoalType.TIME_BASED)) {
+    private void setupOverview(View v) {
+        if (mWorkout.exercise.type.equals(ExerciseType.TIME_BASED)) {
             v.findViewById(R.id.overview_container).setVisibility(View.GONE);
             return;
         }
@@ -253,23 +246,26 @@ public class SetFinishedDialog extends DialogFragment {
         TextView totalRepsText = v.findViewById(R.id.total_reps);
         TextView avgPaceText = v.findViewById(R.id.avg_pace);
 
-        if (type.equals(GoalType.AMRAP)) {
+        final GoalType type = mWorkout.goal.type;
+
+        if (type.equals(GoalType.TIME)) {
             prevSetText.setText(String.valueOf(mWorkout.crtSetIdx == 1
-                    ? 0
+                    ? String.valueOf(0)
                     : mWorkout.reps.get(mWorkout.crtSetIdx - 2)));
             totalRepsText.setText(String.valueOf(mWorkout.totalReps));
-            avgPaceText.setText(getAvgPaceText());
-        } else if (type.equals(GoalType.REP_BASED)) {
+
+        } else if (type.equals(GoalType.REPS)) {
+            prevSetText.setText(mWorkout.crtSetIdx == 1
+                    ? String.valueOf(0)
+                    : formatSeconds(mWorkout.durations.get(mWorkout.crtSetIdx - 2)));
+
             v.findViewById(R.id.crt_set_container).setVisibility(View.VISIBLE);
             TextView crtSetText = v.findViewById(R.id.crt_set);
             crtSetText.setText(formatSeconds(mWorkout.durations.get(mWorkout.crtSetIdx - 1)));
 
-            prevSetText.setText(mWorkout.crtSetIdx == 1
-                    ? String.valueOf(0)
-                    : formatSeconds(mWorkout.durations.get(mWorkout.crtSetIdx - 2)));
             totalRepsText.setText(formatSeconds(mWorkout.totalDuration));
-            avgPaceText.setText(getAvgPaceText());
         }
+        avgPaceText.setText(getAvgPaceText());
     }
 
     private String getAvgPaceText() {

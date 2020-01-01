@@ -50,7 +50,7 @@ public class Goal implements Parcelable {
      * e.g. Plank 3 x 1 minute plank with 30 seconds between sets
      */
     public static Goal getTimeBasedGoal(int sets, int duration, int duration_break) {
-        return new Goal(GoalType.TIME_BASED, sets, DEFAULT_REPS, duration, duration_break);
+        return new Goal(GoalType.TIME, sets, DEFAULT_REPS, duration, duration_break);
 
     }
 
@@ -59,21 +59,12 @@ public class Goal implements Parcelable {
      * e.g. Burpees 3 x 25 reps
      */
     public static Goal getRepBasedGoal(int sets, int reps, int duration_break) {
-        return new Goal(GoalType.REP_BASED, sets, reps, DEFAULT_DURATION, duration_break);
-    }
-
-    /**
-     * AMRAP oriented goal wihth or without automatic counting
-     * e.g. burpees or pull-ups 3 x AMRAP 3 minute
-     */
-    public static Goal getAmrapBasedGoal(int sets, int duration, int duration_break) {
-        return new Goal(GoalType.AMRAP, sets, DEFAULT_REPS, duration, duration_break);
-
+        return new Goal(GoalType.REPS, sets, reps, DEFAULT_DURATION, duration_break);
     }
 
     @Ignore
     public Goal() {
-        this.type = GoalType.REP_BASED;
+        this.type = GoalType.REPS;
         this.sets = DEFAULT_SETS;
         this.reps = DEFAULT_REPS;
         this.duration = DEFAULT_DURATION;

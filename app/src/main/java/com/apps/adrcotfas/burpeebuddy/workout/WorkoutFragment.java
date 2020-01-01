@@ -18,6 +18,8 @@ import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.main.MainActivity;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
@@ -110,6 +112,11 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         }
     }
 
+    @Override
+    public void onFinishSetButtonClicked() {
+        EventBus.getDefault().post(new Events.UserTriggeredFinishSet());
+    }
+
     private void startWorkout() {
         Intent startIntent = new Intent(getActivity(), WorkoutService.class);
         startIntent.putExtras(getArguments());
@@ -125,6 +132,11 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         //TODO: and if the workout is countable
         if (SettingsHelper.autoLockEnabled() && Power.isScreenOn(getActivity())) {
             Power.lockScreen((AppCompatActivity) getActivity());
+        }
+
+        if (BuddyApplication.getWorkoutManager().getWorkout().exercise.type.equals(ExerciseType.REP_BASED)
+                && BuddyApplication.getWorkoutManager().getWorkout().goal.type.equals(GoalType.REPS)) {
+            mViewMvc.onStartWorkout();
         }
     }
 
@@ -148,6 +160,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     @Subscribe
     public void onMessageEvent(Events.SetFinished event) {
         Timber.tag(TAG).v("SetFinished " + this.hashCode());
+        mViewMvc.onStartBreak(); //TODO: move to "onMessageEvent::Break"
         navigateToFinishDialog();
     }
 

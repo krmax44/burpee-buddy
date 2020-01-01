@@ -98,7 +98,7 @@ public class AddEditExerciseDialog extends DialogFragment {
                 case TIME_BASED:
                     // do nothing
                     break;
-                case COUNTABLE:
+                case REP_BASED_COUNTABLE:
                     proxyBox.setChecked(true);
                     break;
                 case REP_BASED:
@@ -151,7 +151,7 @@ public class AddEditExerciseDialog extends DialogFragment {
         ExerciseType type = ExerciseType.TIME_BASED;
 
         if (proxyRelevant) {
-            type = ExerciseType.COUNTABLE;
+            type = ExerciseType.REP_BASED_COUNTABLE;
         } else if (repsRelevant){
             type = ExerciseType.REP_BASED;
         }
