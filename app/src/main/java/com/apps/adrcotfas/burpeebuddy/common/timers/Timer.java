@@ -17,7 +17,8 @@ public class Timer {
     private Disposable mDisposable;
     public int elapsedSeconds;
 
-    public void start(){
+    public void start(int from){
+        elapsedSeconds = from;
         mDisposable = Observable.timer(1, TimeUnit.SECONDS, Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .repeat()

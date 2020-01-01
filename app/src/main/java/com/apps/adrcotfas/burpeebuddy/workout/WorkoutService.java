@@ -12,8 +12,6 @@ import com.apps.adrcotfas.burpeebuddy.workout.manager.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
-import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseTypeConverter;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
@@ -44,27 +42,11 @@ public class WorkoutService extends LifecycleService {
         getWorkoutManager().start();
     }
 
-    private void onStopWorkout() {
-        Timber.tag(TAG).d( "onStopWorkout");
-        getWorkoutManager().getWorkout().state = State.INACTIVE;
-        stopInternal();
-    }
-
-    private void onFinishedWorkout() {
-        // TODO: show finished notification
-        Timber.tag(TAG).d( "onFinishedWorkout");
-        getWorkoutManager().getWorkout().state = State.FINISHED;
-        stopInternal();
-    }
-
     private void stopInternal() {
-        getWorkoutManager().getRepCounter().unregister();
-        getWorkoutManager().getCountDownTimer().cancel();
-        getWorkoutManager().getTimer().stop();
-
         // workaround to make sure that the sound played above is audible and the player released
         new Handler().postDelayed(() -> getMediaPlayer().play(WORKOUT_COMPLETE, true), 1000);
 
+        getWorkoutManager().stop();
         stopForeground(true);
         stopSelf();
     }
@@ -74,12 +56,10 @@ public class WorkoutService extends LifecycleService {
         super.onStartCommand(intent, flags, startId);
         EventBus.getDefault().register(this);
 
-        getWorkoutManager().reset();
         final Exercise exercise = WorkoutFragmentArgs.fromBundle(intent.getExtras()).getExercise();
         final Goal goal = WorkoutFragmentArgs.fromBundle(intent.getExtras()).getGoal();
 
         getWorkoutManager().init(exercise, goal);
-        getWorkoutManager().getWorkout().state = State.ACTIVE;
 
         getMediaPlayer().init();
 
@@ -99,15 +79,16 @@ public class WorkoutService extends LifecycleService {
 
     @Subscribe
     public void onMessageEvent(Events.StopWorkoutEvent event) {
-        Timber.tag(TAG).d( "FinishedWorkoutEvent");
-        onStopWorkout();
+        Timber.tag(TAG).d( "StopWorkoutEvent");
+        stopInternal();
     }
 
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutEvent event) {
         Timber.tag(TAG).d( "FinishedWorkoutEvent");
         Power.turnOnScreen(this);
-        onFinishedWorkout();
+        stopInternal();
+        getWorkoutManager().getWorkout().state = State.WORKOUT_FINISHED;
     }
 
     @Subscribe
@@ -117,12 +98,15 @@ public class WorkoutService extends LifecycleService {
         if (event.type.equals(TimerType.PRE_WORKOUT_COUNT_DOWN)) {
             if (event.seconds == 0) {
                 getMediaPlayer().play(COUNTDOWN_LONG);
-                onStartWorkout();
-                //TODO: extract to constants or to Settings
             } else if (event.seconds <= 3) {
                 getMediaPlayer().play(COUNTDOWN);
             }
         }
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
+        onStartWorkout();
     }
 
     @Subscribe
@@ -135,13 +119,16 @@ public class WorkoutService extends LifecycleService {
             Power.turnOnScreen(this);
         }
         if (SettingsHelper.soundEnabled()){
-            if (event.lastRepThisSet) {
-                getMediaPlayer().play(REP_COMPLETE_SPECIAL);
-            } else {
-                getMediaPlayer().play(REP_COMPLETE);
-            }
+            getMediaPlayer().play(REP_COMPLETE);
         }
         getNotificationHelper().setReps(event.reps);
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.SetFinished event) {
+        if (SettingsHelper.soundEnabled()){
+            getMediaPlayer().play(REP_COMPLETE_SPECIAL);
+        }
     }
 
     @Subscribe
@@ -150,9 +137,16 @@ public class WorkoutService extends LifecycleService {
         Power.turnOnScreen(this);
 
         new Handler().postDelayed(() -> getMediaPlayer().play(REST), 1000);
+        getWorkoutManager().getWorkout().state = State.BREAK_ACTIVE;
         getWorkoutManager().startPreWorkoutTimer(
-                TimeUnit.SECONDS.toMillis(getWorkoutManager().getWorkout().goal.duration_break));
+                TimeUnit.SECONDS.toMillis(event.duration));
     }
+
+    @Subscribe
+    public void onMessageEvent(Events.ToggleWorkoutEvent event) {
+        getWorkoutManager().toggle();
+    }
+
 
     private NotificationHelper getNotificationHelper() {
         return BuddyApplication.getNotificationHelper();

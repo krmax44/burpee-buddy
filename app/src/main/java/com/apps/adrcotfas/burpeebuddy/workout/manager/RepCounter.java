@@ -11,6 +11,11 @@ public class RepCounter implements SensorEventListener {
 
     private final Sensor mProximitySensor;
 
+    /**
+     * A workaround to skip the first rep because it's not a real, just the sensor changing state.
+     */
+    private boolean mSkipFirstRep;
+
     public interface Listener {
         void onRepCompleted();
     }
@@ -20,6 +25,7 @@ public class RepCounter implements SensorEventListener {
     private final float MAX_RANGE;
 
     public RepCounter(Context context) {
+        mSkipFirstRep = true;
         mSensorManager = (SensorManager)
                 context.getSystemService(Context.SENSOR_SERVICE);
 
@@ -40,6 +46,7 @@ public class RepCounter implements SensorEventListener {
     }
 
     public void unregister() {
+        mSkipFirstRep = true;
         mListener = null;
         if (mSensorManager != null) {
             mSensorManager.unregisterListener(this);
@@ -48,7 +55,8 @@ public class RepCounter implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (mListener == null) {
+        if (mListener == null || mSkipFirstRep) {
+            mSkipFirstRep = false;
             return;
         }
         float distance = event.values[0];

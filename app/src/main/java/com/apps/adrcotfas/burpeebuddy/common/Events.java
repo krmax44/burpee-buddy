@@ -10,15 +10,8 @@ public class Events {
 
     public static class RepComplete {
         public int reps;
-        public boolean lastRepThisSet;
-
         public RepComplete(int reps) {
             this.reps = reps;
-        }
-
-        public RepComplete(int reps, boolean lastRepThisSet) {
-            this.reps = reps;
-            this.lastRepThisSet = lastRepThisSet;
         }
     }
 
@@ -33,7 +26,7 @@ public class Events {
     }
 
     public static class StartBreak {
-        int duration;
+        public int duration;
         public StartBreak(int duration) {
             this.duration = duration;
         }
@@ -100,5 +93,8 @@ public class Events {
     }
 
     public static class SetFinished {
+    }
+
+    public static class ToggleWorkoutEvent {
     }
 }

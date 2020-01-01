@@ -10,37 +10,41 @@ import java.util.List;
 public class InProgressWorkout {
 
     public State state = State.INACTIVE;
-
     public Exercise exercise;
     public Goal goal;
 
-    public int crtSetIdx = 0;
+    public int crtSetIdx;
+    public int totalReps;
+    public int totalDuration;
 
-    public List<Integer> reps = new ArrayList<>();
-    public int totalReps = 0;
-
-    public List<Integer> durations = new ArrayList<>();
-    public int totalDuration = 0;
+    public List<Integer> reps;
+    public List<Integer> durations;
 
     public InProgressWorkout() {
         reset();
     }
 
     public void reset() {
-        this.exercise = new Exercise();
-        this.goal = new Goal(GoalType.INVALID, 0, 0, 0, 0);
+        state = State.INACTIVE;
+        exercise = new Exercise();
+        goal = new Goal(GoalType.INVALID, 0, 0, 0, 0);
+        crtSetIdx = 0;
+        totalReps = 0;
+        totalDuration = 0;
+        durations = new ArrayList<>();
+        reps = new ArrayList<>();
+    }
+
+    public void init(Exercise exercise, Goal goal) {
+        this.state = State.PRE_WORKOUT;
+        this.exercise = exercise;
+        this.goal = goal;
         crtSetIdx = 0;
         reps = new ArrayList<>();
         totalReps = 0;
         durations = new ArrayList<>();
         totalDuration = 0;
-    }
 
-    public void init(Exercise exercise, Goal goal) {
-        this.exercise = exercise;
-        this.goal = goal;
-
-        //TODO: maybe fix this in the future / index vs crt set
         for (int i = 0; i < goal.sets; ++i) {
             reps.add(i, 0);
         }

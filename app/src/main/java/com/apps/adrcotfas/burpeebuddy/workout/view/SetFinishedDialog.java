@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.workout.view;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,12 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.fragment.app.DialogFragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
+import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -34,26 +38,21 @@ public class SetFinishedDialog extends DialogFragment {
 
     private InProgressWorkout mWorkout;
     private int mBreakDuration;
+    private MaterialAlertDialogBuilder mBuilder;
     private boolean mIsFinalSet;
-
-    public static SetFinishedDialog getInstance(InProgressWorkout workout) {
-        SetFinishedDialog dialog = new SetFinishedDialog();
-        dialog.mWorkout = workout;
-        return dialog;
-    }
 
     @Override
     public final Dialog onCreateDialog(Bundle savedInstBundle) {
+        mWorkout = BuddyApplication.getWorkoutManager().getWorkout();
 
-        mIsFinalSet = mWorkout.crtSetIdx == mWorkout.goal.sets;
         mBreakDuration = mWorkout.goal.duration_break;
 
-        final MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(getActivity());
+        mBuilder = new MaterialAlertDialogBuilder(getActivity());
         final View v = getActivity().getLayoutInflater()
                 .inflate(R.layout.dialog_set_finished, null, false);
 
-
         setupChips(v);
+        setupButtonsAndTitle(v);
 
         v.findViewById(R.id.overview_container).setVisibility(View.VISIBLE);
         setupOverview(v, mWorkout.goal.type);
@@ -64,32 +63,57 @@ public class SetFinishedDialog extends DialogFragment {
             setupModifierButtons(v);
         }
 
-        setupBreakSeekbar(v);
-
-        if (!mIsFinalSet) {
-            b.setNegativeButton(android.R.string.cancel,
-                    (dialog, which) -> new Events.FinishedWorkoutEvent());
-        }
-
-        Dialog d = b
-            .setTitle("Set finished(" + mWorkout.crtSetIdx + "/" + mWorkout.goal.sets + ")")
-            .setCancelable(false)
-            .setPositiveButton(mIsFinalSet ? getString(android.R.string.ok) : "Start break",
-                    (dialog, which) -> EventBus.getDefault().post(mIsFinalSet
-                            ? new Events.FinishedWorkoutEvent()
-                            : new Events.StartBreak(mBreakDuration)))
-            .setView(v)
-            .create();
+        //TODO: add skip break button
+        Dialog d = mBuilder
+                .setCancelable(false)
+                .setView(v)
+                .create();
         d.setCanceledOnTouchOutside(false);
         return d;
     }
 
+    private void setupButtonsAndTitle(View v) {
+        final DialogInterface.OnClickListener goToMainListener =
+                (dialog, which) -> {
+            BuddyApplication.getWorkoutManager().getWorkout().state = State.INACTIVE;
+            EventBus.getDefault().post(new Events.StopWorkoutEvent());
+            NavHostFragment.findNavController(this)
+                            .navigate(R.id.action_set_finished_dialog_to_main);
+            };
+
+        switch (mWorkout.state) {
+            case ACTIVE:
+                throw new IllegalArgumentException("Invalid workout state" + mWorkout.state);
+            case PAUSED:
+                mIsFinalSet = true;
+                mBuilder.setTitle("Stop workout?")
+                        .setPositiveButton(android.R.string.ok, goToMainListener)
+                        .setNegativeButton(android.R.string.cancel,
+                                (dialog, which) -> EventBus.getDefault().post(new Events.ToggleWorkoutEvent()));
+                break;
+            case SET_FINISHED:
+                mIsFinalSet = false;
+                setupBreakSeekbar(v);
+                mBuilder.setTitle("Set finished(" + mWorkout.crtSetIdx + "/" + mWorkout.goal.sets + ")")
+                        .setPositiveButton("Start break",
+                                (dialog, which) -> EventBus.getDefault().post(new Events.StartBreak(mBreakDuration)))
+                    .setNegativeButton(android.R.string.cancel,
+                            goToMainListener);
+                break;
+            case WORKOUT_FINISHED:
+                mIsFinalSet = true;
+                //TODO: if autobreak, change the title to "Workout finished"
+                mBuilder.setTitle("Set finished(" + mWorkout.crtSetIdx + "/" + mWorkout.goal.sets + ")")
+                        .setPositiveButton(android.R.string.ok, goToMainListener);
+                break;
+            case INACTIVE:
+                // do nothing
+        }
+    }
+
     private void setupBreakSeekbar(View v) {
         LinearLayout breakContainer = v.findViewById(R.id.break_container);
-        if (mIsFinalSet) {
-            breakContainer.setVisibility(View.GONE);
-            return;
-        }
+        breakContainer.setVisibility(View.VISIBLE);
 
         AppCompatSeekBar breakSeekbar = v.findViewById(R.id.break_seekbar);
         TextView breakDesc = v.findViewById(R.id.break_title);
@@ -189,7 +213,7 @@ public class SetFinishedDialog extends DialogFragment {
     }
 
     private void setupOverview(View v, GoalType type) {
-        if (type.equals(GoalType.TIME_BASED)) {
+        if (mWorkout.state == State.PAUSED || type.equals(GoalType.TIME_BASED)) {
             v.findViewById(R.id.overview_container).setVisibility(View.GONE);
             return;
         }
@@ -223,10 +247,10 @@ public class SetFinishedDialog extends DialogFragment {
     }
 
     private String getAvgPaceText() {
-        final double reps = mWorkout.reps.get(mWorkout.crtSetIdx - 1);
         if (mIsFinalSet) {
             return Math.round(mWorkout.totalReps * 60.0 * 10.0 / mWorkout.totalDuration) / 10.0 + " reps/min";
         } else {
+            final double reps = mWorkout.reps.get(mWorkout.crtSetIdx - 1);
             final double duration = mWorkout.durations.get(mWorkout.crtSetIdx - 1);
             return Math.round(reps * 60.0 * 10.0 / duration) / 10.0 + " reps/min";
         }

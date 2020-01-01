@@ -16,13 +16,16 @@
             app:argType="boolean" />
         <action
             android:id="@+id/action_main_to_workout"
-            app:destination="@id/workoutFragment" />
+            app:destination="@id/workoutFragment"
+            app:launchSingleTop="true" />
         <action
             android:id="@+id/action_main_to_exercises"
-            app:destination="@id/editExercisesFragment" />
+            app:destination="@id/editExercisesFragment"
+            app:launchSingleTop="true"/>
         <action
             android:id="@+id/action_main_to_goals"
-            app:destination="@id/goalsFragment" />
+            app:destination="@id/goalsFragment"
+            app:launchSingleTop="true"/>
     </fragment>
 
     <fragment
@@ -39,8 +42,15 @@
         <action
             android:id="@+id/action_workout_to_main"
             app:destination="@id/mainFragment"
-            app:popUpTo="@+id/mainFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/workoutFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_workout_to_set_finished_dialog"
+            app:destination="@id/setFinishedDialog" />
+        <action
+            android:id="@+id/action_workoutFragment_to_confirmStopDialog"
+            app:destination="@id/confirmStopDialog" />
     </fragment>
     <fragment
         android:id="@+id/myProfileFragment"
@@ -76,4 +86,28 @@
             app:popUpTo="@+id/mainFragment"
             app:popUpToInclusive="true" />
     </fragment>
+
+    <dialog
+        android:id="@+id/setFinishedDialog"
+        android:name="com.apps.adrcotfas.burpeebuddy.workout.view.SetFinishedDialog"
+        android:label="dialog_set_finished"
+        tools:layout="@layout/dialog_set_finished" >
+        <action
+            android:id="@+id/action_set_finished_dialog_to_main"
+            app:destination="@id/mainFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/workoutFragment"
+            app:popUpToInclusive="true" />
+    </dialog>
+    <dialog
+        android:id="@+id/confirmStopDialog"
+        android:name="com.apps.adrcotfas.burpeebuddy.workout.view.ConfirmStopDialog"
+        android:label="ConfirmStopDialog" >
+        <action
+            android:id="@+id/action_confirmStopDialog_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/workoutFragment"
+            app:popUpToInclusive="true" />
+    </dialog>
 </navigation>
