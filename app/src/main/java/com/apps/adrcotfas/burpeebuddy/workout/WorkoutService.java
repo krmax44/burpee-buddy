@@ -86,7 +86,7 @@ public class WorkoutService extends LifecycleService {
     @Subscribe
     public void onMessageEvent(Events.UserTriggeredFinishSet event) {
         Timber.tag(TAG).d( "UserTriggeredFinishSet ");
-        getWorkoutManager().onFinishedSetManually();
+        getWorkoutManager().onFinishedSet();
     }
 
     @Subscribe
@@ -99,6 +99,7 @@ public class WorkoutService extends LifecycleService {
 
     @Subscribe
     public void onMessageEvent(Events.TimerTickEvent event) {
+        Timber.tag(TAG).d( "TimerTickEvent");
         getNotificationHelper().setElapsedTime(event.seconds);
 
         if (event.type.equals(TimerType.PRE_WORKOUT_COUNT_DOWN)) {

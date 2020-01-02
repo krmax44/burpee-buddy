@@ -55,7 +55,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
     }
     @Override
     public void onStartBreak() {
-        mFinishSetButton.setVisibility(View.INVISIBLE);
+        mFinishSetButton.setVisibility(View.GONE);
     }
 
 }

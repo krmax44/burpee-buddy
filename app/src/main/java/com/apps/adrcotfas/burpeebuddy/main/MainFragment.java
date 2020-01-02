@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
@@ -27,8 +26,6 @@ import timber.log.Timber;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.getWorkoutManager;
-import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.REP_BASED_COUNTABLE;
-import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.REP_BASED;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
 public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {

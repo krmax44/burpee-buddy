@@ -14,12 +14,12 @@ public class ExerciseFactory {
 
     public static List<Exercise> getDefaultWorkouts() {
         List<Exercise> workouts = new ArrayList<>();
-        workouts.add(new Exercise(PUSHUPS, ExerciseType.REP_BASED_COUNTABLE));
-        workouts.add(new Exercise(BURPEES, ExerciseType.REP_BASED_COUNTABLE));
+        workouts.add(new Exercise(PUSHUPS, ExerciseType.COUNTABLE));
+        workouts.add(new Exercise(BURPEES, ExerciseType.COUNTABLE));
         workouts.add(new Exercise(PLANK, ExerciseType.TIME_BASED));
-        workouts.add(new Exercise(PULLUPS, ExerciseType.REP_BASED));
-        workouts.add(new Exercise(DIPS, ExerciseType.REP_BASED));
-        workouts.add(new Exercise(SQUATS, ExerciseType.REP_BASED));
+        workouts.add(new Exercise(PULLUPS, ExerciseType.UNCOUNTABLE));
+        workouts.add(new Exercise(DIPS, ExerciseType.UNCOUNTABLE));
+        workouts.add(new Exercise(SQUATS, ExerciseType.UNCOUNTABLE));
 
         return workouts;
     }

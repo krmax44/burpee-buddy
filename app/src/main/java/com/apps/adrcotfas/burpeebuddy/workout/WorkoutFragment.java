@@ -134,7 +134,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
             Power.lockScreen((AppCompatActivity) getActivity());
         }
 
-        if (BuddyApplication.getWorkoutManager().getWorkout().exercise.type.equals(ExerciseType.REP_BASED)
+        if (BuddyApplication.getWorkoutManager().getWorkout().exercise.type.equals(ExerciseType.UNCOUNTABLE)
                 && BuddyApplication.getWorkoutManager().getWorkout().goal.type.equals(GoalType.REPS)) {
             mViewMvc.onStartWorkout();
         }

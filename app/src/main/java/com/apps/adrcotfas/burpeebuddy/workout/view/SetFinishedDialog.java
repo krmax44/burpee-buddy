@@ -87,9 +87,9 @@ public class SetFinishedDialog extends DialogFragment {
                     -> SettingsHelper.setAutoStartBreak(mWorkout.exercise.type, isChecked));
         }
 
-        if (mWorkout.exercise.type == ExerciseType.REP_BASED) {
+        if (mWorkout.exercise.type == ExerciseType.UNCOUNTABLE) {
             checkBox.setText(R.string.auto_start_break_uncountable);
-        } else if (mWorkout.exercise.type == ExerciseType.REP_BASED_COUNTABLE) {
+        } else if (mWorkout.exercise.type == ExerciseType.COUNTABLE) {
             checkBox.setText(R.string.auto_start_break_countable);
         } else if (mWorkout.exercise.type == ExerciseType.TIME_BASED) {
             checkBox.setText(R.string.auto_start_break_time_based

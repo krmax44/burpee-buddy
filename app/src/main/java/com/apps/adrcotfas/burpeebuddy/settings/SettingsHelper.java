@@ -70,10 +70,10 @@ public class SettingsHelper {
     }
 
     public static boolean autoStartBreak(ExerciseType type) {
-        if (type.equals(ExerciseType.REP_BASED)) {
+        if (type.equals(ExerciseType.UNCOUNTABLE)) {
             return getDefaultSharedPreferences(BuddyApplication.getInstance())
                     .getBoolean(AUTO_START_BREAK_UNCOUNTABLE, false);
-        } else if (type.equals(ExerciseType.REP_BASED_COUNTABLE)) {
+        } else if (type.equals(ExerciseType.COUNTABLE)) {
             return getDefaultSharedPreferences(BuddyApplication.getInstance())
                     .getBoolean(AUTO_START_BREAK_COUNTABLE, false);
         } else if (type.equals(ExerciseType.TIME_BASED)) {
@@ -85,10 +85,10 @@ public class SettingsHelper {
     }
 
     public static void setAutoStartBreak(ExerciseType type, boolean autoStartBreak) {
-        if (type.equals(ExerciseType.REP_BASED)) {
+        if (type.equals(ExerciseType.UNCOUNTABLE)) {
             getDefaultSharedPreferences(BuddyApplication.getInstance()).edit()
                     .putBoolean(AUTO_START_BREAK_UNCOUNTABLE, autoStartBreak).apply();
-        } else if (type.equals(ExerciseType.REP_BASED_COUNTABLE)) {
+        } else if (type.equals(ExerciseType.COUNTABLE)) {
             getDefaultSharedPreferences(BuddyApplication.getInstance()).edit()
                     .putBoolean(AUTO_START_BREAK_COUNTABLE, autoStartBreak).apply();
         } else if (type.equals(ExerciseType.TIME_BASED)) {

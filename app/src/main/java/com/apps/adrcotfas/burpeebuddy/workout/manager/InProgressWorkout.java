@@ -53,4 +53,11 @@ public class InProgressWorkout {
             durations.add(i, 0);
         }
     }
+
+    public boolean isLastSet() {
+        // TODO: Always call this method after a set is finished
+        //  Currently this method interrogates the current set index which should always
+        //  be smaller than the goal sets. Fix this confusion.
+        return crtSetIdx == goal.sets;
+    }
 }
