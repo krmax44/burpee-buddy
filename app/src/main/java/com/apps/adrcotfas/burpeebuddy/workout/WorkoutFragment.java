@@ -70,7 +70,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         super.onResume();
         mViewMvc.registerListener(this);
 
-        final State state = BuddyApplication.getWorkoutManager().getWorkout().state;
+        final State state = BuddyApplication.getWorkoutManager().getWorkout().getState();
 
         switch (state) {
             case INACTIVE:
@@ -103,7 +103,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onStopButtonClicked() {
-        if (BuddyApplication.getWorkoutManager().getWorkout().state == State.PRE_WORKOUT) {
+        if (BuddyApplication.getWorkoutManager().getWorkout().getState() == State.PRE_WORKOUT) {
             EventBus.getDefault().post(new Events.StopWorkoutEvent());
             NavHostFragment.findNavController(this).navigate(R.id.action_workout_to_main);
         } else {
@@ -134,8 +134,8 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
             Power.lockScreen((AppCompatActivity) getActivity());
         }
 
-        if (BuddyApplication.getWorkoutManager().getWorkout().exercise.type.equals(ExerciseType.UNCOUNTABLE)
-                && BuddyApplication.getWorkoutManager().getWorkout().goal.type.equals(GoalType.REPS)) {
+        if (BuddyApplication.getWorkoutManager().getWorkout().getExerciseType() == ExerciseType.UNCOUNTABLE
+                && BuddyApplication.getWorkoutManager().getWorkout().getGoalType() == GoalType.REPS) {
             mViewMvc.onStartWorkout();
         }
     }

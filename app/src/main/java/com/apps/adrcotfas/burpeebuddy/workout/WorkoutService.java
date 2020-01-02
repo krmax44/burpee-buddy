@@ -94,7 +94,7 @@ public class WorkoutService extends LifecycleService {
         Timber.tag(TAG).d( "FinishedWorkoutEvent");
         Power.turnOnScreen(this);
         stopInternal();
-        getWorkoutManager().getWorkout().state = State.WORKOUT_FINISHED;
+        getWorkoutManager().getWorkout().setState(State.WORKOUT_FINISHED);
     }
 
     @Subscribe
@@ -144,7 +144,7 @@ public class WorkoutService extends LifecycleService {
         Power.turnOnScreen(this);
 
         new Handler().postDelayed(() -> getMediaPlayer().play(REST), 1000);
-        getWorkoutManager().getWorkout().state = State.BREAK_ACTIVE;
+        getWorkoutManager().getWorkout().setState(State.BREAK_ACTIVE);
         getWorkoutManager().startPreWorkoutTimer(
                 TimeUnit.SECONDS.toMillis(event.duration));
     }

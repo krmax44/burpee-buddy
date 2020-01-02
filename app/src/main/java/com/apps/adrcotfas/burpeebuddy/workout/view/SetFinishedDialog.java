@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.workout.view;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -39,17 +38,18 @@ import static com.apps.adrcotfas.burpeebuddy.edit_goals.dialog.AddEditGoalDialog
 
 public class SetFinishedDialog extends DialogFragment {
 
-    private InProgressWorkout mWorkout;
+    private InProgressWorkout getWorkout() {
+        return BuddyApplication.getWorkoutManager().getWorkout();
+    }
+
     private int mBreakDuration;
     private MaterialAlertDialogBuilder mBuilder;
-    private boolean mIsFinalSet;
 
     @Override
     public final Dialog onCreateDialog(Bundle savedInstBundle) {
         setCancelable(false);
-        mWorkout = BuddyApplication.getWorkoutManager().getWorkout();
 
-        mBreakDuration = mWorkout.goal.duration_break;
+        mBreakDuration = getWorkout().getGoalDurationBreak();
 
         mBuilder = new MaterialAlertDialogBuilder(getActivity());
         final View v = getActivity().getLayoutInflater()
@@ -58,11 +58,10 @@ public class SetFinishedDialog extends DialogFragment {
         setupChips(v);
         setupButtonsAndTitle(v);
         setupAutoStartBreakCheckbox(v);
-
         setupOverview(v);
 
-        if (!mWorkout.exercise.type.equals(ExerciseType.TIME_BASED)
-                && mWorkout.goal.type.equals(GoalType.TIME)) {
+        if ((getWorkout().getExerciseType() != ExerciseType.TIME_BASED)
+                && getWorkout().getGoalType() == GoalType.TIME) {
             v.findViewById(R.id.reps_container).setVisibility(View.VISIBLE);
             setupRepsEditText(v);
             setupModifierButtons(v);
@@ -79,55 +78,66 @@ public class SetFinishedDialog extends DialogFragment {
     private void setupAutoStartBreakCheckbox(View v) {
         final MaterialCheckBox checkBox = v.findViewById(R.id.auto_break_checkbox);
 
-        if (SettingsHelper.autoStartBreak(mWorkout.exercise.type)
-                || mWorkout.crtSetIdx == mWorkout.goal.sets) {
+        if (SettingsHelper.autoStartBreak(getWorkout().getExerciseType())
+                || getWorkout().isFinalSet()) {
             checkBox.setVisibility(View.GONE);
         } else {
             checkBox.setOnCheckedChangeListener((buttonView, isChecked)
-                    -> SettingsHelper.setAutoStartBreak(mWorkout.exercise.type, isChecked));
+                    -> SettingsHelper.setAutoStartBreak(getWorkout().getExerciseType(), isChecked));
         }
 
-        if (mWorkout.exercise.type == ExerciseType.UNCOUNTABLE) {
-            checkBox.setText(R.string.auto_start_break_uncountable);
-        } else if (mWorkout.exercise.type == ExerciseType.COUNTABLE) {
-            checkBox.setText(R.string.auto_start_break_countable);
-        } else if (mWorkout.exercise.type == ExerciseType.TIME_BASED) {
-            checkBox.setText(R.string.auto_start_break_time_based
-            );
+        switch (getWorkout().getExerciseType()) {
+            case TIME_BASED:
+                checkBox.setText(R.string.auto_start_break_time_based);
+                break;
+            case COUNTABLE:
+                checkBox.setText(R.string.auto_start_break_countable);
+                break;
+            case UNCOUNTABLE:
+                checkBox.setText(R.string.auto_start_break_uncountable);
+                break;
+            case INVALID:
+                break;
         }
     }
 
     private void setupButtonsAndTitle(View v) {
-        final DialogInterface.OnClickListener goToMainListener =
-                (dialog, which) -> navigateToMain();
-
-        switch (mWorkout.state) {
+        switch (getWorkout().getState()) {
             case SET_FINISHED:
-                mIsFinalSet = false;
                 setupBreakSeekbar(v);
-                mBuilder.setTitle(getString(R.string.dialog_set_finished) + "(" + mWorkout.crtSetIdx + "/" + mWorkout.goal.sets + ")")
+                mBuilder.setTitle(getTitle())
                         .setPositiveButton(getString(R.string.dialog_start_break),
-                                (dialog, which) -> EventBus.getDefault().post(new Events.StartBreak(mBreakDuration)))
-                    .setNegativeButton(android.R.string.cancel,
-                            goToMainListener);
+                                (dialog, which) -> {
+                                    getWorkout().incrementCurrentSet();
+                                    EventBus.getDefault().post(new Events.StartBreak(mBreakDuration));
+                                })
+                        .setNegativeButton(android.R.string.cancel, (d, w) -> stopAndNavigateToMain());
                 break;
             case WORKOUT_FINISHED:
-                mIsFinalSet = true;
                 //TODO: if autobreak, change the title to "Workout finished"
-                mBuilder.setTitle(getString(R.string.dialog_set_finished) + "(" + mWorkout.crtSetIdx + "/" + mWorkout.goal.sets + ")")
-                        .setPositiveButton(android.R.string.ok, goToMainListener);
-                mBuilder.setOnCancelListener(dialog -> navigateToMain());
+                mBuilder.setTitle(getTitle())
+                        .setPositiveButton(android.R.string.ok, (d, w) -> {
+                            //TODO: not needed getWorkout().incrementCurrentSet();
+                            stopAndNavigateToMain();
+                        });
+                mBuilder.setOnCancelListener(dialog -> stopAndNavigateToMain());
                 break;
             default:
                 // do nothing
         }
     }
 
-    private void navigateToMain() {
-        BuddyApplication.getWorkoutManager().getWorkout().state = State.INACTIVE;
+    @NonNull
+    private String getTitle() {
+        // TODO: if auto break, show a different title
+        return getString(R.string.dialog_set_finished) + "(" + getWorkout().getCurrentSet() + "/" + getWorkout().getGoalSets() + ")";
+    }
+
+    private void stopAndNavigateToMain() {
+        getWorkout().setState(State.INACTIVE);
         EventBus.getDefault().post(new Events.StopWorkoutEvent());
         NavHostFragment.findNavController(this)
-                        .navigate(R.id.action_set_finished_dialog_to_main);
+                .navigate(R.id.action_set_finished_dialog_to_main);
     }
 
     private void setupBreakSeekbar(View v) {
@@ -136,7 +146,7 @@ public class SetFinishedDialog extends DialogFragment {
 
         AppCompatSeekBar breakSeekbar = v.findViewById(R.id.break_seekbar);
         TextView breakDesc = v.findViewById(R.id.break_title);
-        breakSeekbar.setProgress(mWorkout.goal.duration_break / BREAK_DURATION_FACTOR);
+        breakSeekbar.setProgress(getWorkout().getGoalDurationBreak() / BREAK_DURATION_FACTOR);
 
         breakSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -193,7 +203,7 @@ public class SetFinishedDialog extends DialogFragment {
 
         TextInputLayout repsEditTextLayout = v.findViewById(R.id.reps_layout);
         TextInputEditText repsEditText = v.findViewById(R.id.reps);
-        repsEditText.setText(String.valueOf(mWorkout.reps.get(mWorkout.crtSetIdx - 1)));
+        repsEditText.setText(String.valueOf(getWorkout().getCurrentReps()));
 
         repsEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -201,7 +211,6 @@ public class SetFinishedDialog extends DialogFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-            // TODO: I should extract the controller logic from here (the modification of totalReps)
             @Override
             public void afterTextChanged(Editable s) {
                 AlertDialog dialog = (AlertDialog) getDialog();
@@ -218,27 +227,21 @@ public class SetFinishedDialog extends DialogFragment {
                     }
                     value = Integer.valueOf(s.toString());
                 }
-                // remove previous reps from total
-                mWorkout.totalReps = mWorkout.totalReps - mWorkout.reps.get(mWorkout.crtSetIdx - 1);
-                // update crt set reps
-                mWorkout.reps.set(mWorkout.crtSetIdx - 1, value);
-                // update total reps
-                mWorkout.totalReps = mWorkout.totalReps + mWorkout.reps.get(mWorkout.crtSetIdx - 1);
-                // update views
+                getWorkout().updateCurrentReps(value);
                 avgPaceText.setText(getAvgPaceText());
-                totalRepsText.setText(String.valueOf(mWorkout.totalReps));
+                totalRepsText.setText(String.valueOf(getWorkout().getTotalReps()));
             }
         });
     }
 
     private void setupOverview(View v) {
-        if (mWorkout.exercise.type.equals(ExerciseType.TIME_BASED)) {
+        if (getWorkout().getExerciseType() == ExerciseType.TIME_BASED) {
             v.findViewById(R.id.overview_container).setVisibility(View.GONE);
             return;
         }
 
         v.findViewById(R.id.prev_set_container).setVisibility(
-                mWorkout.crtSetIdx == 1
+                getWorkout().isFirstSet()
                         ? View.GONE
                         : View.VISIBLE);
 
@@ -246,34 +249,32 @@ public class SetFinishedDialog extends DialogFragment {
         TextView totalRepsText = v.findViewById(R.id.total_reps);
         TextView avgPaceText = v.findViewById(R.id.avg_pace);
 
-        final GoalType type = mWorkout.goal.type;
+        if (getWorkout().getGoalType() == GoalType.TIME) {
+            if (!getWorkout().isFirstSet()) {
+                prevSetText.setText(String.valueOf(getWorkout().getRepsFromSet(getWorkout().getCurrentSetIdx() - 1)));
+            }
+            totalRepsText.setText(String.valueOf(getWorkout().getTotalReps()));
 
-        if (type.equals(GoalType.TIME)) {
-            prevSetText.setText(String.valueOf(mWorkout.crtSetIdx == 1
+        } else if (getWorkout().getGoalType() == GoalType.REPS) {
+            prevSetText.setText(getWorkout().isFirstSet()
                     ? String.valueOf(0)
-                    : mWorkout.reps.get(mWorkout.crtSetIdx - 2)));
-            totalRepsText.setText(String.valueOf(mWorkout.totalReps));
-
-        } else if (type.equals(GoalType.REPS)) {
-            prevSetText.setText(mWorkout.crtSetIdx == 1
-                    ? String.valueOf(0)
-                    : formatSeconds(mWorkout.durations.get(mWorkout.crtSetIdx - 2)));
+                    : formatSeconds(getWorkout().getDurationFromSet(getWorkout().getCurrentSetIdx() - 1)));
 
             v.findViewById(R.id.crt_set_container).setVisibility(View.VISIBLE);
             TextView crtSetText = v.findViewById(R.id.crt_set);
-            crtSetText.setText(formatSeconds(mWorkout.durations.get(mWorkout.crtSetIdx - 1)));
+            crtSetText.setText(formatSeconds(getWorkout().getCurrentDuration()));
 
-            totalRepsText.setText(formatSeconds(mWorkout.totalDuration));
+            totalRepsText.setText(formatSeconds(getWorkout().getTotalDuration()));
         }
         avgPaceText.setText(getAvgPaceText());
     }
 
     private String getAvgPaceText() {
-        if (mIsFinalSet) {
-            return Math.round(mWorkout.totalReps * 60.0 * 10.0 / mWorkout.totalDuration) / 10.0 + getString(R.string.dialog_reps_per_min);
+        if (getWorkout().isFinalSet()) {
+            return Math.round(getWorkout().getTotalReps() * 60.0 * 10.0 / getWorkout().getTotalDuration()) / 10.0 + getString(R.string.dialog_reps_per_min);
         } else {
-            final double reps = mWorkout.reps.get(mWorkout.crtSetIdx - 1);
-            final double duration = mWorkout.durations.get(mWorkout.crtSetIdx - 1);
+            final double reps = getWorkout().getCurrentReps();
+            final double duration = getWorkout().getCurrentDuration();
             return Math.round(reps * 60.0 * 10.0 / duration) / 10.0 + getString(R.string.dialog_reps_per_min);
         }
     }
@@ -281,8 +282,8 @@ public class SetFinishedDialog extends DialogFragment {
     private void setupChips(View v) {
         Chip chipExercise = v.findViewById(R.id.chip_exercise);
         Chip chipGoal = v.findViewById(R.id.chip_goal);
-        chipExercise.setText(mWorkout.exercise.name);
-        chipGoal.setText(GoalToString.goalToString(mWorkout.goal));
+        chipExercise.setText(getWorkout().getExerciseName());
+        chipGoal.setText(GoalToString.goalToString(getWorkout().getGoal()));
     }
 
     @NonNull

@@ -37,60 +37,6 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
         mWorkout = new InProgressWorkout();
     }
 
-    /**
-     * This is relevant only for exercises which can be measured with the proximity sensor
-     * ExerciseType == COUNTABLE
-     */
-    @Override
-    public void onRepCompleted() {
-        //TODO: refactoring needed
-        getWorkout().reps.set(getWorkout().crtSetIdx, getWorkout().reps.get(getWorkout().crtSetIdx) + 1);
-        ++getWorkout().totalReps;
-
-        if (getGoalType() == GoalType.TIME) {
-
-            Timber.tag(TAG).d("rep finished " + getWorkout().reps.get(getWorkout().crtSetIdx));
-            EventBus.getDefault().post(new Events.RepComplete(getWorkout().reps.get(getWorkout().crtSetIdx)));
-
-        } else if (getGoalType() == GoalType.REPS) {
-            if (getWorkout().reps.get(getWorkout().crtSetIdx) < getWorkout().goal.reps) {
-                Timber.tag(TAG).d("rep finished " + getWorkout().reps.get(getWorkout().crtSetIdx) + "/" + getWorkout().goal.reps);
-                EventBus.getDefault().post(new Events.RepComplete(getWorkout().reps.get(getWorkout().crtSetIdx)));
-            } else if (getWorkout().crtSetIdx + 1 < getWorkout().goal.sets) {
-                getRepCounter().unregister();
-                getWorkout().durations.set(getWorkout().crtSetIdx, mTimer.elapsedSeconds);
-                getWorkout().totalDuration += getWorkout().durations.get(getWorkout().crtSetIdx);
-                ++getWorkout().crtSetIdx;
-
-                Timber.tag(TAG).v("set finished " + (getWorkout().crtSetIdx + 1) + "/" + getWorkout().goal.sets);
-                mTimer.stop();
-                EventBus.getDefault().post(new Events.RepComplete(getWorkout().reps.get(getWorkout().crtSetIdx)));
-
-                if (SettingsHelper.autoStartBreak(getWorkout().exercise.type)) {
-                    EventBus.getDefault().post(new Events.StartBreak(getWorkout().goal.duration_break));
-                } else {
-                    getWorkout().state = State.SET_FINISHED;
-                    EventBus.getDefault().post(new Events.SetFinished());
-                }
-
-                getWorkout().reps.set(getWorkout().crtSetIdx, 0);
-            } else {
-                Timber.tag(TAG).d("Workout finished");
-                getRepCounter().unregister();
-                getWorkout().durations.set(getWorkout().crtSetIdx, mTimer.elapsedSeconds);
-                getWorkout().totalDuration += getWorkout().durations.get(getWorkout().crtSetIdx);
-
-                mTimer.stop();
-                EventBus.getDefault().post(new Events.RepComplete(getWorkout().reps.get(getWorkout().crtSetIdx)));
-
-                ++getWorkout().crtSetIdx;
-
-                getWorkout().state = State.WORKOUT_FINISHED;
-                EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
-            }
-        }
-    }
-
     public void init(Exercise exercise, Goal goal) {
         if (exercise.type.equals(INVALID)) {
             throw new IllegalArgumentException("Invalid exercise type");
@@ -99,7 +45,7 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
     }
 
     public void start() {
-        mWorkout.state = State.ACTIVE;
+        mWorkout.setState(State.ACTIVE);
 
         if (getExerciseType().equals(COUNTABLE)) {
             getRepCounter().register(this);
@@ -110,22 +56,22 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
         } else if (getGoalType().equals(GoalType.TIME)) {
             mCountDownTimer = new CountDownTimer(
                     TimerType.COUNT_DOWN,
-                    TimeUnit.SECONDS.toMillis(getWorkout().goal.duration),
+                    TimeUnit.SECONDS.toMillis(getWorkout().getGoalDuration()),
                     this);
             mCountDownTimer.start();
         }
     }
 
     private ExerciseType getExerciseType() {
-        return getWorkout().exercise.type;
+        return getWorkout().getExerciseType();
     }
 
     private GoalType getGoalType() {
-        return getWorkout().goal.type;
+        return getWorkout().getGoalType();
     }
 
     public void stop() {
-        getWorkout().state = State.INACTIVE;
+        getWorkout().setState(State.INACTIVE);
         getRepCounter().unregister();
         getCountDownTimer().cancel();
         getTimer().stop();
@@ -153,45 +99,80 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
     }
 
     /**
+     * This is relevant only for exercises which can be measured with the proximity sensor
+     * ExerciseType == COUNTABLE
+     */
+    @Override
+    public void onFinishedRep() {
+        getWorkout().incrementCurrentReps();
+
+        Timber.tag(TAG).d("Rep (%s / %s) | Set (%s / %s)",
+                getWorkout().getCurrentReps(), getWorkout().getGoalReps(),
+                getWorkout().getCurrentSet() + 1, getWorkout().getGoalSets());
+        EventBus.getDefault().post(new Events.RepComplete(getWorkout().getCurrentReps()));
+
+        if (getGoalType() == GoalType.TIME) {
+            return;
+        }
+
+        if (getWorkout().isSetFinished()) {
+            getRepCounter().unregister();
+            getWorkout().setCurrentDuration(mTimer.elapsedSeconds);
+
+            mTimer.stop();
+
+            if (getWorkout().isFinalSet()) {
+                Timber.tag(TAG).v("Workout finished");
+                getWorkout().setState(State.WORKOUT_FINISHED);
+                EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
+            } else {
+                if (SettingsHelper.autoStartBreak(getExerciseType())) {
+                    getWorkout().incrementCurrentSet();
+                    EventBus.getDefault().post(new Events.StartBreak(getWorkout().getGoalDurationBreak()));
+                } else {
+                    getWorkout().setState(State.SET_FINISHED);
+                    EventBus.getDefault().post(new Events.SetFinished());
+                }
+            }
+        }
+    }
+
+    /**
      * This is called when:
      * - a set of an AMRAP workout is finished (COUNTABLE / UNCOUNTABLE + TIME as goal)
      * - a set of a UNCOUNTABLE + REPS as goal workout was finished (manually triggered by the user)
      */
     @Override
     public void onFinishedSet() {
+        Timber.tag(TAG).v("onFinishedSet %s / %s",
+                getWorkout().getCurrentSet(), getWorkout().getGoalSets());
 
-        Timber.tag(TAG).v("onFinishedSet %s / %s", getWorkout().crtSetIdx + 1, getWorkout().goal.sets);
-
-        if (getWorkout().exercise.type == COUNTABLE) {
+        if (getExerciseType() == COUNTABLE) {
             getRepCounter().unregister();
         }
 
-        if (getWorkout().goal.type == GoalType.TIME) {
-            // Rep(countable or not) based exercises with TIME as goal. (AMRAP)
+        if (getGoalType() == GoalType.TIME) {
+            // Rep(countable or not) based exercises with TIME as goal (AMRAP)
             // The countdown was finished
-            final int duration = getWorkout().goal.duration;
-            getWorkout().durations.set(getWorkout().crtSetIdx, duration);
-            getWorkout().totalDuration += duration;
-        } else if (getWorkout().goal.type == GoalType.REPS) {
-            // Rep based exercises with REPS as goal.
+            getWorkout().setCurrentDuration(getWorkout().getGoalDuration());
+        } else if (getGoalType() == GoalType.REPS) {
+            // Rep based exercises with REPS as goal
             // The user stated that he achieved the rep goal
-            getWorkout().reps.set(getWorkout().crtSetIdx, mWorkout.goal.reps);
-            getWorkout().durations.set(getWorkout().crtSetIdx, mTimer.elapsedSeconds);
-            getWorkout().totalDuration += getWorkout().durations.get(getWorkout().crtSetIdx);
+            getWorkout().setCurrentReps(getWorkout().getGoalReps());
+            getWorkout().setCurrentDuration(mTimer.elapsedSeconds);
             mTimer.stop();
         }
 
-        ++getWorkout().crtSetIdx;
-
-        if (getWorkout().isLastSet()) {
-            getWorkout().state = State.WORKOUT_FINISHED;
+        if (getWorkout().isFinalSet()) {
+            getWorkout().setState(State.WORKOUT_FINISHED);
             EventBus.getDefault().post(new Events.FinishedWorkoutEvent());
         } else {
-            if (SettingsHelper.autoStartBreak(getWorkout().exercise.type)) {
-                getWorkout().state = State.BREAK_ACTIVE;
-                EventBus.getDefault().post(new Events.StartBreak(getWorkout().goal.duration_break));
+            if (SettingsHelper.autoStartBreak(getExerciseType())) {
+                getWorkout().incrementCurrentSet();
+                getWorkout().setState(State.BREAK_ACTIVE);
+                EventBus.getDefault().post(new Events.StartBreak(getWorkout().getGoalDurationBreak()));
             } else {
-                getWorkout().state = State.SET_FINISHED;
+                getWorkout().setState(State.SET_FINISHED);
                 EventBus.getDefault().post(new Events.SetFinished());
             }
         }
@@ -202,20 +183,20 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
      * This will pause and un-pause the workout.
      */
     public void toggle() {
-        if (getWorkout().state == State.BREAK_ACTIVE) {
+        if (getWorkout().getState() == State.BREAK_ACTIVE) {
             mElapsed = mCountDownTimer.seconds;
             mCountDownTimer.cancel();
-            getWorkout().state = State.BREAK_PAUSED;
+            getWorkout().setState(State.BREAK_PAUSED);
             return;
-        } else if (getWorkout().state == State.BREAK_PAUSED) {
-            getWorkout().state = State.BREAK_ACTIVE;
+        } else if (getWorkout().getState() == State.BREAK_PAUSED) {
+            getWorkout().setState(State.BREAK_ACTIVE);
             EventBus.getDefault().post(new Events.StartBreak(mElapsed));
             return;
         }
 
-        final boolean active = getWorkout().state == State.ACTIVE;
+        final boolean active = getWorkout().getState() == State.ACTIVE;
 
-        getWorkout().state = active ? State.PAUSED : State.ACTIVE;
+        getWorkout().setState(active ? State.PAUSED : State.ACTIVE);
 
         if (getExerciseType().equals(COUNTABLE)) {
             if (active) {

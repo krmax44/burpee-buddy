@@ -6,7 +6,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-//TODO: fusion with light sensor too
 public class RepCounter implements SensorEventListener {
 
     private final Sensor mProximitySensor;
@@ -17,7 +16,7 @@ public class RepCounter implements SensorEventListener {
     private boolean mSkipFirstRep;
 
     public interface Listener {
-        void onRepCompleted();
+        void onFinishedRep();
     }
 
     private final SensorManager mSensorManager;
@@ -61,7 +60,7 @@ public class RepCounter implements SensorEventListener {
         }
         float distance = event.values[0];
         if (distance == MAX_RANGE) {
-            mListener.onRepCompleted();
+            mListener.onFinishedRep();
         }
     }
 

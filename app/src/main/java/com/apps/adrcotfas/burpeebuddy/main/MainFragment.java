@@ -67,14 +67,14 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         });
 
         // when navigating from Workout to Main
-        if (getWorkoutManager().getWorkout().state != State.ACTIVE &&
+        if (getWorkoutManager().getWorkout().getState() != State.ACTIVE &&
                 MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
             Timber.tag(TAG).d( "show finished dialog");
             //TODO: refactoring
 //            SetFinishedDialog.getInstance(
 //                    BuddyApplication.getWorkoutManager().getWorkout())
 //                    .show(getActivity().getSupportFragmentManager(), TAG);
-            getWorkoutManager().getWorkout().state = State.INACTIVE;
+            getWorkoutManager().getWorkout().setState(State.INACTIVE);
         }
 
         return mViewMvc.getRootView();
