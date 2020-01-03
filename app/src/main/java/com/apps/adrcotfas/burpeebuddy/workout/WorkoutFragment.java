@@ -160,8 +160,12 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     @Subscribe
     public void onMessageEvent(Events.SetFinished event) {
         Timber.tag(TAG).v("SetFinished " + this.hashCode());
-        mViewMvc.onStartBreak(); //TODO: move to "onMessageEvent::Break"
         navigateToFinishDialog();
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.StartBreak event) {
+        mViewMvc.onStartBreak();
     }
 
     private void navigateToFinishDialog() {

@@ -60,9 +60,10 @@ public class SetFinishedDialog extends DialogFragment {
         setupAutoStartBreakCheckbox(v);
         setupOverview(v);
 
-        if ((getWorkout().getExerciseType() != ExerciseType.TIME_BASED)
+        if ((getWorkout().getExerciseType() == ExerciseType.UNCOUNTABLE)
                 && getWorkout().getGoalType() == GoalType.TIME) {
             v.findViewById(R.id.reps_container).setVisibility(View.VISIBLE);
+
             setupRepsEditText(v);
             setupModifierButtons(v);
         }
@@ -114,10 +115,8 @@ public class SetFinishedDialog extends DialogFragment {
                         .setNegativeButton(android.R.string.cancel, (d, w) -> stopAndNavigateToMain());
                 break;
             case WORKOUT_FINISHED:
-                //TODO: if autobreak, change the title to "Workout finished"
                 mBuilder.setTitle(getTitle())
                         .setPositiveButton(android.R.string.ok, (d, w) -> {
-                            //TODO: not needed getWorkout().incrementCurrentSet();
                             stopAndNavigateToMain();
                         });
                 mBuilder.setOnCancelListener(dialog -> stopAndNavigateToMain());
@@ -129,7 +128,9 @@ public class SetFinishedDialog extends DialogFragment {
 
     @NonNull
     private String getTitle() {
-        // TODO: if auto break, show a different title
+        if (SettingsHelper.autoStartBreak(getWorkout().getExerciseType())) {
+            return "Workout finished";
+        }
         return getString(R.string.dialog_set_finished) + "(" + getWorkout().getCurrentSet() + "/" + getWorkout().getGoalSets() + ")";
     }
 
@@ -271,10 +272,16 @@ public class SetFinishedDialog extends DialogFragment {
 
     private String getAvgPaceText() {
         if (getWorkout().isFinalSet()) {
+            if (getWorkout().getTotalDuration() == 0) {
+                return "-";
+            }
             return Math.round(getWorkout().getTotalReps() * 60.0 * 10.0 / getWorkout().getTotalDuration()) / 10.0 + getString(R.string.dialog_reps_per_min);
         } else {
             final double reps = getWorkout().getCurrentReps();
             final double duration = getWorkout().getCurrentDuration();
+            if (duration == 0) {
+                return "-";
+            }
             return Math.round(reps * 60.0 * 10.0 / duration) / 10.0 + getString(R.string.dialog_reps_per_min);
         }
     }
