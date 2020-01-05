@@ -2,6 +2,7 @@ package com.apps.adrcotfas.burpeebuddy.settings;
 
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -71,6 +72,9 @@ public class SettingsHelper {
 
     public static boolean autoStartBreak(ExerciseType type) {
         if (type.equals(ExerciseType.UNCOUNTABLE)) {
+            if (BuddyApplication.getWorkoutManager().getWorkout().getGoalType() == GoalType.TIME) {
+                return false;
+            }
             return getDefaultSharedPreferences(BuddyApplication.getInstance())
                     .getBoolean(AUTO_START_BREAK_UNCOUNTABLE, false);
         } else if (type.equals(ExerciseType.COUNTABLE)) {
