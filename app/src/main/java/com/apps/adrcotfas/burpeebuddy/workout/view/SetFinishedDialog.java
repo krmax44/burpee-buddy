@@ -74,13 +74,6 @@ public class SetFinishedDialog extends DialogFragment {
     private void setupAutoStartBreakCheckbox(View v) {
         final MaterialCheckBox checkBox = v.findViewById(R.id.auto_break_checkbox);
 
-        // always hide the checkbox for workouts that require user interaction
-        if (getWorkout().getExerciseType() == ExerciseType.UNCOUNTABLE
-                && getWorkout().getGoalType() == GoalType.REPS) {
-            checkBox.setVisibility(View.GONE);
-            return;
-        }
-
         if (SettingsHelper.autoStartBreak(getWorkout().getExerciseType())
                 || getWorkout().isFinalSet()) {
             checkBox.setVisibility(View.GONE);
