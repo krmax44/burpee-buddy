@@ -1,15 +1,12 @@
 package com.apps.adrcotfas.burpeebuddy.db.goals;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 @Entity
-public class Goal implements Parcelable {
+public class Goal {
 
     public static int DEFAULT_SETS = 3;
     public static int DEFAULT_REPS = 10;
@@ -79,44 +76,5 @@ public class Goal implements Parcelable {
         this.duration = duration;
         this.duration_break = duration_break;
         this.color = 0;
-    }
-
-    /**
-     * Parcelable stuff bellow
-     */
-    protected Goal(Parcel in) {
-        id = in.readInt();
-        type = GoalTypeConverter.getGoalTypeFromInt(in.readInt());
-        sets = in.readInt();
-        reps = in.readInt();
-        duration = in.readInt();
-        duration_break = in.readInt();
-    }
-
-    public static final Creator<Goal> CREATOR = new Creator<Goal>() {
-        @Override
-        public Goal createFromParcel(Parcel in) {
-            return new Goal(in);
-        }
-
-        @Override
-        public Goal[] newArray(int size) {
-            return new Goal[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeInt(type.getValue());
-        dest.writeInt(sets);
-        dest.writeInt(reps);
-        dest.writeInt(duration);
-        dest.writeInt(duration_break);
     }
 }

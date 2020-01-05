@@ -3,6 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.workout.manager;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class InProgressWorkout {
     }
 
     public void init(Exercise exercise, Goal goal) {
-        mState = State.PRE_WORKOUT;
+        mState = State.INACTIVE;
         mExercise = exercise;
         mGoal = goal;
         mCrtSetIdx = 0;
@@ -82,6 +83,10 @@ public class InProgressWorkout {
 
     public String getExerciseName() {
         return mExercise.name;
+    }
+
+    public String getGoalName() {
+        return GoalToString.goalToString(mGoal);
     }
 
     public int getCurrentSet() {
@@ -135,8 +140,6 @@ public class InProgressWorkout {
         mTotalReps = mTotalReps - getCurrentReps();
         // update crt set mReps
         setCurrentReps(value);
-        // update total mReps
-        mTotalReps = mTotalReps + getCurrentReps();
     }
 
     public int getCurrentDuration() {
@@ -162,6 +165,29 @@ public class InProgressWorkout {
 
     public int getTotalDuration() {
         return mTotalDuration;
+    }
+
+    public double getAvgPaceFromSet(int i) {
+        final int reps = getRepsFromSet(i);
+        final int duration = getDurationFromSet(i);
+        if (duration == 0) {
+            return 0;
+        }
+        return getAvgPace(reps, duration);
+    }
+
+    public double getTotalAvgPace() {
+        if (getTotalDuration() == 0) {
+            return 0;
+        }
+        return getAvgPace(getTotalReps(), getTotalDuration());
+    }
+
+    public double getAvgPace(int reps, int duration) {
+        if (duration == 0) {
+            return 0;
+        }
+        return Math.round(reps * 60.0 * 10.0 / duration) / 10.0;
     }
 
     public int getGoalSets() {

@@ -7,12 +7,10 @@ import androidx.lifecycle.LifecycleService;
 
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
-import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.WorkoutManager;
@@ -56,14 +54,10 @@ public class WorkoutService extends LifecycleService {
         super.onStartCommand(intent, flags, startId);
         EventBus.getDefault().register(this);
 
-        final Exercise exercise = WorkoutFragmentArgs.fromBundle(intent.getExtras()).getExercise();
-        final Goal goal = WorkoutFragmentArgs.fromBundle(intent.getExtras()).getGoal();
-
-        getWorkoutManager().init(exercise, goal);
-
         getMediaPlayer().init();
 
         getWorkoutManager().startPreWorkoutTimer(PRE_WORKOUT_COUNTDOWN_SECONDS);
+        getWorkoutManager().getWorkout().setState(State.PRE_WORKOUT);
         startForeground(WORKOUT_NOTIFICATION_ID, getNotificationHelper().getBuilder().build());
         getNotificationHelper().setTitle("Get ready"); //TODO: extract string
 
@@ -153,7 +147,6 @@ public class WorkoutService extends LifecycleService {
     public void onMessageEvent(Events.ToggleWorkoutEvent event) {
         getWorkoutManager().toggle();
     }
-
 
     private NotificationHelper getNotificationHelper() {
         return BuddyApplication.getNotificationHelper();

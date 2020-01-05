@@ -22,6 +22,7 @@ import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.main.MainActivity;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
+import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewMvc;
 import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewMvcImpl;
@@ -79,7 +80,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
                 break;
             case ACTIVE:
                 // coming from another screen / the app was sent to background
-                // do nothing
+                setupFinishSet(View.VISIBLE);
                 break;
             case PAUSED:
                 navigateToConfirmStopDialog();
@@ -88,6 +89,8 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
             case SET_FINISHED:
             case WORKOUT_FINISHED:
                 navigateToFinishDialog();
+                break;
+            case WORKOUT_FINISHED_IDLE:
                 break;
         }
     }
@@ -119,11 +122,17 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     private void startWorkout() {
         Intent startIntent = new Intent(getActivity(), WorkoutService.class);
-        startIntent.putExtras(getArguments());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getActivity().startForegroundService(startIntent);
         } else {
             getActivity().startService(startIntent);
+        }
+    }
+
+    private void setupFinishSet(int visible) {
+        if (getWorkout().getGoalType() == GoalType.REPS &&
+                getWorkout().getExerciseType() == ExerciseType.UNCOUNTABLE) {
+            mViewMvc.setFinishSetButtonVisibility(visible);
         }
     }
 
@@ -133,21 +142,17 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         if (SettingsHelper.autoLockEnabled() && Power.isScreenOn(getActivity())) {
             Power.lockScreen((AppCompatActivity) getActivity());
         }
-
-        if (BuddyApplication.getWorkoutManager().getWorkout().getExerciseType() == ExerciseType.UNCOUNTABLE
-                && BuddyApplication.getWorkoutManager().getWorkout().getGoalType() == GoalType.REPS) {
-            mViewMvc.onStartWorkout();
-        }
+        setupFinishSet(View.VISIBLE);
     }
 
     @Subscribe
     public void onMessageEvent(Events.RepComplete event) {
-        mViewMvc.updateCounter(event.reps);
+        mViewMvc.onRepComplete(event.reps);
     }
 
     @Subscribe
     public void onMessageEvent(Events.TimerTickEvent event) {
-        mViewMvc.updateTimer(event.seconds);
+        mViewMvc.onTimerTick(event.seconds);
     }
 
     @Subscribe
@@ -155,6 +160,12 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         Timber.tag(TAG).v("FinishedWorkoutEvent " + this.hashCode());
         //TODO show finish dialog with special title (no 3/3 but "Workout finished")
         navigateToFinishDialog();
+        mViewMvc.onWorkoutFinished();
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.FinishedWorkoutIdle event) {
+        mViewMvc.onWorkoutFinished();
     }
 
     @Subscribe
@@ -166,6 +177,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     @Subscribe
     public void onMessageEvent(Events.StartBreak event) {
         mViewMvc.onStartBreak();
+        setupFinishSet(View.GONE);
     }
 
     private void navigateToFinishDialog() {
@@ -176,5 +188,9 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     private void navigateToConfirmStopDialog() {
         Timber.tag(TAG).v("navigateToConfirmStopDialog");
         NavHostFragment.findNavController(this).navigate(R.id.action_workoutFragment_to_confirmStopDialog);
+    }
+
+    private InProgressWorkout getWorkout() {
+        return BuddyApplication.getWorkoutManager().getWorkout();
     }
 }

@@ -144,8 +144,8 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
      */
     @Override
     public void onFinishedSet() {
-        Timber.tag(TAG).v("onFinishedSet %s / %s",
-                getWorkout().getCurrentSet(), getWorkout().getGoalSets());
+        Timber.tag(TAG).v("onFinishedSet %s / %s, hashcode: %s",
+                getWorkout().getCurrentSet(), getWorkout().getGoalSets(), this.hashCode());
 
         if (getExerciseType() == COUNTABLE) {
             getRepCounter().unregister();
@@ -221,6 +221,14 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
             } else {
                 mTimer.start(mElapsed);
             }
+        }
+    }
+
+    public int getElapsedTime() {
+        if (getWorkout().getGoalType() == GoalType.REPS) {
+            return getTimer().elapsedSeconds;
+        } else { // TIME
+            return getWorkout().getGoal().duration - getCountDownTimer().seconds;
         }
     }
 }

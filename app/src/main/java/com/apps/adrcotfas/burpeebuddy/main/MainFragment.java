@@ -12,6 +12,7 @@ import androidx.lifecycle.LiveData;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
@@ -101,9 +102,8 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
     @Override
     public void onStartButtonClicked() {
-        MainFragmentDirections.ActionMainToWorkout action =
-                MainFragmentDirections.actionMainToWorkout(mExercise, mViewMvc.getGoal());
-        NavHostFragment.findNavController(this).navigate(action);
+        BuddyApplication.getWorkoutManager().init(mExercise, mViewMvc.getGoal());
+        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_workout);
     }
 
     @Override

@@ -36,4 +36,20 @@ public class GoalToString {
         }
         return result;
     }
+
+    public static String formatSecondsAlt(int seconds) {
+
+        final int minutes = seconds / 60;
+        final int remSec = seconds % 60;
+
+        String result;
+        if (seconds != 0) {
+            result =  minutes > 10
+                    ? minutes + ":" + (remSec < 10 ? "0" + remSec : remSec)
+                    : "0" + minutes + ":" + (remSec < 10 ? "0" + remSec : remSec);
+        } else {
+            result = "00:00";
+        }
+        return result;
+    }
 }

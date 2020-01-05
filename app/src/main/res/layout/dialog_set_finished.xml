@@ -6,127 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_margin="32dp">
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_exercise"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"/>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_goal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"/>
-    </LinearLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/overview_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:id="@+id/crt_set_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/prev_set_container"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone">
-            <TextView
-                style="style/OverviewTextDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Current" />
-            <TextView
-                android:id="@+id/crt_set"
-                style="@style/OverviewTextValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/prev_set_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/linearLayout9"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/crt_set_container"
-            app:layout_constraintTop_toTopOf="parent">
-            <TextView
-                style="style/OverviewTextDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Previous" />
-            <TextView
-                android:id="@+id/prev_set"
-                style="@style/OverviewTextValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linearLayout9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/linearLayout10"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/prev_set_container"
-            app:layout_constraintTop_toTopOf="parent">
-            <TextView
-                style="style/OverviewTextDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Avg. pace" />
-            <TextView
-                android:id="@+id/avg_pace"
-                style="@style/OverviewTextValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linearLayout10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/linearLayout9"
-            app:layout_constraintTop_toTopOf="parent">
-            <TextView
-                style="style/OverviewTextDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total" />
-            <TextView
-                android:id="@+id/total_reps"
-                style="@style/OverviewTextValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/reps_container"
         android:layout_width="match_parent"
@@ -152,6 +31,7 @@
                 android:id="@+id/reps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
                 android:maxLength="3" />
         </com.google.android.material.textfield.TextInputLayout>
 

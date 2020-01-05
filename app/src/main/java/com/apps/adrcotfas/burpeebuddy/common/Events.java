@@ -100,4 +100,7 @@ public class Events {
 
     public static class UserTriggeredFinishSet {
     }
+
+    public static class FinishedWorkoutIdle {
+    }
 }
