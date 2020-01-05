@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.workout.view;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -170,12 +171,12 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
             row.avgPace.setVisibility(View.GONE);
         }
 
-        row.parent.setBackgroundColor(
+        row.parent.setBackgroundTintList(ColorStateList.valueOf(
                 getContext().getResources().getColor(
                         getWorkout().getCurrentSetIdx() == index
                                 || index == STATS_TOTAL_ROW_INDEX
                                 ? R.color.colorAccent
-                                : R.color.transparent));
+                                : R.color.transparent)));
         return row;
     }
 
@@ -189,13 +190,13 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         getSetViewRowAt(index).header.setText(index < 9 ? "0" + (index + 1) : (index + 1) + "");
         getSetViewRowAt(index).duration.setText(
                 formatSecondsAlt(getWorkout().getDurationFromSet(index)));
-        getSetViewRowAt(index).parent.setBackgroundColor(
+        getSetViewRowAt(index).parent.setBackgroundTintList(ColorStateList.valueOf(
                 getContext().getResources().getColor(
                         getWorkout().getCurrentSetIdx() == index
                                 && getWorkout().getState() != State.WORKOUT_FINISHED
                                 && getWorkout().getState() != State.WORKOUT_FINISHED_IDLE
                                 ? R.color.colorAccent
-                                : R.color.transparent));
+                                : R.color.transparent)));
     }
 
     private SetViewRow getCurrentSetViewRow() {
