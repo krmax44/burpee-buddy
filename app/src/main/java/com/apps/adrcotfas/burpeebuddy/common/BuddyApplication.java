@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavDeepLinkBuilder;
 
 import com.apps.adrcotfas.burpeebuddy.BuildConfig;
@@ -16,6 +17,11 @@ import com.apps.adrcotfas.burpeebuddy.workout.manager.WorkoutManager;
 import timber.log.Timber;
 
 public class BuddyApplication extends Application {
+
+    static {
+        AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_YES);
+    }
 
     private static BuddyApplication INSTANCE;
     private static WorkoutManager mWorkoutManager;
