@@ -4,30 +4,40 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private BottomNavigationView navView;
 
+    private AppBarConfiguration appBarConfiguration;
+    private NavigationView navView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         navView = findViewById(R.id.nav_view);
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        if (navHostFragment != null) {
-            NavigationUI.setupWithNavController(navView, navHostFragment.getNavController());
-            NavigationUI.setupActionBarWithNavController(this, navHostFragment.getNavController());
-        }
+        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph())
+                .setDrawerLayout(drawerLayout)
+                .build();
+
+        NavigationUI.setupWithNavController(navView, navController);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         if (SettingsHelper.isFirstRun()) {
             AppDatabase.getDatabase(getApplicationContext());
@@ -36,8 +46,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setBottomNavigationVisibility(int visibility) {
-        navView.setVisibility(visibility);
+    @Override
+    public boolean onSupportNavigateUp() {
+        return NavigationUI.navigateUp(Navigation.findNavController(
+                this, R.id.nav_host_fragment), appBarConfiguration);
     }
 
     @Override

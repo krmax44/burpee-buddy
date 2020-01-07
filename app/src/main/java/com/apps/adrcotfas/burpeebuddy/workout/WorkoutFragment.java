@@ -43,7 +43,6 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     public void onAttach(@NonNull Context context) {
         Timber.tag(TAG).d( "onAttach" + this.hashCode());
         super.onAttach(context);
-        ((MainActivity)getActivity()).setBottomNavigationVisibility(View.INVISIBLE);
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -100,7 +99,6 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         Timber.tag(TAG).d( "onDestroy " + this.hashCode());
         mViewMvc.unregisterListener(this);
         EventBus.getDefault().unregister(this);
-        ((MainActivity)getActivity()).setBottomNavigationVisibility(View.VISIBLE);
         super.onDestroy();
     }
 
