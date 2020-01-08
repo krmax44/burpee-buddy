@@ -20,7 +20,6 @@ import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
-import com.apps.adrcotfas.burpeebuddy.main.MainActivity;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
@@ -47,7 +46,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // TODO: show dialog to stop session
+                onStopButtonClicked();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);

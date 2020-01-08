@@ -47,20 +47,6 @@
             app:destination="@id/confirmStopDialog" />
     </fragment>
     <fragment
-        android:id="@+id/myProfileFragment"
-        android:name="com.apps.adrcotfas.burpeebuddy.myprofile.MyProfileFragment"
-        android:label="@string/title_me"
-        tools:layout="@layout/fragment_my_profile" />
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.apps.adrcotfas.burpeebuddy.settings.SettingsFragment"
-        android:label="@string/title_settings" />
-    <fragment
-        android:id="@+id/leaderboardFragment"
-        android:name="com.apps.adrcotfas.burpeebuddy.leaderboard.LeaderboardFragment"
-        android:label="@string/title_leaderboard"
-        tools:layout="@layout/fragment_leaderboard" />
-    <fragment
         android:id="@+id/editExercisesFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.edit_exercises.ExercisesFragment"
         android:label="EditExercisesFragment" >

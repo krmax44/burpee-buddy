@@ -6,7 +6,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -14,6 +16,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
+import com.apps.adrcotfas.burpeebuddy.workout.WorkoutFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private AppBarConfiguration appBarConfiguration;
-    private NavigationView navView;
+    private NavController navController;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,14 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
-        navView = findViewById(R.id.nav_view);
+        NavigationView sideNavView = findViewById(R.id.nav_view);
+
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph())
                 .setDrawerLayout(drawerLayout)
                 .build();
 
-        NavigationUI.setupWithNavController(navView, navController);
+        NavigationUI.setupWithNavController(sideNavView, navController);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         if (SettingsHelper.isFirstRun()) {
@@ -48,8 +53,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(Navigation.findNavController(
-                this, R.id.nav_host_fragment), appBarConfiguration);
+
+        NavDestination destination = navController.getCurrentDestination();
+        if (destination != null && destination.getId() == R.id.workoutFragment) {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                    if (fragment != null) {
+                        WorkoutFragment workoutFragment =
+                                (WorkoutFragment)fragment.getChildFragmentManager().getPrimaryNavigationFragment();
+                                if (workoutFragment != null){
+                                    workoutFragment.onStopButtonClicked();
+                                }
+                    }
+            return false;
+        }
+        return NavigationUI.navigateUp(navController, appBarConfiguration);
     }
 
     @Override
