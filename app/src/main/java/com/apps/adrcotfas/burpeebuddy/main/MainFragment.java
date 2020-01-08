@@ -25,7 +25,6 @@ import java.util.List;
 
 import timber.log.Timber;
 
-import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.getWorkoutManager;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
@@ -85,8 +84,6 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     public void onResume() {
         super.onResume();
         Timber.tag(TAG).d( "onResume");
-        //TODO extract to settings
-        getActivity().getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
         mViewMvc.registerListener(this);
         mViewMvc.showIntroduction();
     }

@@ -31,6 +31,8 @@ import org.greenrobot.eventbus.Subscribe;
 
 import timber.log.Timber;
 
+import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+
 public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener {
 
     private static final String TAG = "WorkoutFragment";
@@ -56,7 +58,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.tag(TAG).d( "onCreateView " + this.hashCode());
-
+        getActivity().getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
         mViewMvc = new WorkoutViewMvcImpl(inflater, container);
         EventBus.getDefault().register(this);
 
