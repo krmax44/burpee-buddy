@@ -19,6 +19,14 @@ public class TimerFormat {
                 + ":" + insertPrefixZero(seconds);
     }
 
+    public static String secondsToTimerFormatAlt(int elapsed) {
+        final long minutes = TimeUnit.SECONDS.toMinutes(elapsed);
+        final long seconds = elapsed - (minutes * 60);
+
+        return insertPrefixZero(minutes)
+                + ":" + insertPrefixZero(seconds);
+    }
+
     private static String insertPrefixZero(long value) {
         return value < 10 ? "0" + value : String.valueOf(value);
     }

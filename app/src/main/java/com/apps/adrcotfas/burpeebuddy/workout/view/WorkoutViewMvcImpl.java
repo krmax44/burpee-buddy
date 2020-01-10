@@ -16,8 +16,8 @@ import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
 
     private final LayoutInflater mInflater;
     private TextView mTimer;
-    private final ExtendedFloatingActionButton mFinishSetButton;
+    private final MaterialButton mFinishSetButton;
 
     private LinearLayout mStatsContainer;
     private List<SetViewRow> mStatRowViews;
@@ -68,8 +68,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         mIsTimeBased = getWorkout().getExerciseType() == ExerciseType.TIME_BASED;
         setupStats();
 
-        ExtendedFloatingActionButton stopButton = findViewById(R.id.stop_button);
-        stopButton.setOnClickListener(v -> {
+        findViewById(R.id.stop_button).setOnClickListener(v -> {
             for (Listener listener : getListeners()) {
                 listener.onStopButtonClicked();
             }
@@ -219,7 +218,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
 
     @Override
     public void onTimerTick(int seconds) {
-        mTimer.setText(TimerFormat.secondsToTimerFormat(seconds));
+        mTimer.setText(TimerFormat.secondsToTimerFormatAlt(seconds));
         if (getWorkout().getState() == State.ACTIVE) {
             getCurrentSetViewRow().duration.setText(formatSecondsAlt(getElapsedTime()));
         }

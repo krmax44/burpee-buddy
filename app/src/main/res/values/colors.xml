@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="white">#E3F2FD</color>
     <color name="colorPrimary">#83c2e2</color>
     <color name="colorPrimaryDark">#5E9FC0</color>
 
@@ -7,5 +8,6 @@
     <color name="colorSurface">#1b1f22</color>
 
     <color name="colorAccent">#AD36E0</color>
+    <color name="red">#EC407A</color>
     <color name="transparent">#00000000</color>
 </resources>

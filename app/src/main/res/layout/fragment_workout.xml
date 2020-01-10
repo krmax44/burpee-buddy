@@ -39,7 +39,7 @@
     <LinearLayout
         android:id="@+id/stats_parent"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="180dp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/chip_container"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -62,22 +62,28 @@
 
     <TextView
         android:id="@+id/timer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
         android:layout_marginTop="32dp"
-        android:text="00:00:00"
-        android:textColor="@color/design_default_color_primary_dark"
-        android:textSize="45sp"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:text="00:00"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/white"
+        app:autoSizeTextType="uniform"
+        android:maxLines="1"
+        android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/stop_button"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/stats_parent" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/finish_set_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="32dp"
         android:backgroundTint="@color/colorPrimaryDark"
         android:gravity="center"
         android:text="Finish set"
@@ -88,12 +94,12 @@
         app:layout_constraintStart_toStartOf="parent"
         android:visibility="gone"/>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/stop_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:backgroundTint="@color/colorAccent"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/red"
         android:gravity="center"
         android:text="@string/stop"
         android:textColor="@color/cardview_light_background"

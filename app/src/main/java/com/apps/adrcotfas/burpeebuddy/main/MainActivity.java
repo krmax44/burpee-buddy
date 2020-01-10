@@ -1,7 +1,9 @@
 package com.apps.adrcotfas.burpeebuddy.main;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,7 +21,7 @@ import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.WorkoutFragment;
 import com.google.android.material.navigation.NavigationView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = "MainActivity";
 
@@ -34,15 +36,15 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView sideNavView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph())
+        appBarConfiguration = new AppBarConfiguration.Builder(R.id.mainFragment)
                 .setDrawerLayout(drawerLayout)
                 .build();
 
-        NavigationUI.setupWithNavController(sideNavView, navController);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
 
         if (SettingsHelper.isFirstRun()) {
             AppDatabase.getDatabase(getApplicationContext());
@@ -53,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-
         NavDestination destination = navController.getCurrentDestination();
         if (destination != null && destination.getId() == R.id.workoutFragment) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
@@ -72,5 +73,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.settingsFragment) {
+            navController.navigate(R.id.settingsFragment);
+            return true;
+        }
+        return false;
     }
 }

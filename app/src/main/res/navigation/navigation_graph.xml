@@ -90,4 +90,8 @@
             app:popUpTo="@+id/workoutFragment"
             app:popUpToInclusive="true" />
     </dialog>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.apps.adrcotfas.burpeebuddy.settings.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>
