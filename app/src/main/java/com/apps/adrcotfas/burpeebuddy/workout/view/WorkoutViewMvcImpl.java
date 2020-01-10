@@ -1,10 +1,10 @@
 package com.apps.adrcotfas.burpeebuddy.workout.view;
 
-import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -24,6 +24,7 @@ import java.util.List;
 
 import timber.log.Timber;
 
+import static android.view.animation.AnimationUtils.loadAnimation;
 import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.formatSecondsAlt;
 
 public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Listener>
@@ -50,8 +51,10 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
     private final LayoutInflater mInflater;
     private TextView mTimer;
     private final MaterialButton mFinishSetButton;
+    private final MaterialButton mStopButton;
 
     private LinearLayout mStatsContainer;
+    private ScrollView mStatsScrollView;
     private List<SetViewRow> mStatRowViews;
 
     private boolean mIsTimeBased;
@@ -68,7 +71,8 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         mIsTimeBased = getWorkout().getExerciseType() == ExerciseType.TIME_BASED;
         setupStats();
 
-        findViewById(R.id.stop_button).setOnClickListener(v -> {
+        mStopButton = findViewById(R.id.stop_button);
+        mStopButton.setOnClickListener(v -> {
             for (Listener listener : getListeners()) {
                 listener.onStopButtonClicked();
             }
@@ -102,18 +106,43 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
             SetViewRow total = createNewStatsRow(STATS_TOTAL_ROW_INDEX);
             mStatsContainer.addView(total.parent);
         }
+        mStatsScrollView = findViewById(R.id.stats_scroll_view);
+        mStatsScrollView.post(() -> mStatsScrollView.fullScroll(View.FOCUS_DOWN));
+    }
+
+    @Override
+    public void toggleRowAppearance(boolean isWorkingOut) {
+        if (isWorkingOut) {
+            ConstraintLayout parent = getCurrentSetViewRow().parent;
+            parent.clearAnimation();
+            ViewHelper.setBackgroundTint(getContext(), parent, R.color.colorAccent);
+            if (!mIsTimeBased) {
+                getCurrentSetViewRow().reps.setVisibility(View.VISIBLE);
+                getCurrentSetViewRow().avgPace.setVisibility(View.VISIBLE);
+            }
+            getCurrentSetViewRow().header.setVisibility(View.VISIBLE);
+            getCurrentSetViewRow().duration.setText("-");
+        } else {
+            ConstraintLayout parent = getCurrentSetViewRow().parent;
+            parent.startAnimation(loadAnimation(getContext(), R.anim.blink));
+            ViewHelper.setBackgroundTint(getContext(), parent, R.color.gray800);
+
+            getCurrentSetViewRow().header.setVisibility(View.GONE);
+            getCurrentSetViewRow().reps.setVisibility(View.GONE);
+            getCurrentSetViewRow().avgPace.setVisibility(View.GONE);
+            getCurrentSetViewRow().duration.setText("Get ready");
+        }
     }
 
     @Override
     public void onStartBreak() {
-        Timber.tag(TAG).v("onStartBreak, %s", this.hashCode());
-
         // refresh previous row
         refreshStatsRow(getWorkout().getCurrentSetIdx() - 1);
         // new row for the new set
         SetViewRow row = createNewStatsRow(getWorkout().getCurrentSetIdx());
         mStatRowViews.add(row);
         mStatsContainer.addView(row.parent);
+        mStatsScrollView.post(() -> mStatsScrollView.fullScroll(View.FOCUS_DOWN));
     }
 
     @Override
@@ -133,9 +162,13 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
             mStatsContainer.addView(total.parent);
             return;
         }
-
         mStatRowViews.add(total);
         mStatsContainer.addView(total.parent);
+        mStatsScrollView.post(() -> mStatsScrollView.fullScroll(View.FOCUS_DOWN));
+
+        mTimer.setVisibility(View.GONE);
+        mStopButton.setVisibility(View.GONE);
+        mFinishSetButton.setVisibility(View.GONE);
     }
 
     private SetViewRow createNewStatsRow(int index) {
@@ -170,32 +203,30 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
             row.avgPace.setVisibility(View.GONE);
         }
 
-        row.parent.setBackgroundTintList(ColorStateList.valueOf(
-                getContext().getResources().getColor(
-                        getWorkout().getCurrentSetIdx() == index
-                                || index == STATS_TOTAL_ROW_INDEX
-                                ? R.color.colorAccent
-                                : R.color.transparent)));
+        ViewHelper.setBackgroundTint(getContext(), row.parent,
+                getWorkout().getCurrentSetIdx() == index || index == STATS_TOTAL_ROW_INDEX
+                ? R.color.colorAccent
+                : R.color.transparent);
         return row;
     }
 
     private void refreshStatsRow(int index) {
+        SetViewRow row = getSetViewRowAt(index);
         if (!mIsTimeBased) {
-            getSetViewRowAt(index).reps.setText(
+            row.reps.setText(
                     String.valueOf(getWorkout().getRepsFromSet(index)));
-            getSetViewRowAt(index).avgPace.setText(
+            row.avgPace.setText(
                     String.valueOf(getWorkout().getAvgPaceFromSet(index)));
         }
-        getSetViewRowAt(index).header.setText(index < 9 ? "0" + (index + 1) : (index + 1) + "");
-        getSetViewRowAt(index).duration.setText(
+        row.header.setText(index < 9 ? "0" + (index + 1) : (index + 1) + "");
+        row.duration.setText(
                 formatSecondsAlt(getWorkout().getDurationFromSet(index)));
-        getSetViewRowAt(index).parent.setBackgroundTintList(ColorStateList.valueOf(
-                getContext().getResources().getColor(
-                        getWorkout().getCurrentSetIdx() == index
-                                && getWorkout().getState() != State.WORKOUT_FINISHED
-                                && getWorkout().getState() != State.WORKOUT_FINISHED_IDLE
-                                ? R.color.colorAccent
-                                : R.color.transparent)));
+
+        ViewHelper.setBackgroundTint(getContext(), row.parent, getWorkout().getCurrentSetIdx() == index
+                && getWorkout().getState() != State.WORKOUT_FINISHED
+                && getWorkout().getState() != State.WORKOUT_FINISHED_IDLE
+                ? R.color.colorAccent
+                : R.color.transparent);
     }
 
     private SetViewRow getCurrentSetViewRow() {

@@ -9,5 +9,8 @@
 
     <color name="colorAccent">#AD36E0</color>
     <color name="red">#EC407A</color>
+
+    <color name="gray800">#424242</color>
+
     <color name="transparent">#00000000</color>
 </resources>

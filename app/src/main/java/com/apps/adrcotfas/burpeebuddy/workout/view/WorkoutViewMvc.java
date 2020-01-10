@@ -15,5 +15,7 @@ public interface WorkoutViewMvc extends ObservableViewMvc<WorkoutViewMvc.Listene
     public void setFinishSetButtonVisibility(int visibility);
 
     public void onStartBreak();
+    public void toggleRowAppearance(boolean isWorkingOut);
+
     public void onWorkoutFinished();
 }

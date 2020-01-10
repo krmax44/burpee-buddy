@@ -42,13 +42,16 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onAttach(@NonNull Context context) {
-        Timber.tag(TAG).d( "onAttach" + this.hashCode());
         super.onAttach(context);
-
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                onStopButtonClicked();
+                final State state = BuddyApplication.getWorkoutManager().getWorkout().getState();
+                if (state != State.WORKOUT_FINISHED_IDLE) {
+                    onStopButtonClicked();
+                } else {
+                    NavHostFragment.findNavController(WorkoutFragment.this).navigate(R.id.action_workout_to_main);
+                }
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -76,6 +79,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         switch (state) {
             case INACTIVE:
                 // coming from Main
+                mViewMvc.toggleRowAppearance(false);
                 startWorkout();
                 break;
             case ACTIVE:
@@ -142,6 +146,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
             Power.lockScreen((AppCompatActivity) getActivity());
         }
         setupFinishSet(View.VISIBLE);
+        mViewMvc.toggleRowAppearance(true);
     }
 
     @Subscribe
@@ -176,6 +181,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     @Subscribe
     public void onMessageEvent(Events.StartBreak event) {
         mViewMvc.onStartBreak();
+        mViewMvc.toggleRowAppearance(false);
         setupFinishSet(View.GONE);
     }
 
