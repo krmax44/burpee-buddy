@@ -217,7 +217,7 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
         } else if (getGoalType().equals(GoalType.REPS)){
             if (active) {
                 mElapsed = mTimer.elapsedSeconds;
-                mTimer.stop();
+                mTimer.toggle();
             } else {
                 mTimer.start(mElapsed);
             }
@@ -225,6 +225,10 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
     }
 
     public int getElapsedTime() {
+        if (getWorkout().getState() == State.BREAK_PAUSED
+                || getWorkout().getState() == State.BREAK_ACTIVE) {
+            return getCountDownTimer().seconds;
+        }
         if (getWorkout().getGoalType() == GoalType.REPS) {
             return getTimer().elapsedSeconds;
         } else { // TIME

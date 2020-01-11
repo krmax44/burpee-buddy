@@ -12,6 +12,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
@@ -38,6 +39,8 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     private static final String TAG = "WorkoutFragment";
     private WorkoutViewMvc mViewMvc;
 
+    private static boolean wasPaused = false;
+
     public WorkoutFragment() {}
 
     @Override
@@ -46,12 +49,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                final State state = BuddyApplication.getWorkoutManager().getWorkout().getState();
-                if (state != State.WORKOUT_FINISHED_IDLE) {
                     onStopButtonClicked();
-                } else {
-                    NavHostFragment.findNavController(WorkoutFragment.this).navigate(R.id.action_workout_to_main);
-                }
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -70,11 +68,11 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onResume() {
-        Timber.tag(TAG).d( "onResume " + this.hashCode());
         super.onResume();
         mViewMvc.registerListener(this);
 
         final State state = BuddyApplication.getWorkoutManager().getWorkout().getState();
+        Timber.tag(TAG).d( "onResume, current state: %s", state.toString());
 
         switch (state) {
             case INACTIVE:
@@ -87,6 +85,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
                 setupFinishSet(View.VISIBLE);
                 break;
             case PAUSED:
+            case BREAK_PAUSED:
                 navigateToConfirmStopDialog();
                 // the stop button or toggle button was pressed, the user left the app and returned
                 break;
@@ -109,7 +108,8 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onStopButtonClicked() {
-        if (BuddyApplication.getWorkoutManager().getWorkout().getState() == State.PRE_WORKOUT) {
+        final State state = BuddyApplication.getWorkoutManager().getWorkout().getState();
+        if (state == State.PRE_WORKOUT || state == State.WORKOUT_FINISHED_IDLE) {
             EventBus.getDefault().post(new Events.StopWorkoutEvent());
             NavHostFragment.findNavController(this).navigate(R.id.action_workout_to_main);
         } else {
@@ -176,13 +176,21 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     public void onMessageEvent(Events.SetFinished event) {
         Timber.tag(TAG).v("SetFinished " + this.hashCode());
         navigateToFinishDialog();
+        wasPaused = false;
     }
 
     @Subscribe
     public void onMessageEvent(Events.StartBreak event) {
-        mViewMvc.onStartBreak();
-        mViewMvc.toggleRowAppearance(false);
+        if (!wasPaused) {
+            mViewMvc.onStartBreak();
+            mViewMvc.toggleRowAppearance(false);
+        }
         setupFinishSet(View.GONE);
+    }
+
+    @Subscribe
+    public void onMessageEvent(Events.ToggleWorkoutEvent event) {
+        wasPaused = true;
     }
 
     private void navigateToFinishDialog() {
@@ -192,7 +200,11 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     private void navigateToConfirmStopDialog() {
         Timber.tag(TAG).v("navigateToConfirmStopDialog");
-        NavHostFragment.findNavController(this).navigate(R.id.action_workoutFragment_to_confirmStopDialog);
+
+        final NavDestination destination = NavHostFragment.findNavController(this).getCurrentDestination();
+        if (destination != null && destination.getId() == R.id.workoutFragment) {
+            NavHostFragment.findNavController(this).navigate(R.id.action_workoutFragment_to_confirmStopDialog);
+        }
     }
 
     private InProgressWorkout getWorkout() {

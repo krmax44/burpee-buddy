@@ -187,7 +187,7 @@ public class InProgressWorkout {
         if (duration == 0) {
             return 0;
         }
-        return Math.round(reps * 60.0 * 10.0 / duration) / 10.0;
+        return Math.round(reps * 60.0 * 100.0 / duration) / 100.0;
     }
 
     public int getGoalSets() {

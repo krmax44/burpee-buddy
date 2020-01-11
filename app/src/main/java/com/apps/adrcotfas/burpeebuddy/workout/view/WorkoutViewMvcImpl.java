@@ -14,6 +14,7 @@ import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.TimerFormat;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
+import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 import com.google.android.material.button.MaterialButton;
@@ -84,8 +85,13 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
                 listener.onFinishSetButtonClicked();
             }
         });
+        setFinishSetButtonVisibility(
+                (getWorkout().getState() == State.ACTIVE || getWorkout().getState() == State.PAUSED)
+                        && (getWorkout().getGoalType() == GoalType.REPS && getWorkout().getExerciseType() == ExerciseType.UNCOUNTABLE)
+                        ? View.VISIBLE : View.GONE);
 
         mTimer = findViewById(R.id.timer);
+        mTimer.setText(TimerFormat.secondsToTimerFormatAlt(getElapsedTime()));
     }
 
     private void setupStats() {
@@ -98,14 +104,19 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         mStatsContainer = findViewById(R.id.stats_container);
         mStatRowViews = new ArrayList<>();
         for (int i = 0; i < getWorkout().getCurrentSet(); ++i) {
-            SetViewRow row = createNewStatsRow(i);
+            SetViewRow row = createStatsRow(i);
             mStatRowViews.add(row);
             mStatsContainer.addView(row.parent);
         }
         if (getWorkout().getState() == State.WORKOUT_FINISHED_IDLE) {
-            SetViewRow total = createNewStatsRow(STATS_TOTAL_ROW_INDEX);
+            SetViewRow total = createStatsRow(STATS_TOTAL_ROW_INDEX);
             mStatsContainer.addView(total.parent);
         }
+
+        toggleRowAppearance(getWorkout().getState() == State.ACTIVE
+                || getWorkout().getState() == State.PAUSED
+                || getWorkout().getState() == State.SET_FINISHED);
+
         mStatsScrollView = findViewById(R.id.stats_scroll_view);
         mStatsScrollView.post(() -> mStatsScrollView.fullScroll(View.FOCUS_DOWN));
     }
@@ -139,7 +150,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         // refresh previous row
         refreshStatsRow(getWorkout().getCurrentSetIdx() - 1);
         // new row for the new set
-        SetViewRow row = createNewStatsRow(getWorkout().getCurrentSetIdx());
+        SetViewRow row = createStatsRow(getWorkout().getCurrentSetIdx());
         mStatRowViews.add(row);
         mStatsContainer.addView(row.parent);
         mStatsScrollView.post(() -> mStatsScrollView.fullScroll(View.FOCUS_DOWN));
@@ -152,7 +163,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         // refresh last row
         refreshStatsRow(getWorkout().getCurrentSetIdx());
         // new row for total
-        SetViewRow total = createNewStatsRow(STATS_TOTAL_ROW_INDEX);
+        SetViewRow total = createStatsRow(STATS_TOTAL_ROW_INDEX);
 
         // workaround for uncountable exercises with rep based goals
         if (getWorkout().getState() == State.WORKOUT_FINISHED_IDLE) {
@@ -171,33 +182,45 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         mFinishSetButton.setVisibility(View.GONE);
     }
 
-    private SetViewRow createNewStatsRow(int index) {
+    private SetViewRow createStatsRow(int index) {
         SetViewRow row = new SetViewRow(
                 (ConstraintLayout) mInflater.inflate(
                         R.layout.view_workout_set_row, null, false));
 
         if (index == STATS_TOTAL_ROW_INDEX) {
             row.header.setText("Total");
-            final int duration = getWorkout().getTotalDuration();
-            row.duration.setText(duration > 0 ? formatSecondsAlt(duration): "-");
         } else {
             row.header.setText(index < 9 ? "0" + (index + 1) : (index + 1) + "");
-            final int duration = getWorkout().getDurationFromSet(index);
-            row.duration.setText(duration > 0 ? formatSecondsAlt(duration): "-");
         }
 
+        final boolean isCurrentSet = index == getWorkout().getCurrentSetIdx();
+
+        final int duration = isCurrentSet
+                ? getElapsedTime()
+                : (index == STATS_TOTAL_ROW_INDEX)
+                    ? getWorkout().getTotalDuration()
+                    : getWorkout().getDurationFromSet(index);
+
+        row.duration.setText(duration > 0 ? formatSecondsAlt(duration): "-");
+
         if (!mIsTimeBased) {
-            if (index == STATS_TOTAL_ROW_INDEX) {
-                final int reps = getWorkout().getTotalReps();
-                row.reps.setText(reps > 0 ? reps + "" : "-");
-                final double avgPace = getWorkout().getTotalAvgPace();
-                row.avgPace.setText(avgPace > 0 ? avgPace + "" : "-");
-            } else {
-                final int reps = getWorkout().getRepsFromSet(index);
-                row.reps.setText(reps > 0 ? reps + "" : "-");
-                final double avgPace = getWorkout().getAvgPaceFromSet(index);
-                row.avgPace.setText(avgPace > 0 ? avgPace + "" : "-");
+            final int reps = (index == STATS_TOTAL_ROW_INDEX)
+                    ? getWorkout().getTotalReps()
+                    : getWorkout().getRepsFromSet(index);
+            row.reps.setText(reps > 0 ? reps + "" : "-");
+
+            double avgPace = (index == STATS_TOTAL_ROW_INDEX)
+                    ? getWorkout().getTotalAvgPace()
+                    : isCurrentSet
+                    ? getWorkout().getAvgPace(reps, getElapsedTime())
+                    : getWorkout().getAvgPaceFromSet(index);
+
+            // remove trailing zeros if it's the case
+            if (avgPace == (long) avgPace) {
+                avgPace = (long) avgPace;
             }
+
+            row.avgPace.setText(avgPace > 0 ? avgPace + "" : "-");
         } else {
             row.reps.setVisibility(View.GONE);
             row.avgPace.setVisibility(View.GONE);
@@ -243,7 +266,13 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
 
         final int duration = getElapsedTime();
         if (duration > 0) {
-            getCurrentSetViewRow().avgPace.setText(String.valueOf(getWorkout().getAvgPace(reps, duration)));
+            double avgPace = getWorkout().getAvgPace(reps, duration);
+
+            // remove trailing zeros if it's the case
+            if (avgPace == (long) avgPace) {
+                avgPace = (long) avgPace;
+            }
+            getCurrentSetViewRow().avgPace.setText(String.valueOf(avgPace));
         }
     }
 

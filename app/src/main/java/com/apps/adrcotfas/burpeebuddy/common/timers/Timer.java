@@ -29,6 +29,12 @@ public class Timer {
                 }, throwable -> Timber.wtf("Something is wrong here."));
     }
 
+    public void toggle() {
+        if (mDisposable != null) {
+            mDisposable.dispose();
+        }
+    }
+
     public void stop(){
         if (mDisposable != null) {
             mDisposable.dispose();

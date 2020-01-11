@@ -79,7 +79,7 @@ public class SettingsHelper {
                     .getBoolean(AUTO_START_BREAK_UNCOUNTABLE, false);
         } else if (type.equals(ExerciseType.COUNTABLE)) {
             return getDefaultSharedPreferences(BuddyApplication.getInstance())
-                    .getBoolean(AUTO_START_BREAK_COUNTABLE, false);
+                    .getBoolean(AUTO_START_BREAK_COUNTABLE, true);
         } else if (type.equals(ExerciseType.TIME_BASED)) {
             return getDefaultSharedPreferences(BuddyApplication.getInstance())
                     .getBoolean(AUTO_START_BREAK_TIME_BASED, false);

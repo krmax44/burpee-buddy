@@ -108,15 +108,13 @@ public class SetFinishedDialog extends DialogFragment {
                                 (dialog, which) -> {
                                     getWorkout().incrementCurrentSet();
                                     EventBus.getDefault().post(new Events.StartBreak(mBreakDuration));
-                                })
-                        .setNegativeButton(android.R.string.cancel, (d, w) -> stopAndNavigateToMain());
+                                });
                 break;
             case WORKOUT_FINISHED:
                 mBuilder.setTitle(getTitle())
                         .setPositiveButton(android.R.string.ok, (d, w) -> {
                             onFinalSetOkClicked();
                         });
-                //TODO: is this needed? mBuilder.setOnCancelListener(dialog -> stopAndNavigateToMain());
                 break;
             default:
                 // do nothing
@@ -129,13 +127,6 @@ public class SetFinishedDialog extends DialogFragment {
             return "Workout finished";
         }
         return getString(R.string.dialog_set_finished) + "(" + getWorkout().getCurrentSet() + "/" + getWorkout().getGoalSets() + ")";
-    }
-
-    private void stopAndNavigateToMain() {
-        getWorkout().setState(State.INACTIVE);
-        EventBus.getDefault().post(new Events.StopWorkoutEvent());
-        NavHostFragment.findNavController(this)
-                .navigate(R.id.action_set_finished_dialog_to_main);
     }
 
     private void onFinalSetOkClicked() {

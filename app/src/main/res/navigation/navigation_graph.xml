@@ -17,15 +17,27 @@
         <action
             android:id="@+id/action_main_to_workout"
             app:destination="@id/workoutFragment"
-            app:launchSingleTop="true" />
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_main_to_exercises"
             app:destination="@id/editExercisesFragment"
-            app:launchSingleTop="true"/>
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_main_to_goals"
             app:destination="@id/goalsFragment"
-            app:launchSingleTop="true"/>
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -36,35 +48,35 @@
         <action
             android:id="@+id/action_workout_to_main"
             app:destination="@id/mainFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
             app:launchSingleTop="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@+id/workoutFragment"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_workout_to_set_finished_dialog"
-            app:destination="@id/setFinishedDialog" />
+            app:destination="@id/setFinishedDialog"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_workoutFragment_to_confirmStopDialog"
-            app:destination="@id/confirmStopDialog" />
+            app:destination="@id/confirmStopDialog"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_close_exit" />
     </fragment>
     <fragment
         android:id="@+id/editExercisesFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.edit_exercises.ExercisesFragment"
         android:label="EditExercisesFragment" >
-        <action
-            android:id="@+id/action_edit_exercises_tomain"
-            app:destination="@id/mainFragment"
-            app:popUpTo="@+id/mainFragment"
-            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/goalsFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.edit_goals.GoalsFragment"
         android:label="GoalsFragment" >
-        <action
-            android:id="@+id/action_goals_to_main"
-            app:destination="@id/mainFragment"
-            app:popUpTo="@+id/mainFragment"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <dialog
@@ -72,12 +84,6 @@
         android:name="com.apps.adrcotfas.burpeebuddy.workout.view.SetFinishedDialog"
         android:label="dialog_set_finished"
         tools:layout="@layout/dialog_set_finished" >
-        <action
-            android:id="@+id/action_set_finished_dialog_to_main"
-            app:destination="@id/mainFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@+id/workoutFragment"
-            app:popUpToInclusive="true" />
     </dialog>
     <dialog
         android:id="@+id/confirmStopDialog"
@@ -86,6 +92,8 @@
         <action
             android:id="@+id/action_confirmStopDialog_to_mainFragment"
             app:destination="@id/mainFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
             app:launchSingleTop="true"
             app:popUpTo="@+id/workoutFragment"
             app:popUpToInclusive="true" />

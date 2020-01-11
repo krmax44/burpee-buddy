@@ -54,5 +54,6 @@ public class CountDownTimer extends android.os.CountDownTimer {
         } else {
             listener.onFinishedSet();
         }
+        seconds = 0;
     }
 }
