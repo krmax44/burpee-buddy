@@ -8,6 +8,9 @@
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="16dp"
         android:checkedButton="@id/rep_based">
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/rep_based"
@@ -25,12 +28,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical">
         <TextView
             android:id="@+id/sets_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:text="Sets" />
         <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/sets_seekbar"
@@ -48,12 +55,15 @@
         android:id="@+id/reps_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical">
         <TextView
             android:id="@+id/reps_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:text="Reps" />
         <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/reps_seekbar"
@@ -71,12 +81,15 @@
         android:id="@+id/duration_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical">
         <TextView
             android:id="@+id/duration_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:text="Duration" />
         <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/duration_seekbar"
@@ -95,12 +108,15 @@
         android:id="@+id/break_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical">
         <TextView
             android:id="@+id/break_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:text="Break" />
         <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/break_seekbar"

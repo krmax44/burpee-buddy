@@ -10,6 +10,9 @@
         android:id="@+id/reps_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:orientation="horizontal"
         android:visibility="gone">
 
@@ -90,13 +93,17 @@
         android:id="@+id/break_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:orientation="vertical"
         android:visibility="gone">
         <TextView
             android:id="@+id/break_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:text="Break" />
@@ -112,11 +119,22 @@
             android:progress="1"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/congratulations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/congratulations"
+        android:textSize="@dimen/smallTextSize"
+        android:visibility="gone"/>
+
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/auto_break_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Automatically start break for workouts measured with the proximity sensor."
+        android:layout_marginStart="16dp"
         android:textSize="@dimen/smallerTextSize"/>
 
 </LinearLayout>

@@ -109,10 +109,13 @@ public class AddEditExerciseDialog extends DialogFragment {
                     break;
             }
 
-            b.setNeutralButton(getString(R.string.delete), ((dialog, which) -> {
-                //TODO: confirmation
-                EventBus.getDefault().post(new Events.DeleteExercise(mExercise.name));
-            }));
+            b.setNeutralButton(getString(R.string.delete), ((dialog, which) -> new MaterialAlertDialogBuilder(getActivity())
+                    .setPositiveButton(android.R.string.ok, ((dialog2, which2)
+                            -> EventBus.getDefault().post(new Events.DeleteExercise(mExercise.name))))
+                    .setNegativeButton(android.R.string.cancel, (dialog3, which3) -> {})
+                    .setTitle("Delete " + mExercise.name + "?")
+                    .setMessage("Deleting this exercise will not remove the completed workouts from the statistics.")
+                    .create().show()));
         }
 
         Dialog d = b

@@ -30,8 +30,8 @@ public class ExercisesItemViewMvcImpl extends BaseObservableViewMvc<ExercisesIte
         mVisibilityButton = findViewById(R.id.visibility_icon);
         findViewById(R.id.visibility_icon_container).setOnClickListener(v -> {
             mVisibilityButton.setImageDrawable(getDrawable(mExercise.visible
-                    ? R.drawable.ic_check_off
-                    : R.drawable.ic_check));
+                    ? R.drawable.ic_eye_off_outline
+                    : R.drawable.ic_eye_outline));
 
             for (Listener l : getListeners()) {
                 l.onVisibilityToggle(mExercise.name, !mExercise.visible);
@@ -51,8 +51,8 @@ public class ExercisesItemViewMvcImpl extends BaseObservableViewMvc<ExercisesIte
         mExercise = exercise;
         mTitle.setText(exercise.name);
         mVisibilityButton.setImageDrawable(getDrawable(mExercise.visible
-                ? R.drawable.ic_check
-                : R.drawable.ic_check_off));
+                ? R.drawable.ic_eye_outline
+                : R.drawable.ic_eye_off_outline));
     }
 
     @Override

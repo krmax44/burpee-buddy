@@ -216,11 +216,11 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
                     : getWorkout().getAvgPaceFromSet(index);
 
             // remove trailing zeros if it's the case
-            if (avgPace == (long) avgPace) {
-                avgPace = (long) avgPace;
-            }
-
-            row.avgPace.setText(avgPace > 0 ? avgPace + "" : "-");
+            row.avgPace.setText(avgPace > 0
+                    ? ((avgPace == (long) avgPace)
+                        ? String.valueOf((long) avgPace)
+                        : String.valueOf(avgPace))
+                    : "-");
         } else {
             row.reps.setVisibility(View.GONE);
             row.avgPace.setVisibility(View.GONE);
@@ -238,8 +238,12 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
         if (!mIsTimeBased) {
             row.reps.setText(
                     String.valueOf(getWorkout().getRepsFromSet(index)));
-            row.avgPace.setText(
-                    String.valueOf(getWorkout().getAvgPaceFromSet(index)));
+
+            double avgPaceFromSet = getWorkout().getAvgPaceFromSet(index);
+            // remove trailing zeros if it's the case
+            row.avgPace.setText(avgPaceFromSet == (long) avgPaceFromSet
+                    ? String.valueOf((long)avgPaceFromSet)
+                    : String.valueOf(avgPaceFromSet));
         }
         row.header.setText(index < 9 ? "0" + (index + 1) : (index + 1) + "");
         row.duration.setText(
@@ -269,10 +273,9 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
             double avgPace = getWorkout().getAvgPace(reps, duration);
 
             // remove trailing zeros if it's the case
-            if (avgPace == (long) avgPace) {
-                avgPace = (long) avgPace;
-            }
-            getCurrentSetViewRow().avgPace.setText(String.valueOf(avgPace));
+            getCurrentSetViewRow().avgPace.setText(avgPace == (long) avgPace
+                    ? String.valueOf((long) avgPace)
+                    : String.valueOf(avgPace));
         }
     }
 

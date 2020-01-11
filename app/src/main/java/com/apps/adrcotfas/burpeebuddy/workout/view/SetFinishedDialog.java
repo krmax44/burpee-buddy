@@ -63,6 +63,8 @@ public class SetFinishedDialog extends DialogFragment {
             setupModifierButtons(v);
         }
 
+        v.findViewById(R.id.congratulations).setVisibility(getWorkout().isFinalSet() ? View.VISIBLE : View.GONE);
+
         //TODO: add skip break button
         Dialog d = mBuilder
                 .setView(v)

@@ -3,6 +3,7 @@
     android:id="@+id/item"
     android:orientation="horizontal"
     android:layout_width="wrap_content"
+    android:layout_marginTop="4dp"
     android:background="?attr/android:windowBackground"
     android:layout_height="wrap_content">
 
@@ -34,7 +35,7 @@
         android:clickable="true">
         <ImageView
             android:id="@+id/visibility_icon"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/ic_eye_outline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center">
@@ -62,11 +63,12 @@
 
     <include
         android:id="@+id/edit"
+        layout="@layout/button_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_gravity="center"
+        android:layout_centerVertical="true"
         android:layout_marginEnd="8dp"
-        layout="@layout/button_edit"/>
+        android:gravity="center" />
 
 </RelativeLayout>
