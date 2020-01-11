@@ -13,11 +13,12 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface GoalDao {
 
-    @Query("select * from Goal")
+    @TypeConverters(GoalTypeConverter.class)
+    @Query("select * from Goal order by type, sets")
     LiveData<List<Goal>> getAll();
 
     @TypeConverters(GoalTypeConverter.class)
-    @Query("select * from Goal where type = :type")
+    @Query("select * from Goal where type = :type order by sets")
     LiveData<List<Goal>> getGoals(GoalType type);
 
     @Insert(onConflict = REPLACE)

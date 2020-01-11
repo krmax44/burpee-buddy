@@ -111,7 +111,6 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
                     getContext(), null, 0,
                     R.style.Widget_MaterialComponents_Chip_Choice);
             c.setChipDrawable(d);
-             //   c.setOnClickListener(v -> onDisabledChipClicked());
             mExerciseTypeChipGroup.addView(c);
         }
         if (!mExercises.isEmpty()) {

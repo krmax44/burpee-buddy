@@ -12,7 +12,7 @@ import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseDao;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseFactory;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalDao;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalFactory;
+import com.apps.adrcotfas.burpeebuddy.db.goals.GoalGenerator;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.db.workout.WorkoutDao;
 
@@ -63,7 +63,7 @@ public abstract class AppDatabase extends RoomDatabase {
             getDatabase(context).exerciseDao().insertAll(
                     ExerciseFactory.getDefaultWorkouts());
             getDatabase(context).goalDao().insertAll(
-                    GoalFactory.getDefaultGoals());
+                    GoalGenerator.getDefaultGoals());
         });
     }
 

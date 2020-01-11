@@ -35,6 +35,7 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
         mTimer = new Timer();
         mRepCounter = new RepCounter(context);
         mWorkout = new InProgressWorkout();
+        mCountDownTimer = new CountDownTimer(TimerType.COUNT_DOWN, 0);
     }
 
     public void init(Exercise exercise, Goal goal) {
