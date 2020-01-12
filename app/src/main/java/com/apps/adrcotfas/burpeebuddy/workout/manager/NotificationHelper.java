@@ -57,20 +57,11 @@ public class NotificationHelper extends ContextWrapper {
         return mBuilder;
     }
 
-    public void setReps(int reps) {
+    public void setTime(boolean hide, int seconds) {
         mManager.notify(WORKOUT_NOTIFICATION_ID,
                 getBuilder()
                         .setOnlyAlertOnce(true)
-                        //TODO: consider plurals
-                        .setContentTitle(reps + " " + getString(R.string.reps))
-                        .build());
-    }
-
-    public void setElapsedTime(int elapsed) {
-        mManager.notify(WORKOUT_NOTIFICATION_ID,
-                getBuilder()
-                        .setOnlyAlertOnce(true)
-                        .setContentText(TimerFormat.secondsToTimerFormat(elapsed))
+                        .setContentText(hide ? "" : TimerFormat.secondsToTimerFormatAlt(seconds))
                         .build());
     }
 
