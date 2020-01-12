@@ -110,13 +110,15 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
         Timber.tag(TAG).d("Rep (%s / %s) | Set (%s / %s)",
                 getWorkout().getCurrentReps(), getWorkout().getGoalReps(),
                 getWorkout().getCurrentSet() + 1, getWorkout().getGoalSets());
-        EventBus.getDefault().post(new Events.RepComplete(getWorkout().getCurrentReps()));
 
         if (getGoalType() == GoalType.TIME) {
+            EventBus.getDefault().post(new Events.RepComplete());
             return;
         }
 
         if (getWorkout().isSetFinished()) {
+            EventBus.getDefault().post(new Events.RepComplete(true));
+
             getRepCounter().unregister();
             getWorkout().setCurrentDuration(mTimer.elapsedSeconds);
 
@@ -135,6 +137,8 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
                     EventBus.getDefault().post(new Events.SetFinished());
                 }
             }
+        } else {
+            EventBus.getDefault().post(new Events.RepComplete());
         }
     }
 

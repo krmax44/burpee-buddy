@@ -20,6 +20,7 @@ public class Power {
                 PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
                 Power.class.getName());
         wakeLock.acquire(0);
+        wakeLock.release();
     }
 
     public static void lockScreen(AppCompatActivity activity) {

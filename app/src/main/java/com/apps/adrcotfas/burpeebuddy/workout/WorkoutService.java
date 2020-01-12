@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.workout;
 
 import android.content.Intent;
-import android.os.Handler;
 
 import androidx.lifecycle.LifecycleService;
 
@@ -13,7 +12,6 @@ import com.apps.adrcotfas.burpeebuddy.workout.manager.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
-import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.WorkoutManager;
 
@@ -42,9 +40,6 @@ public class WorkoutService extends LifecycleService {
     }
 
     private void stopInternal() {
-        // workaround to make sure that the sound played above is audible and the player released
-        new Handler().postDelayed(() -> getMediaPlayer().play(WORKOUT_COMPLETE, true), 1000);
-
         getWorkoutManager().stop();
         stopForeground(true);
         stopSelf();
@@ -54,8 +49,6 @@ public class WorkoutService extends LifecycleService {
     public synchronized int onStartCommand(final Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         EventBus.getDefault().register(this);
-
-        getMediaPlayer().init();
 
         getWorkoutManager().startPreWorkoutTimer(PRE_WORKOUT_COUNTDOWN_SECONDS);
         getWorkout().setState(State.PRE_WORKOUT);
@@ -89,6 +82,7 @@ public class WorkoutService extends LifecycleService {
     public void onMessageEvent(Events.FinishedWorkoutEvent event) {
         Timber.tag(TAG).d( "FinishedWorkoutEvent");
         Power.turnOnScreen(this);
+        getMediaPlayer().play(WORKOUT_COMPLETE);
         stopInternal();
         getWorkout().setState(State.WORKOUT_FINISHED);
     }
@@ -112,38 +106,32 @@ public class WorkoutService extends LifecycleService {
         onStartWorkout();
         final boolean isTimeBased = getWorkout().getGoalType() == GoalType.TIME;
         getNotificationHelper().setTitle(
-                "set " + getWorkout().getCurrentSet() + "/" + getWorkout().getGoalSets()
+                "Set " + getWorkout().getCurrentSet() + "/" + getWorkout().getGoalSets()
                         + (getWorkout().getCurrentReps() != 0
-                        ? " " + getWorkout().getCurrentReps()
+                        ? " | " + getWorkout().getCurrentReps()
                         + (isTimeBased ? " reps" : "/" + getWorkout().getGoalReps() + " reps")
                         : ""));
     }
 
     @Subscribe
     public void onMessageEvent(Events.RepComplete event) {
-        if (event.reps == 0) {
-            return;
-        }
-        if (SettingsHelper.wakeupEnabled()
-                && (event.reps  % SettingsHelper.getWakeUpInterval() == 0)) {
-            Power.turnOnScreen(this);
-        }
-        if (SettingsHelper.soundEnabled()){
+        if (event.lastRepInSet) {
+            getMediaPlayer().play(REP_COMPLETE_SPECIAL);
+        } else {
             getMediaPlayer().play(REP_COMPLETE);
         }
 
         final boolean isTimeBased = getWorkout().getGoalType() == GoalType.TIME;
         getNotificationHelper().setTitle(
-                "set " + getWorkout().getCurrentSet() + "/" + getWorkout().getGoalSets()
-                        + " " + getWorkout().getCurrentReps()
+                "Set " + getWorkout().getCurrentSet() + "/" + getWorkout().getGoalSets()
+                        + " | " + getWorkout().getCurrentReps()
                         + (isTimeBased ? " reps" : "/" + getWorkout().getGoalReps() + " reps"));
     }
 
     @Subscribe
     public void onMessageEvent(Events.SetFinished event) {
-        if (SettingsHelper.soundEnabled()){
-            getMediaPlayer().play(REP_COMPLETE_SPECIAL);
-        }
+        getMediaPlayer().play(REP_COMPLETE_SPECIAL);
+        Power.turnOnScreen(this);
 
         getNotificationHelper().setTitle("Set finished " +
                 getWorkout().getCurrentSet()  + "/" +
@@ -156,7 +144,7 @@ public class WorkoutService extends LifecycleService {
         Timber.tag(TAG).d( "onSetCompleted");
         Power.turnOnScreen(this);
 
-        new Handler().postDelayed(() -> getMediaPlayer().play(REST), 1000);
+        getMediaPlayer().play(REST);
         getWorkout().setState(State.BREAK_ACTIVE);
         getWorkoutManager().startPreWorkoutTimer(
                 TimeUnit.SECONDS.toMillis(event.duration));
@@ -181,6 +169,6 @@ public class WorkoutService extends LifecycleService {
     }
 
     private SoundPlayer getMediaPlayer() {
-        return BuddyApplication.getMediaPlayer();
+        return BuddyApplication.getInstance().getMediaPlayer();
     }
 }

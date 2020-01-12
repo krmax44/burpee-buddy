@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Burpee Buddy</string>
     <string name="implementation_not_ready">This feature is coming soon.</string>
-    <string name="snack_avoid_clicks">For burpees or push-ups, lock your phone before placing it under your chest to avoid accidental clicks.</string>
+    <string name="snack_avoid_clicks">For push-up like exercises, lock your phone to avoid accidental clicks.</string>
     <string name="action_stop">STOP</string>
     <string name="title_settings">Settings</string>
     <string name="title_leaderboard">Leaderboard</string>
@@ -33,7 +33,7 @@
     <string name="goal_dialog_sets">Sets</string>
     <string name="auto_start_break_uncountable">Automatically start break for rep based exercises.</string>
     <string name="auto_start_break_countable">Automatically start break for exercises measured with the proximity sensor.</string>
-    <string name="auto_start_break_time_based">Automatically start break for time based exercises without repetitions as relevant metric.</string>
+    <string name="auto_start_break_time_based">Automatically start break for time based exercises.</string>
     <string name="dialog_stop_workout">Stop workout?</string>
     <string name="dialog_set_finished">Set finished</string>
     <string name="dialog_start_break">Start break</string>

@@ -19,15 +19,8 @@ public class SoundPlayer extends ContextWrapper {
         super(base);
     }
 
-    public void init() {
-        mMediaPlayer = new MediaPlayer();
-    }
-
     public void play(int sound) {
-        play(sound, false);
-    }
-
-    public void play(int sound, boolean release) {
+        mMediaPlayer = new MediaPlayer();
         try {
             final Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + sound);
             mMediaPlayer.reset();
@@ -35,9 +28,7 @@ public class SoundPlayer extends ContextWrapper {
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
             mMediaPlayer.prepare();
 
-            if (release) {
-                mMediaPlayer.setOnCompletionListener(mp -> mMediaPlayer.release());
-            }
+            mMediaPlayer.setOnCompletionListener(mp -> mMediaPlayer.release());
 
             mMediaPlayer.setOnPreparedListener(mp -> {
                 mMediaPlayer.start();

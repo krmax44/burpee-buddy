@@ -9,9 +9,11 @@ public class Events {
     public static class PreWorkoutCountdownFinished {}
 
     public static class RepComplete {
-        public int reps;
-        public RepComplete(int reps) {
-            this.reps = reps;
+        public boolean lastRepInSet = false;
+        public RepComplete() {
+        }
+        public RepComplete(boolean lastRepInSet) {
+            this.lastRepInSet = lastRepInSet;
         }
     }
 

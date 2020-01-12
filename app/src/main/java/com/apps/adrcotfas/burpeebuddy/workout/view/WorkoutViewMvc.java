@@ -9,7 +9,7 @@ public interface WorkoutViewMvc extends ObservableViewMvc<WorkoutViewMvc.Listene
         void onFinishSetButtonClicked();
     }
 
-    public void onRepComplete(int reps);
+    public void onRepComplete();
     public void onTimerTick(int seconds);
 
     public void setFinishSetButtonVisibility(int visibility);

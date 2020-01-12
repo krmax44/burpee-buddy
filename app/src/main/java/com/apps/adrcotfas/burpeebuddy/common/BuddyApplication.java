@@ -26,7 +26,6 @@ public class BuddyApplication extends Application {
     private static BuddyApplication INSTANCE;
     private static WorkoutManager mWorkoutManager;
     private static NotificationHelper mNotificationHelper;
-    private static SoundPlayer mMediaPlayer;
 
     private static SharedPreferences mPrivatePreferences;
 
@@ -38,8 +37,8 @@ public class BuddyApplication extends Application {
         return mWorkoutManager;
     }
 
-    public static SoundPlayer getMediaPlayer() {
-        return mMediaPlayer;
+    public SoundPlayer getMediaPlayer() {
+        return new SoundPlayer(this);
     }
 
     public static BuddyApplication getInstance() {
@@ -63,7 +62,6 @@ public class BuddyApplication extends Application {
         INSTANCE = this;
         mWorkoutManager = new WorkoutManager(this);
         mNotificationHelper = new NotificationHelper(this);
-        mMediaPlayer = new SoundPlayer(this);
         mPrivatePreferences =
                 getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
 

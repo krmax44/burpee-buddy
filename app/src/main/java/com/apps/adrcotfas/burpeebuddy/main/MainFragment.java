@@ -114,9 +114,4 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     public void onEditGoalsClicked() {
         NavHostFragment.findNavController(this).navigate(R.id.action_main_to_goals);
     }
-
-    @Override
-    public void onDisabledChipClicked() {
-        Toast.makeText(getActivity(), getString(R.string.implementation_not_ready), Toast.LENGTH_SHORT).show();
-    }
 }

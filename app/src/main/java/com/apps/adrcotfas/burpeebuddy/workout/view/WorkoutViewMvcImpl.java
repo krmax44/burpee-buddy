@@ -265,7 +265,8 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
     }
 
     @Override
-    public void onRepComplete(int reps) {
+    public void onRepComplete() {
+        final int reps = getWorkout().getCurrentReps();
         getCurrentSetViewRow().reps.setText(reps + "");
 
         final int duration = getElapsedTime();

@@ -141,17 +141,18 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
+        //TODO: handle this later
         //TODO: and if the workout is countable
-        if (SettingsHelper.autoLockEnabled() && Power.isScreenOn(getActivity())) {
-            Power.lockScreen((AppCompatActivity) getActivity());
-        }
+//        if (SettingsHelper.autoLockEnabled() && Power.isScreenOn(getActivity())) {
+//            Power.lockScreen((AppCompatActivity) getActivity());
+//        }
         setupFinishSet(View.VISIBLE);
         mViewMvc.toggleRowAppearance(true);
     }
 
     @Subscribe
     public void onMessageEvent(Events.RepComplete event) {
-        mViewMvc.onRepComplete(event.reps);
+        mViewMvc.onRepComplete();
     }
 
     @Subscribe
@@ -162,7 +163,9 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutEvent event) {
         Timber.tag(TAG).v("FinishedWorkoutEvent " + this.hashCode());
-        //TODO show finish dialog with special title (no 3/3 but "Workout finished")
+
+        getActivity().getWindow().clearFlags(FLAG_KEEP_SCREEN_ON);
+
         navigateToFinishDialog();
         mViewMvc.onWorkoutFinished();
     }

@@ -27,7 +27,6 @@ public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
 
     public interface Listener {
         void onStartButtonClicked();
-        void onDisabledChipClicked();
         void onEditExercisesClicked();
         void onEditGoalsClicked();
     }
