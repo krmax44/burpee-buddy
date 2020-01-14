@@ -1,8 +1,10 @@
 package com.apps.adrcotfas.burpeebuddy.edit_goals.view;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +24,7 @@ public class GoalsViewMvcImpl
     private GoalsAdapter mAdapter;
 
     private List<Goal> mGoals = new ArrayList<>();
+    private final FloatingActionButton mFab;
 
     public GoalsViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_add_edit, parent, false));
@@ -31,10 +34,22 @@ public class GoalsViewMvcImpl
         mAdapter = new GoalsAdapter(inflater, this);
         mRecyclerView.setAdapter(mAdapter);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(v -> {
+        mFab = findViewById(R.id.fab);
+        mFab.setOnClickListener(v -> {
             for (GoalsViewMvc.Listener l : getListeners()) {
                 l.onGoalAddClicked();
+            }
+        });
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0 && mFab.getVisibility() == View.VISIBLE) {
+                    mFab.hide();
+                } else if (dy < 0 && mFab.getVisibility() !=View.VISIBLE) {
+                    mFab.show();
+                }
             }
         });
     }

@@ -2,8 +2,10 @@ package com.apps.adrcotfas.burpeebuddy.edit_exercises.view;
 
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +29,7 @@ public class ExercisesViewMvcImpl
     private ItemTouchHelper mItemTouchHelper;
 
     private List<Exercise> mExercises = new ArrayList<>();
+    private final FloatingActionButton mFab;
 
     public ExercisesViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_add_edit, parent, false));
@@ -40,10 +43,22 @@ public class ExercisesViewMvcImpl
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(v -> {
+        mFab = findViewById(R.id.fab);
+        mFab.setOnClickListener(v -> {
             for (Listener l : getListeners()) {
                 l.onExerciseAddClicked();
+            }
+        });
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0 && mFab.getVisibility() == View.VISIBLE) {
+                    mFab.hide();
+                } else if (dy < 0 && mFab.getVisibility() !=View.VISIBLE) {
+                    mFab.show();
+                }
             }
         });
     }
