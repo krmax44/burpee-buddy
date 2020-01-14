@@ -71,12 +71,12 @@
     <fragment
         android:id="@+id/editExercisesFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.edit_exercises.ExercisesFragment"
-        android:label="EditExercisesFragment" >
+        android:label="title_exercises">
     </fragment>
     <fragment
         android:id="@+id/goalsFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.edit_goals.GoalsFragment"
-        android:label="GoalsFragment" >
+        android:label="@string/title_goals" >
     </fragment>
 
     <dialog
@@ -101,5 +101,5 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.settings.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="@string/title_settings" />
 </navigation>
