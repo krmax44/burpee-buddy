@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.main.view;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -36,6 +37,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     private List<Exercise> mExercises = new ArrayList<>();
     private List<Goal> mGoals = new ArrayList<>();
+    private final MaterialButton mStartButton;
 
     public MutableLiveData<Exercise> getExercise() {
         return mExercise;
@@ -47,6 +49,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         setRootView(inflater.inflate(R.layout.fragment_main, parent, false));
 
         mExerciseTypeChipGroup = findViewById(R.id.exercise_type);
+        mStartButton = findViewById(R.id.start_button);
         mExerciseTypeChipGroup.setSelectionRequired(true);
         mExerciseTypeChipGroup.setSingleSelection(true);
         mExerciseTypeChipGroup.setOnCheckedChangeListener((group, checkedId) -> onExerciseSelected());
@@ -54,6 +57,11 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         mGoalsChipGroup = findViewById(R.id.goal_type);
         mGoalsChipGroup.setSelectionRequired(true);
         mGoalsChipGroup.setSingleSelection(true);
+        mGoalsChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            for (Listener listener : MainViewMvcImpl.this.getListeners()) {
+                listener.onGoalSelectionChanged(checkedId != View.NO_ID);
+            }
+        });
 
         mCoordinatorLayout = findViewById(R.id.top_coordinator);
 
@@ -71,8 +79,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             }
         });
 
-        MaterialButton startButton = findViewById(R.id.start_button);
-        startButton.setOnClickListener(v -> onStartButtonClicked());
+        mStartButton.setOnClickListener(v -> onStartButtonClicked());
     }
 
     public void onStartButtonClicked() {
@@ -125,9 +132,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             c.setChipDrawable(d);
             mGoalsChipGroup.addView(c);
         }
-        if (!goals.isEmpty()) {
-            mGoalsChipGroup.check(mGoalsChipGroup.getChildAt(0).getId());
-        }
+        mGoalsChipGroup.clearCheck();
     }
 
     private void onExerciseSelected() {
@@ -178,5 +183,10 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
         Timber.tag(TAG).wtf( "Could not find the selected goal in the internal list.");
         return null;
+    }
+
+    @Override
+    public void toggleStartButtonState(boolean enabled) {
+        mStartButton.setEnabled(enabled);
     }
 }

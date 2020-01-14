@@ -25,9 +25,13 @@ public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
      */
     Goal getGoal();
 
+    void toggleStartButtonState(boolean state);
+
     public interface Listener {
         void onStartButtonClicked();
         void onEditExercisesClicked();
         void onEditGoalsClicked();
+
+        void onGoalSelectionChanged(boolean valid);
     }
 }

@@ -71,7 +71,7 @@
     <fragment
         android:id="@+id/editExercisesFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.edit_exercises.ExercisesFragment"
-        android:label="title_exercises">
+        android:label="@string/title_exercises">
     </fragment>
     <fragment
         android:id="@+id/goalsFragment"
