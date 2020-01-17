@@ -216,7 +216,7 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
                 mElapsed = mCountDownTimer.seconds;
                 mCountDownTimer.cancel();
             } else {
-                mCountDownTimer = new CountDownTimer(TimerType.COUNT_DOWN, mElapsed);
+                mCountDownTimer = new CountDownTimer(TimerType.COUNT_DOWN, TimeUnit.SECONDS.toMillis(mElapsed), this);
                 mCountDownTimer.start();
             }
         } else if (getGoalType().equals(GoalType.REPS)){

@@ -51,7 +51,7 @@ public class CountDownTimer extends android.os.CountDownTimer {
     public void onFinish() {
         if (type.equals(TimerType.PRE_WORKOUT_COUNT_DOWN)) {
             EventBus.getDefault().post(new Events.PreWorkoutCountdownFinished());
-        } else {
+        } else if (listener != null) {
             listener.onFinishedSet();
         }
         seconds = 0;

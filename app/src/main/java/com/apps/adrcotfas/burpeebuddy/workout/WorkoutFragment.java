@@ -10,18 +10,16 @@ import android.view.ViewGroup;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
-import com.apps.adrcotfas.burpeebuddy.common.utilities.Power;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
-import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewMvc;
@@ -108,6 +106,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onStopButtonClicked() {
+        wasPaused = false;
         final State state = BuddyApplication.getWorkoutManager().getWorkout().getState();
         if (state == State.PRE_WORKOUT || state == State.WORKOUT_FINISHED_IDLE) {
             EventBus.getDefault().post(new Events.StopWorkoutEvent());
@@ -172,12 +171,12 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutIdle event) {
-        mViewMvc.onWorkoutFinished();
+        //TODO: save to database event
+        wasPaused = false;
     }
 
     @Subscribe
     public void onMessageEvent(Events.SetFinished event) {
-        Timber.tag(TAG).v("SetFinished " + this.hashCode());
         navigateToFinishDialog();
         wasPaused = false;
     }
@@ -198,7 +197,11 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     private void navigateToFinishDialog() {
         Timber.tag(TAG).v("navigateToFinishDialog");
-        NavHostFragment.findNavController(this).navigate(R.id.action_workout_to_set_finished_dialog);
+        final NavController navController = NavHostFragment.findNavController(this);
+        final NavDestination destination = navController.getCurrentDestination();
+        if (destination != null && destination.getId() == R.id.workoutFragment) {
+            navController.navigate(R.id.action_workout_to_set_finished_dialog);
+        }
     }
 
     private void navigateToConfirmStopDialog() {

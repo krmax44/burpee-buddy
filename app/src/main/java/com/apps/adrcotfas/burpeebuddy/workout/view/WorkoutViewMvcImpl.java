@@ -148,9 +148,10 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
     @Override
     public void onStartBreak() {
         // refresh previous row
-        refreshStatsRow(getWorkout().getCurrentSetIdx() - 1);
+        final int currentSetIdx = getWorkout().getCurrentSetIdx();
+        refreshStatsRow(currentSetIdx - 1);
         // new row for the new set
-        SetViewRow row = createStatsRow(getWorkout().getCurrentSetIdx());
+        SetViewRow row = createStatsRow(currentSetIdx);
         mStatRowViews.add(row);
         mStatsContainer.addView(row.parent);
         mStatsScrollView.post(() -> mStatsScrollView.fullScroll(View.FOCUS_DOWN));
