@@ -18,8 +18,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
+import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewMvc;
@@ -98,7 +100,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onDestroy() {
-        Timber.tag(TAG).d( "onDestroy " + this.hashCode());
+        Timber.tag(TAG).d( "onDestroy ");
         mViewMvc.unregisterListener(this);
         EventBus.getDefault().unregister(this);
         super.onDestroy();
@@ -106,7 +108,6 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Override
     public void onStopButtonClicked() {
-        wasPaused = false;
         final State state = BuddyApplication.getWorkoutManager().getWorkout().getState();
         if (state == State.PRE_WORKOUT || state == State.WORKOUT_FINISHED_IDLE) {
             EventBus.getDefault().post(new Events.StopWorkoutEvent());
@@ -161,7 +162,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutEvent event) {
-        Timber.tag(TAG).v("FinishedWorkoutEvent " + this.hashCode());
+        Timber.tag(TAG).v("FinishedWorkoutEvent ");
 
         getActivity().getWindow().clearFlags(FLAG_KEEP_SCREEN_ON);
 
@@ -171,7 +172,18 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutIdle event) {
-        //TODO: save to database event
+        final Workout workout = new Workout(
+                getWorkout().getExerciseName(),
+                getWorkout().getExerciseType(),
+                getWorkout().getExerciseColor(),
+                System.currentTimeMillis(),
+                getWorkout().getTotalDuration(),
+                getWorkout().getTotalReps(),
+                0,
+                getWorkout().getTotalAvgPace(),
+                0);
+
+        AppDatabase.addWorkout(getContext(), workout);
         wasPaused = false;
     }
 

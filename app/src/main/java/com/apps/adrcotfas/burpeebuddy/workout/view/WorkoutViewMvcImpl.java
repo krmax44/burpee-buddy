@@ -11,7 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
-import com.apps.adrcotfas.burpeebuddy.common.utilities.TimerFormat;
+import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
@@ -91,7 +91,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
                         ? View.VISIBLE : View.GONE);
 
         mTimer = findViewById(R.id.timer);
-        mTimer.setText(TimerFormat.secondsToTimerFormatAlt(getElapsedTime()));
+        mTimer.setText(StringUtils.secondsToTimerFormatAlt(getElapsedTime()));
     }
 
     private void setupStats() {
@@ -283,7 +283,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
 
     @Override
     public void onTimerTick(int seconds) {
-        mTimer.setText(TimerFormat.secondsToTimerFormatAlt(seconds));
+        mTimer.setText(StringUtils.secondsToTimerFormatAlt(seconds));
         if (getWorkout().getState() == State.ACTIVE) {
             getCurrentSetViewRow().duration.setText(formatSecondsAlt(getElapsedTime()));
         }

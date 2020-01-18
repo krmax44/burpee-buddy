@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.edit_goals.GoalsViewHolder;
-import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsItemViewMvc;
-import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsItemViewMvcImpl;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
-import com.apps.adrcotfas.burpeebuddy.common.utilities.TimerFormat;
+import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
 
 public class NotificationHelper extends ContextWrapper {
 
@@ -61,7 +61,7 @@ public class NotificationHelper extends ContextWrapper {
         mManager.notify(WORKOUT_NOTIFICATION_ID,
                 getBuilder()
                         .setOnlyAlertOnce(true)
-                        .setContentText(hide ? "" : TimerFormat.secondsToTimerFormatAlt(seconds))
+                        .setContentText(hide ? "" : StringUtils.secondsToTimerFormatAlt(seconds))
                         .build());
     }
 

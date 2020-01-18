@@ -119,7 +119,7 @@ public class AddEditExerciseDialog extends DialogFragment {
                             -> EventBus.getDefault().post(new Events.DeleteExercise(mExercise.name))))
                     .setNegativeButton(android.R.string.cancel, (dialog3, which3) -> {})
                     .setTitle("Delete " + mExercise.name + "?")
-                    .setMessage("Deleting this exercise will not remove the completed workouts from the statistics.")
+                    .setMessage("Deleting this exercise will remove the associated completed workouts from the statistics.")
                     .create().show()));
         }
 

@@ -17,7 +17,6 @@ import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.edit_exercises.ExercisesAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExercisesViewMvcImpl
@@ -28,11 +27,10 @@ public class ExercisesViewMvcImpl
     private ExercisesAdapter mAdapter;
     private ItemTouchHelper mItemTouchHelper;
 
-    private List<Exercise> mExercises = new ArrayList<>();
     private final FloatingActionButton mFab;
 
     public ExercisesViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
-        setRootView(inflater.inflate(R.layout.fragment_add_edit, parent, false));
+        setRootView(inflater.inflate(R.layout.fragment_recycler_and_fab, parent, false));
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -66,7 +64,6 @@ public class ExercisesViewMvcImpl
     @Override
     public void bindExercises(List<Exercise> exercises) {
         mAdapter.bindExercises(exercises);
-        mExercises = exercises;
     }
 
     @Override

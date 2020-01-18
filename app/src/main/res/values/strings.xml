@@ -14,8 +14,8 @@
     <string name="stop">STOP</string>
     <string name="database_name">buddy-db</string>
     <string name="add_workout">Add workout</string>
-    <string name="exercise_dialog_reps">Repetitions</string>
-    <string name="exercise_dialog_reps_proxy">Repetitions measured with the proximity sensor</string>
+    <string name="exercise_dialog_reps">Reps</string>
+    <string name="exercise_dialog_reps_proxy">Reps measured with the proximity sensor</string>
     <string name="exercise_dialog_weight">Weight</string>
     <string name="exercise_dialog_distance">Distance</string>
     <string name="exercise_dialog_time">Time</string>
@@ -39,4 +39,6 @@
     <string name="congratulations">Congratulations! You have finished the workout.</string>
     <string name="title_goals">Goals</string>
     <string name="title_exercises">Exercises</string>
+    <string name="title_statistics">History</string>
+    <string name="reps_per_min">reps/min</string>
 </resources>

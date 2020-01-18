@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_goals.view;
+package com.apps.adrcotfas.burpeebuddy.statistics.view;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,32 +10,33 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-public class GoalsViewMvcImpl
-        extends BaseObservableViewMvc<GoalsViewMvc.Listener>
-        implements GoalsViewMvc, GoalsAdapter.Listener {
+public class StatisticsViewMvcImpl
+        extends BaseObservableViewMvc<StatisticsViewMvc.Listener>
+    implements StatisticsViewMvc, StatisticsAdapter.Listener {
 
     private RecyclerView mRecyclerView;
-    private GoalsAdapter mAdapter;
-
+    private StatisticsAdapter mAdapter;
     private final FloatingActionButton mFab;
 
-    public GoalsViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
+    public StatisticsViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_recycler_and_fab, parent, false));
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mAdapter = new GoalsAdapter(inflater, this);
+        mAdapter = new StatisticsAdapter(inflater, this);
         mRecyclerView.setAdapter(mAdapter);
-
         mFab = findViewById(R.id.fab);
+
+        // TODO: implement
+        mFab.setVisibility(View.GONE);
         mFab.setOnClickListener(v -> {
-            for (GoalsViewMvc.Listener l : getListeners()) {
-                l.onGoalAddClicked();
+            for (StatisticsViewMvc.Listener l : getListeners()) {
+                l.onWorkoutAddClicked();
             }
         });
 
@@ -53,14 +54,14 @@ public class GoalsViewMvcImpl
     }
 
     @Override
-    public void bindGoals(List<Goal> goals) {
-        mAdapter.bindGoals(goals);
+    public void bindWorkouts(List<Workout> workouts) {
+        mAdapter.bindWorkouts(workouts);
     }
 
     @Override
-    public void onGoalEditClicked(Goal goal) {
+    public void onWorkoutLongPress(Workout workout) {
         for (Listener l : getListeners()) {
-            l.onGoalEditClicked(goal);
+            l.onWorkoutLongPress();
         }
     }
 }

@@ -12,7 +12,7 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface WorkoutDao {
 
-    @Query("select * from Workout")
+    @Query("select * from Workout order by timestamp desc")
     LiveData<List<Workout>> getAll();
 
     @Query("select * from Workout where id = :id")

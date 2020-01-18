@@ -114,4 +114,9 @@ public abstract class AppDatabase extends RoomDatabase {
                 -> getDatabase(context).goalDao()
                 .deleteGoal(id));
     }
+
+    public static void addWorkout(Context context, Workout workout) {
+        mExecutorService.execute(()
+                -> getDatabase(context).workoutDao().addWorkout(workout));
+    }
 }

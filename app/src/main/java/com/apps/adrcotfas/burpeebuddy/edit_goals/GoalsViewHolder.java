@@ -8,9 +8,9 @@ public class GoalsViewHolder extends RecyclerView.ViewHolder {
 
     private final GoalsItemViewMvc mViewMvc;
 
-    public GoalsViewHolder(GoalsItemViewMvc mViewMvc) {
-        super(mViewMvc.getRootView());
-        this.mViewMvc = mViewMvc;
+    public GoalsViewHolder(GoalsItemViewMvc viewMvc) {
+        super(viewMvc.getRootView());
+        this.mViewMvc = viewMvc;
     }
 
     public GoalsItemViewMvc getViewMvc() {
