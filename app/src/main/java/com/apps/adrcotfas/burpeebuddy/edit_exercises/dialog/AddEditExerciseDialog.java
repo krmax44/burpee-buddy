@@ -54,6 +54,11 @@ public class AddEditExerciseDialog extends DialogFragment {
         final TextInputLayout nameEditTextLayout = v.findViewById(R.id.name_layout);
         final TextInputEditText nameEditText = v.findViewById(R.id.name);
 
+        if (mEditMode) { // cannot edit metrics of already crated exercise
+            repsBox.setEnabled(false);
+            proxyBox.setEnabled(false);
+        }
+
         repsBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked && proxyBox.isChecked()) {
                 proxyBox.setChecked(false);
