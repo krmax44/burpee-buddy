@@ -2,13 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:clickable="true"
+    android:focusable="true">
 
     <com.google.android.material.chip.Chip
         android:id="@+id/exercise"
         android:layout_width="wrap_content"
+        android:maxWidth="120dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:enabled="false"
@@ -52,6 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/smallerTextSize"
+                android:paddingEnd="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/pace"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -62,8 +67,8 @@
                 android:id="@+id/pace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:textSize="@dimen/smallerTextSize"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/duration"
@@ -77,6 +82,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="@dimen/smallerTextSize"
+                android:paddingStart="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

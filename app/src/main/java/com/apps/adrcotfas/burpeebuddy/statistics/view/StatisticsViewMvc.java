@@ -9,7 +9,6 @@ public interface StatisticsViewMvc extends ObservableViewMvc<StatisticsViewMvc.L
 
     void bindWorkouts(List<Workout> workouts);
     public interface Listener {
-        void onWorkoutAddClicked();
-        void onWorkoutLongPress();
+        void onWorkoutLongPress(int id);
     }
 }

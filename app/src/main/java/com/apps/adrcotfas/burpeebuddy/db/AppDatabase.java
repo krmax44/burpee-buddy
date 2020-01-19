@@ -119,4 +119,23 @@ public abstract class AppDatabase extends RoomDatabase {
         mExecutorService.execute(()
                 -> getDatabase(context).workoutDao().addWorkout(workout));
     }
+
+    public static void editWorkout(Context context, int id, Workout workout) {
+        mExecutorService.execute(()
+                -> getDatabase(context).workoutDao().editWorkout(
+                        id,
+                workout.type,
+                workout.color,
+                workout.timestamp,
+                workout.duration,
+                workout.reps,
+                workout.distance,
+                workout.weight,
+                workout.pace));
+    }
+
+    public static void deleteWorkout(Context context, int id) {
+        mExecutorService.execute(()
+            -> getDatabase(context).workoutDao().delete(id));
+    }
 }

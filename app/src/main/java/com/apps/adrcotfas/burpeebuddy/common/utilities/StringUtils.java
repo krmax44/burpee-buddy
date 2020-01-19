@@ -35,8 +35,18 @@ public class StringUtils {
     }
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("EEE', 'MMM d', ' yyyy, HH:mm");
-
     public static String formatDateAndTime(long millis) {
         return dateTimeFormatter.print(millis);
     }
+
+    private static final DateTimeFormatter monthFormatter = DateTimeFormat.forPattern("EEE', 'MMM d', ' yyyy");
+    private static final DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("HH:mm");
+
+    public static String formatDate(long millis) {
+        return monthFormatter.print(millis);
+    }
+    public static String formatTime(long millis) {
+        return timeFormatter.print(millis);
+    }
+
 }

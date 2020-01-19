@@ -2,12 +2,16 @@ package com.apps.adrcotfas.burpeebuddy.edit_exercises;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
@@ -34,7 +38,7 @@ public class ExercisesFragment extends Fragment implements ExercisesViewMvc.List
         AppDatabase.getDatabase(getContext()).exerciseDao().getAll().observe(
                 getViewLifecycleOwner(), exercises ->
                         mViewMvc.bindExercises(exercises));
-
+        setHasOptionsMenu(true);
         return mViewMvc.getRootView();
     }
 
@@ -53,6 +57,23 @@ public class ExercisesFragment extends Fragment implements ExercisesViewMvc.List
         super.onDestroy();
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu,
+                                    MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_add_stuff, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.add) {
+            AddEditExerciseDialog.getInstance(null, false)
+                    .show(getActivity().getSupportFragmentManager(), TAG);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void onVisibilityToggle(String exercise, boolean visibility) {
         AppDatabase.editVisibility(getContext(), exercise, visibility);
@@ -65,12 +86,6 @@ public class ExercisesFragment extends Fragment implements ExercisesViewMvc.List
         for (int i = 0; i < exercises.size(); ++i) {
             AppDatabase.editExerciseOrder(getContext(), exercises.get(i).name, i);
         }
-    }
-
-    @Override
-    public void onExerciseAddClicked() {
-        AddEditExerciseDialog.getInstance(null, false)
-                .show(getActivity().getSupportFragmentManager(), TAG);
     }
 
     @Override

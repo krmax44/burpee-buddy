@@ -2,12 +2,16 @@ package com.apps.adrcotfas.burpeebuddy.edit_goals;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
@@ -32,7 +36,7 @@ public class GoalsFragment extends Fragment implements GoalsViewMvc.Listener {
         AppDatabase.getDatabase(getContext()).goalDao().getAll().observe(
                 getViewLifecycleOwner(), goals ->
                         mViewMvc.bindGoals(goals));
-
+        setHasOptionsMenu(true);
         return mViewMvc.getRootView();
     }
 
@@ -52,9 +56,19 @@ public class GoalsFragment extends Fragment implements GoalsViewMvc.Listener {
     }
 
     @Override
-    public void onGoalAddClicked() {
-        AddEditGoalDialog.getInstance(null, false)
-                .show(getActivity().getSupportFragmentManager(), TAG);
+    public void onCreateOptionsMenu(Menu menu,
+                                    MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_add_stuff, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.add) {
+            AddEditGoalDialog.getInstance(null, false)
+                    .show(getActivity().getSupportFragmentManager(), TAG);
+            return true;
+        }
+        return false;
     }
 
     @Override

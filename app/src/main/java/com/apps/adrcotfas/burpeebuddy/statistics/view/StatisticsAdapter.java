@@ -15,7 +15,7 @@ public class StatisticsAdapter extends RecyclerView.Adapter<StatisticsViewHolder
     implements StatisticsItemViewMvc.Listener {
 
     public interface Listener {
-        void onWorkoutLongPress(Workout workout);
+        void onWorkoutLongPress(int id);
     }
 
     private final LayoutInflater mInflater;
@@ -51,7 +51,7 @@ public class StatisticsAdapter extends RecyclerView.Adapter<StatisticsViewHolder
     }
 
     @Override
-    public void onWorkoutLongPress(Workout workout) {
-        mListener.onWorkoutLongPress(workout);
+    public void onWorkoutLongPress(int id) {
+        mListener.onWorkoutLongPress(id);
     }
 }

@@ -19,9 +19,23 @@ import static androidx.room.ForeignKey.CASCADE;
                 parentColumns = {"name", "type", "color"},
                 childColumns = {"exerciseName", "type", "color"},
                 onUpdate = CASCADE, onDelete = CASCADE)},
-        indices = {@Index(value = {"exerciseName", "type", "color"}, unique = true)})
+        indices = {@Index(value = {"exerciseName", "type", "color"})})
 public class Workout {
 
+    public Workout() {
+        this.id = 0;
+        this.exerciseName = "";
+        this.type = ExerciseType.INVALID;
+        this.color = 0;
+        this.timestamp = System.currentTimeMillis();
+        this.reps = 0;
+        this.duration = 0;
+        this.distance = 0;
+        this.pace = 0;
+        this.weight = 0;
+    }
+
+    @Ignore
     public Workout(String exerciseName, ExerciseType type, int color, long timestamp, int duration, int reps,
             int distance, double pace, double weight) {
         this.id = 0;

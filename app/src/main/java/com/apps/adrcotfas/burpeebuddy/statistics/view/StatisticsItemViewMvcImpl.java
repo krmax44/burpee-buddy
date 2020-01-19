@@ -19,7 +19,6 @@ class StatisticsItemViewMvcImpl extends BaseObservableViewMvc<StatisticsItemView
 
     private Chip mExerciseName;
     private TextView mDate;
-    private TextView mTime;
     private TextView mReps;
     private TextView mPace;
     private TextView mDuration;
@@ -29,24 +28,42 @@ class StatisticsItemViewMvcImpl extends BaseObservableViewMvc<StatisticsItemView
 
         mExerciseName = findViewById(R.id.exercise);
         mDate = findViewById(R.id.date);
-        mTime = findViewById(R.id.time);
         mReps = findViewById(R.id.reps);
         mPace = findViewById(R.id.pace);
         mDuration = findViewById(R.id.duration);
-        //TODO: update views and set onLongPressListener
+        findViewById(R.id.parent).setOnClickListener(v -> {
+            for (Listener l : getListeners()) {
+                l.onWorkoutLongPress(mWorkout.id);
+            }
+        });
     }
 
     @Override
     public void bindWorkout(Workout workout) {
         mWorkout = workout;
         if (mWorkout.type == ExerciseType.TIME_BASED) {
-            mReps.setVisibility(View.GONE);
-            mPace.setVisibility(View.GONE);
+            mReps.setText("");
+            mPace.setText("");
         }
         mExerciseName.setText(mWorkout.exerciseName);
         mDate.setText(StringUtils.formatDateAndTime(mWorkout.timestamp));
-        mReps.setText(mWorkout.reps + " reps");
-        mPace.setText(mWorkout.pace + " reps/min");
-        mDuration.setText(StringUtils.secondsToTimerFormatAlt(mWorkout.duration));
+        if (mWorkout.reps == 0) {
+            mReps.setText("");
+        } else {
+            mReps.setText(mWorkout.reps == 1 ? mWorkout.reps + " rep" : mWorkout.reps + " reps");
+        }
+
+        if (mWorkout.pace == 0) {
+            mPace.setText("");
+        } else {
+            mPace.setText(mWorkout.pace == (long) mWorkout.pace
+                    ? (long) mWorkout.pace + " reps/min"
+                    : mWorkout.pace + " reps/min");
+        }
+        if (mWorkout.duration == 0) {
+            mDuration.setText("");
+        } else {
+            mDuration.setText(StringUtils.secondsToTimerFormatAlt(mWorkout.duration));
+        }
     }
 }

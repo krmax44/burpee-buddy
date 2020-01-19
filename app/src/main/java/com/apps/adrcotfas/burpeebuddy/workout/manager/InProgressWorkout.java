@@ -187,7 +187,7 @@ public class InProgressWorkout {
         return getAvgPace(getTotalReps(), getTotalDuration());
     }
 
-    public double getAvgPace(int reps, int duration) {
+    public static double getAvgPace(int reps, int duration) {
         if (duration == 0) {
             return 0;
         }

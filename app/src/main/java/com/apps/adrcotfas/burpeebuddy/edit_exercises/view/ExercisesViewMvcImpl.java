@@ -2,10 +2,8 @@ package com.apps.adrcotfas.burpeebuddy.edit_exercises.view;
 
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +13,6 @@ import com.apps.adrcotfas.burpeebuddy.common.recyclerview.SimpleItemTouchHelperC
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.edit_exercises.ExercisesAdapter;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -27,10 +24,8 @@ public class ExercisesViewMvcImpl
     private ExercisesAdapter mAdapter;
     private ItemTouchHelper mItemTouchHelper;
 
-    private final FloatingActionButton mFab;
-
     public ExercisesViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
-        setRootView(inflater.inflate(R.layout.fragment_recycler_and_fab, parent, false));
+        setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -40,25 +35,6 @@ public class ExercisesViewMvcImpl
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-
-        mFab = findViewById(R.id.fab);
-        mFab.setOnClickListener(v -> {
-            for (Listener l : getListeners()) {
-                l.onExerciseAddClicked();
-            }
-        });
-
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0 && mFab.getVisibility() == View.VISIBLE) {
-                    mFab.hide();
-                } else if (dy < 0 && mFab.getVisibility() !=View.VISIBLE) {
-                    mFab.show();
-                }
-            }
-        });
     }
 
     @Override

@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
+import com.apps.adrcotfas.burpeebuddy.workout.WorkoutFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.greenrobot.eventbus.EventBus;
@@ -22,6 +23,7 @@ public class ConfirmStopDialog extends DialogFragment {
                 .setMessage("Are you sure you want to stop this workout?")
                 .setPositiveButton(android.R.string.ok,
                         (dialog, which) -> {
+                            WorkoutFragment.isInPausedBreakState = false;
                             EventBus.getDefault().post(new Events.StopWorkoutEvent());
                             NavHostFragment.findNavController(this)
                                     .navigate(R.id.action_confirmStopDialog_to_mainFragment);

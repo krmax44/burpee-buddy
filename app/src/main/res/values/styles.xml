@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
     </style>
 
     <style name="OverviewTextValue">
@@ -18,5 +20,8 @@
         <item name="android:textSize">@dimen/smallTextSize</item>
         <item name="android:singleLine">true</item>
     </style>
+
+    <style name="mdtp_ActionButton.Text" parent="Widget.MaterialComponents.Button.TextButton.Dialog"/>
+
 
 </resources>

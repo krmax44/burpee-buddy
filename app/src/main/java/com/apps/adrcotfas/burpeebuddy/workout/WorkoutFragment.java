@@ -39,7 +39,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
     private static final String TAG = "WorkoutFragment";
     private WorkoutViewMvc mViewMvc;
 
-    private static boolean wasPaused = false;
+    public static boolean isInPausedBreakState = false;
 
     public WorkoutFragment() {}
 
@@ -82,7 +82,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
                 break;
             case ACTIVE:
                 // coming from another screen / the app was sent to background
-                setupFinishSet(View.VISIBLE);
+                setFinishSetButtonVisibility(View.VISIBLE);
                 break;
             case PAUSED:
             case BREAK_PAUSED:
@@ -113,6 +113,9 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
             EventBus.getDefault().post(new Events.StopWorkoutEvent());
             NavHostFragment.findNavController(this).navigate(R.id.action_workout_to_main);
         } else {
+            if (state == State.BREAK_ACTIVE) {
+                isInPausedBreakState = true;
+            }
             EventBus.getDefault().post(new Events.ToggleWorkoutEvent());
             navigateToConfirmStopDialog();
         }
@@ -132,7 +135,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         }
     }
 
-    private void setupFinishSet(int visible) {
+    private void setFinishSetButtonVisibility(int visible) {
         if (getWorkout().getGoalType() == GoalType.REPS &&
                 getWorkout().getExerciseType() == ExerciseType.UNCOUNTABLE) {
             mViewMvc.setFinishSetButtonVisibility(visible);
@@ -146,7 +149,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 //        if (SettingsHelper.autoLockEnabled() && Power.isScreenOn(getActivity())) {
 //            Power.lockScreen((AppCompatActivity) getActivity());
 //        }
-        setupFinishSet(View.VISIBLE);
+        setFinishSetButtonVisibility(View.VISIBLE);
         mViewMvc.toggleRowAppearance(true);
     }
 
@@ -184,27 +187,26 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
                 0);
 
         AppDatabase.addWorkout(getContext(), workout);
-        wasPaused = false;
     }
 
     @Subscribe
     public void onMessageEvent(Events.SetFinished event) {
         navigateToFinishDialog();
-        wasPaused = false;
     }
 
     @Subscribe
     public void onMessageEvent(Events.StartBreak event) {
-        if (!wasPaused) {
+        if (!isInPausedBreakState) {
             mViewMvc.onStartBreak();
             mViewMvc.toggleRowAppearance(false);
+        } else {
+            isInPausedBreakState = false;
         }
-        setupFinishSet(View.GONE);
+        setFinishSetButtonVisibility(View.GONE);
     }
 
     @Subscribe
     public void onMessageEvent(Events.ToggleWorkoutEvent event) {
-        wasPaused = true;
     }
 
     private void navigateToFinishDialog() {

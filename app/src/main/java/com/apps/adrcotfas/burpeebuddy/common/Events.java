@@ -3,6 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.common;
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 
 public class Events {
 
@@ -104,5 +105,28 @@ public class Events {
     }
 
     public static class FinishedWorkoutIdle {
+    }
+
+    public static class DeleteWorkout {
+        public int id;
+        public DeleteWorkout(int id) {
+            this.id = id;
+        }
+    }
+
+    public static class AddWorkout {
+        public Workout workout;
+        public AddWorkout(Workout workout) {
+            this.workout = workout;
+        }
+    }
+
+    public static class EditWorkout {
+        public int id;
+        public Workout workout;
+        public EditWorkout(int id, Workout workout) {
+            this.id = id;
+            this.workout = workout;
+        }
     }
 }

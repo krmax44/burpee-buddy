@@ -194,7 +194,6 @@ public class SetFinishedDialog extends DialogFragment {
     }
 
     private void setupRepsEditText(View v) {
-
         TextInputLayout repsEditTextLayout = v.findViewById(R.id.reps_layout);
         TextInputEditText repsEditText = v.findViewById(R.id.reps);
         repsEditText.setText(String.valueOf(getWorkout().getCurrentReps()));
