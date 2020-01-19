@@ -59,19 +59,20 @@
             android:text="@string/exercise_dialog_reps_proxy"/>
     </LinearLayout>
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:enabled="false"
-        android:text="@string/exercise_dialog_weight"/>
+<!--    TODO: activate this when implementation is done-->
+<!--    <com.google.android.material.checkbox.MaterialCheckBox-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:layout_marginEnd="24dp"-->
+<!--        android:enabled="false"-->
+<!--        android:text="@string/exercise_dialog_weight"/>-->
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:enabled="false"
-        android:text="@string/exercise_dialog_distance"/>
+<!--    <com.google.android.material.checkbox.MaterialCheckBox-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:layout_marginEnd="24dp"-->
+<!--        android:enabled="false"-->
+<!--        android:text="@string/exercise_dialog_distance"/>-->
 </LinearLayout>
