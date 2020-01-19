@@ -184,58 +184,50 @@ public class AddEditGoalDialog extends DialogFragment {
             }
         });
 
-        if(mEditMode) {
-            final int sets = mGoal.sets;
-            final int reps = mGoal.reps;
-            final int duration = mGoal.duration;
-            final int durationBreak = mGoal.duration_break;
+        final int sets = mGoal.sets;
+        final int reps = mGoal.reps;
+        final int duration = mGoal.duration;
+        final int durationBreak = mGoal.duration_break;
 
-            final int repsProgress = reps / REPS_FACTOR;
-            final int durationProgress = duration / DURATION_FACTOR;
-            final int durationBreakProgress = durationBreak / BREAK_DURATION_FACTOR;
+        final int repsProgress = reps / REPS_FACTOR;
+        final int durationProgress = duration / DURATION_FACTOR;
+        final int durationBreakProgress = durationBreak / BREAK_DURATION_FACTOR;
 
-            if (sets == setsSeekbar.getProgress()) {
-                setsDesc.setText(formatSetsDesc(sets));
-            } else {
-                setsSeekbar.setProgress(sets);
-            }
-
-            if (repsProgress == repsSeekbar.getProgress()) {
-                repsDesc.setText(formatRepsDesc(reps));
-            } else {
-                repsSeekbar.setProgress(repsProgress);
-            }
-
-            if (durationProgress == durationSeekbar.getProgress()) {
-                durationDesc.setText(formatDurationDesc(duration));
-            } else {
-                durationSeekbar.setProgress(durationProgress);
-            }
-
-            if (durationBreakProgress == breakSeekbar.getProgress()) {
-                breakDesc.setText(formatBreakDesc(durationBreak));
-            } else {
-                breakSeekbar.setProgress(durationBreakProgress);
-            }
-
-            switch (mGoal.type) {
-                case TIME:
-                    durationRadio.setChecked(true);
-                    repsContainer.setVisibility(View.GONE);
-                    break;
-                case REPS:
-                    repBasedRadio.setChecked(true);
-                    durationContainer.setVisibility(View.GONE);
-                    break;
-                case INVALID:
-                    break;
-            }
+        if (sets == setsSeekbar.getProgress()) {
+            setsDesc.setText(formatSetsDesc(sets));
         } else {
-            setsDesc.setText(formatSetsDesc(mGoal.sets));
-            repsDesc.setText(formatRepsDesc(mGoal.reps));
-            durationDesc.setText(formatDurationDesc(mGoal.duration));
-            breakDesc.setText(formatBreakDesc(mGoal.duration_break));
-            durationContainer.setVisibility(View.GONE);
+            setsSeekbar.setProgress(sets);
+        }
+
+        if (repsProgress == repsSeekbar.getProgress()) {
+            repsDesc.setText(formatRepsDesc(reps));
+        } else {
+            repsSeekbar.setProgress(repsProgress);
+        }
+
+        if (durationProgress == durationSeekbar.getProgress()) {
+            durationDesc.setText(formatDurationDesc(duration));
+        } else {
+            durationSeekbar.setProgress(durationProgress);
+        }
+
+        if (durationBreakProgress == breakSeekbar.getProgress()) {
+            breakDesc.setText(formatBreakDesc(durationBreak));
+        } else {
+            breakSeekbar.setProgress(durationBreakProgress);
+        }
+
+        switch (mGoal.type) {
+            case TIME:
+                durationRadio.setChecked(true);
+                repsContainer.setVisibility(View.GONE);
+                break;
+            case REPS:
+                repBasedRadio.setChecked(true);
+                durationContainer.setVisibility(View.GONE);
+                break;
+            case INVALID:
+                break;
         }
     }
 
