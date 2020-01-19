@@ -71,7 +71,6 @@ public class AddEditWorkoutDialog extends DialogFragment
 
         setupExerciseTextView(v);
         setupRepsEditText(v);
-        setupModifierButtons(v);
         setupDurationsEditText(v);
         setupDateAndTimeViews(v);
 
@@ -166,8 +165,9 @@ public class AddEditWorkoutDialog extends DialogFragment
                     nameEditTextLayout.setError(getString(R.string.exercise_dialog_name_error));
                     if (dialog != null) {
                         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        v.findViewById(R.id.reps_container).setVisibility(View.GONE);
-                        v.findViewById(R.id.duration_container).setVisibility(View.GONE);
+                        v.findViewById(R.id.reps_layout).setVisibility(View.GONE);
+                        v.findViewById(R.id.minutes_layout).setVisibility(View.GONE);
+                        v.findViewById(R.id.seconds_layout).setVisibility(View.GONE);
                     }
                 } else {
                     nameEditTextLayout.setError(null);
@@ -175,9 +175,10 @@ public class AddEditWorkoutDialog extends DialogFragment
                         if (e.name.equals(s.toString())) {
                             mWorkout.exerciseName = e.name;
                             mWorkout.type = e.type;
-                            v.findViewById(R.id.reps_container).setVisibility(
+                            v.findViewById(R.id.reps_layout).setVisibility(
                                     e.type != ExerciseType.TIME_BASED ? View.VISIBLE : View.GONE);
-                            v.findViewById(R.id.duration_container).setVisibility(View.VISIBLE);
+                            v.findViewById(R.id.minutes_layout).setVisibility(View.VISIBLE);
+                            v.findViewById(R.id.seconds_layout).setVisibility(View.VISIBLE);
                             break;
                         }
                     }
@@ -189,10 +190,10 @@ public class AddEditWorkoutDialog extends DialogFragment
     private void setupRepsEditText(View v) {
         TextInputLayout repsEditTextLayout = v.findViewById(R.id.reps_layout);
         TextInputEditText repsEditText = v.findViewById(R.id.reps);
-        repsEditText.setText(String.valueOf(mWorkout.reps));
 
         if (mEditMode) {
-            v.findViewById(R.id.reps_container).setVisibility(
+            repsEditText.setText(String.valueOf(mWorkout.reps));
+            v.findViewById(R.id.reps_layout).setVisibility(
                     mWorkout.type != ExerciseType.TIME_BASED ? View.VISIBLE : View.GONE);
         }
 
@@ -207,7 +208,7 @@ public class AddEditWorkoutDialog extends DialogFragment
                 AlertDialog dialog = (AlertDialog) getDialog();
                 int value = 0;
                 if (s.length() == 0 || Integer.valueOf(s.toString()) == 0) {
-                    repsEditTextLayout.setError(" ");
+                    repsEditTextLayout.setError("");
                     if (dialog != null) {
                         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                     }
@@ -223,38 +224,9 @@ public class AddEditWorkoutDialog extends DialogFragment
         });
     }
 
-    private void setupModifierButtons(View v) {
-        final TextInputEditText repsEditText = v.findViewById(R.id.reps);
-        MaterialButton plus_1 = v.findViewById(R.id.reps_plus_one);
-        MaterialButton minus_1 = v.findViewById(R.id.reps_minus_one);
-        MaterialButton multiply_2 = v.findViewById(R.id.reps_multiply_2);
-
-        // TODO: extract limit of 500 to preferences
-        plus_1.setOnClickListener(v1 -> {
-            String s = repsEditText.getText().toString();
-            final int value = s.equals("") ? 0 : Integer.valueOf(s);
-
-            repsEditText.setText(value == 499
-                    ? String.valueOf(500)
-                    : String.valueOf(value + 1));
-        });
-        minus_1.setOnClickListener(v1 -> {
-            String s = repsEditText.getText().toString();
-            final int value = s.equals("") ? 0 : Integer.valueOf(s);
-            repsEditText.setText(value == 0
-                    ? String.valueOf(0)
-                    : String.valueOf(value - 1));
-        });
-        multiply_2.setOnClickListener(v1 -> {
-            String s = repsEditText.getText().toString();
-            final int value = s.equals("") ? 0 : Integer.valueOf(s);
-            repsEditText.setText(value >= 250
-                    ? String.valueOf(500)
-                    : String.valueOf(value * 2));
-        });
-    }
-
     private void setupDurationsEditText(View v) {
+        final TextInputLayout minutesLayout = v.findViewById(R.id.minutes_layout);
+        final TextInputLayout secondsLayout = v.findViewById(R.id.seconds_layout);
         mMinutes = v.findViewById(R.id.minutes);
         mSeconds = v.findViewById(R.id.seconds);
 
@@ -276,15 +248,17 @@ public class AddEditWorkoutDialog extends DialogFragment
                 if (s.length() == 0) {
                     if (mWorkout.type == ExerciseType.TIME_BASED
                             && (mSeconds.length() == 0 || mSeconds.getText().toString().equals("0"))) {
-                        mMinutes.setError(" ");
+                        minutesLayout.setError("");
                         if (dialog != null) {
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                         }
                     }
                 } else {
-                    mMinutes.setError(null);
+                    minutesLayout.setError(null);
                     if (dialog != null) {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if (mWorkout.type == ExerciseType.TIME_BASED) {
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        }
                     }
                     int minutes = Integer.valueOf(s.toString());
                     final String seconds = mSeconds.getText().toString().equals("") ? "0" : mSeconds.getText().toString();
@@ -306,7 +280,7 @@ public class AddEditWorkoutDialog extends DialogFragment
                 if (s.length() == 0) {
                     if (mWorkout.type == ExerciseType.TIME_BASED
                             && (mMinutes.length() == 0 || mMinutes.getText().toString().equals("0"))) {
-                        mSeconds.setError("");
+                        secondsLayout.setError("");
                         if (dialog != null) {
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                         }
@@ -315,9 +289,11 @@ public class AddEditWorkoutDialog extends DialogFragment
                     if (Integer.valueOf(s.toString()) > 60 ) {
                         mSeconds.setText(String.valueOf(60));
                     }
-                    mSeconds.setError(null);
+                    secondsLayout.setError(null);
                     if (dialog != null) {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if (mWorkout.type == ExerciseType.TIME_BASED) {
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        }
                     }
                     int seconds = Integer.valueOf(s.toString());
                     final String minutes = mMinutes.getText().toString().equals("") ? "0" : mMinutes.getText().toString();
