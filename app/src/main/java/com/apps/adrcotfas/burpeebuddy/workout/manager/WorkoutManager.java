@@ -131,6 +131,7 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
             } else {
                 if (SettingsHelper.autoStartBreak(getExerciseType())) {
                     getWorkout().incrementCurrentSet();
+                    EventBus.getDefault().post(new Events.SetFinished(true));
                     EventBus.getDefault().post(new Events.StartBreak(getWorkout().getGoalDurationBreak()));
                 } else {
                     getWorkout().setState(State.SET_FINISHED);
@@ -175,6 +176,7 @@ public class WorkoutManager implements RepCounter.Listener, CountDownTimer.Liste
             if (SettingsHelper.autoStartBreak(getExerciseType())) {
                 getWorkout().incrementCurrentSet();
                 getWorkout().setState(State.BREAK_ACTIVE);
+                EventBus.getDefault().post(new Events.SetFinished(true));
                 EventBus.getDefault().post(new Events.StartBreak(getWorkout().getGoalDurationBreak()));
             } else {
                 getWorkout().setState(State.SET_FINISHED);

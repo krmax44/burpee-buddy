@@ -133,10 +133,12 @@ public class WorkoutService extends LifecycleService {
         getMediaPlayer().play(REP_COMPLETE_SPECIAL);
         Power.turnOnScreen(this);
 
-        getNotificationHelper().setTitle("Set finished " +
-                getWorkout().getCurrentSet()  + "/" +
-                getWorkout().getGoalSets());
-        getNotificationHelper().setTime(true, 0);
+        if (event.justTheSound) {
+            getNotificationHelper().setTitle("Set finished " +
+                    getWorkout().getCurrentSet()  + "/" +
+                    getWorkout().getGoalSets());
+            getNotificationHelper().setTime(true, 0);
+        }
     }
 
     @Subscribe

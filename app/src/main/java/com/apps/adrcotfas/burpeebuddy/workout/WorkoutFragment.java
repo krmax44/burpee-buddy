@@ -191,7 +191,9 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
 
     @Subscribe
     public void onMessageEvent(Events.SetFinished event) {
-        navigateToFinishDialog();
+        if (!event.justTheSound) {
+            navigateToFinishDialog();
+        }
     }
 
     @Subscribe

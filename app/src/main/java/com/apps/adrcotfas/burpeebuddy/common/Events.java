@@ -96,6 +96,14 @@ public class Events {
     }
 
     public static class SetFinished {
+        public boolean justTheSound;
+
+        public SetFinished() {
+            this.justTheSound = false;
+        }
+        public SetFinished(boolean justTheSound) {
+            this.justTheSound = justTheSound;
+        }
     }
 
     public static class ToggleWorkoutEvent {
