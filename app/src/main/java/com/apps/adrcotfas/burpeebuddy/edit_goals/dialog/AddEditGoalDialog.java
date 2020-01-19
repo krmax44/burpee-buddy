@@ -33,6 +33,12 @@ public class AddEditGoalDialog extends DialogFragment {
 
     private boolean mEditMode;
     private Goal mGoal;
+    private AppCompatSeekBar mSetsSeekbar;
+    private AppCompatSeekBar mRepsSeekbar;
+    private AppCompatSeekBar mDurationSeekbar;
+    private AppCompatSeekBar mBreakSeekbar;
+    private MaterialRadioButton mRepBasedRadio;
+    private MaterialRadioButton mDurationRadio;
 
     public static AddEditGoalDialog getInstance(Goal goal, boolean editMode) {
         AddEditGoalDialog dialog = new AddEditGoalDialog();
@@ -70,6 +76,13 @@ public class AddEditGoalDialog extends DialogFragment {
                 .setCancelable(false)
                 .setTitle(mEditMode ? "Edit Goal" : "Add Goal")
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+
+                    mGoal.sets = mSetsSeekbar.getProgress();
+                    mGoal.reps = mRepsSeekbar.getProgress() * REPS_FACTOR;
+                    mGoal.duration = mDurationSeekbar.getProgress() * DURATION_FACTOR;
+                    mGoal.duration_break = mBreakSeekbar.getProgress() * BREAK_DURATION_FACTOR;
+                    mGoal.type = mDurationRadio.isChecked() ? GoalType.TIME : GoalType.REPS;
+
                     EventBus.getDefault().post(mEditMode
                             ? new Events.EditGoal(mGoal.id, mGoal)
                             : new Events.AddGoal(mGoal));
@@ -82,27 +95,26 @@ public class AddEditGoalDialog extends DialogFragment {
     }
 
     private void setupViews(View v) {
-        MaterialRadioButton repBasedRadio = v.findViewById(R.id.rep_based);
-        MaterialRadioButton durationRadio = v.findViewById(R.id.time_based);
+        mRepBasedRadio = v.findViewById(R.id.rep_based);
+        mDurationRadio = v.findViewById(R.id.time_based);
 
         LinearLayout repsContainer = v.findViewById(R.id.reps_container);
         LinearLayout durationContainer = v.findViewById(R.id.duration_container);
         LinearLayout breakContainer = v.findViewById(R.id.break_container);
 
-        AppCompatSeekBar setsSeekbar = v.findViewById(R.id.sets_seekbar);
-        AppCompatSeekBar repsSeekbar = v.findViewById(R.id.reps_seekbar);
-        AppCompatSeekBar durationSeekbar = v.findViewById(R.id.duration_seekbar);
-        AppCompatSeekBar breakSeekbar = v.findViewById(R.id.break_seekbar);
+        mSetsSeekbar = v.findViewById(R.id.sets_seekbar);
+        mRepsSeekbar = v.findViewById(R.id.reps_seekbar);
+        mDurationSeekbar = v.findViewById(R.id.duration_seekbar);
+        mBreakSeekbar = v.findViewById(R.id.break_seekbar);
 
         TextView setsDesc = v.findViewById(R.id.sets_title);
         TextView repsDesc = v.findViewById(R.id.reps_title);
         TextView durationDesc = v.findViewById(R.id.duration_title);
         TextView breakDesc = v.findViewById(R.id.break_title);
 
-        setsSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mSetsSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int sets, boolean fromUser) {
-                mGoal.sets = sets;
                 setsDesc.setText(formatSetsDesc(sets));
                 breakContainer.setVisibility(sets == 1 ? View.GONE : View.VISIBLE);
             }
@@ -116,11 +128,10 @@ public class AddEditGoalDialog extends DialogFragment {
             }
         });
 
-        repsSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mRepsSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 int reps = progress * REPS_FACTOR;
-                mGoal.reps = reps;
                 repsDesc.setText(formatRepsDesc(reps));
             }
 
@@ -134,11 +145,10 @@ public class AddEditGoalDialog extends DialogFragment {
         });
 
 
-        durationSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mDurationSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 final int seconds = progress * DURATION_FACTOR;
-                mGoal.duration = seconds;
                 durationDesc.setText(formatDurationDesc(seconds));
             }
 
@@ -151,11 +161,10 @@ public class AddEditGoalDialog extends DialogFragment {
             }
         });
 
-        breakSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mBreakSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 final int seconds = progress * BREAK_DURATION_FACTOR;
-                mGoal.duration_break = seconds;
                 breakDesc.setText(formatBreakDesc(seconds));
             }
 
@@ -168,19 +177,17 @@ public class AddEditGoalDialog extends DialogFragment {
             }
         });
 
-        repBasedRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        mRepBasedRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 repsContainer.setVisibility(View.VISIBLE);
                 durationContainer.setVisibility(View.GONE);
-                mGoal.type = GoalType.REPS;
             }
         });
 
-        durationRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        mDurationRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 repsContainer.setVisibility(View.GONE);
                 durationContainer.setVisibility(View.VISIBLE);
-                mGoal.type = GoalType.TIME;
             }
         });
 
@@ -193,37 +200,37 @@ public class AddEditGoalDialog extends DialogFragment {
         final int durationProgress = duration / DURATION_FACTOR;
         final int durationBreakProgress = durationBreak / BREAK_DURATION_FACTOR;
 
-        if (sets == setsSeekbar.getProgress()) {
+        if (sets == mSetsSeekbar.getProgress()) {
             setsDesc.setText(formatSetsDesc(sets));
         } else {
-            setsSeekbar.setProgress(sets);
+            mSetsSeekbar.setProgress(sets);
         }
 
-        if (repsProgress == repsSeekbar.getProgress()) {
+        if (repsProgress == mRepsSeekbar.getProgress()) {
             repsDesc.setText(formatRepsDesc(reps));
         } else {
-            repsSeekbar.setProgress(repsProgress);
+            mRepsSeekbar.setProgress(repsProgress);
         }
 
-        if (durationProgress == durationSeekbar.getProgress()) {
+        if (durationProgress == mDurationSeekbar.getProgress()) {
             durationDesc.setText(formatDurationDesc(duration));
         } else {
-            durationSeekbar.setProgress(durationProgress);
+            mDurationSeekbar.setProgress(durationProgress);
         }
 
-        if (durationBreakProgress == breakSeekbar.getProgress()) {
+        if (durationBreakProgress == mBreakSeekbar.getProgress()) {
             breakDesc.setText(formatBreakDesc(durationBreak));
         } else {
-            breakSeekbar.setProgress(durationBreakProgress);
+            mBreakSeekbar.setProgress(durationBreakProgress);
         }
 
         switch (mGoal.type) {
             case TIME:
-                durationRadio.setChecked(true);
+                mDurationRadio.setChecked(true);
                 repsContainer.setVisibility(View.GONE);
                 break;
             case REPS:
-                repBasedRadio.setChecked(true);
+                mRepBasedRadio.setChecked(true);
                 durationContainer.setVisibility(View.GONE);
                 break;
             case INVALID:
