@@ -5,7 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RadioButton;
+
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.MutableLiveData;
 
@@ -45,6 +46,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     private MutableLiveData<Exercise> mExercise = new MutableLiveData<>();
     private final ImageView mFavoriteGoalButton;
     private GoalConfigurator mGoalConfigurator;
+    private final ImageView mEditGoals;
 
     public MainViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         final View view = inflater.inflate(R.layout.fragment_main, parent, false);
@@ -73,15 +75,15 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
         mCoordinatorLayout = findViewById(R.id.top_coordinator);
 
-        FrameLayout editExercises = findViewById(R.id.edit_exercises);
-        editExercises.setOnClickListener(v -> {
+        ImageView editExercisesButton = findViewById(R.id.edit_exercises).findViewById(R.id.button_edit);
+        editExercisesButton.setOnClickListener(v -> {
             for (Listener listener : getListeners()) {
                 listener.onEditExercisesClicked();
             }
         });
 
-        FrameLayout editGoals = findViewById(R.id.button_edit_goals);
-        editGoals.setOnClickListener(v -> {
+        mEditGoals = findViewById(R.id.button_edit_goals).findViewById(R.id.button_edit);
+        mEditGoals.setOnClickListener(v -> {
             for (Listener listener : getListeners()) {
                 listener.onEditGoalsClicked();
             }
@@ -108,14 +110,11 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     }
 
     private void updateGoalType() {
-        final LinearLayout repsContainer = findViewById(R.id.reps_container);
-        final LinearLayout durationContainer = findViewById(R.id.duration_container);
         if (mExercise.getValue().type == ExerciseType.TIME_BASED) {
-            repsContainer.setVisibility(View.GONE);
-            durationContainer.setVisibility(View.VISIBLE);
+            findViewById(R.id.rep_based).setEnabled(false);
+            ((RadioButton)findViewById(R.id.time_based)).setChecked(true);
         } else {
-            repsContainer.setVisibility(View.VISIBLE);
-            durationContainer.setVisibility(View.GONE);
+            findViewById(R.id.rep_based).setEnabled(true);
         }
     }
 

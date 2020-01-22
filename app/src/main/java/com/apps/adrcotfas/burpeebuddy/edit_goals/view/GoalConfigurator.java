@@ -3,6 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.edit_goals.view;
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -82,6 +83,7 @@ public class GoalConfigurator implements SetNumberDialog.Listener {
         mRepBasedRadio = v.findViewById(R.id.rep_based);
         mDurationRadio = v.findViewById(R.id.time_based);
 
+        RadioGroup typeContainer = v.findViewById(R.id.goal_type_container);
         LinearLayout setsContainer = v.findViewById(R.id.sets_container);
         LinearLayout repsContainer = v.findViewById(R.id.reps_container);
         LinearLayout durationContainer = v.findViewById(R.id.duration_container);
@@ -114,18 +116,30 @@ public class GoalConfigurator implements SetNumberDialog.Listener {
         setReps(mGoal.reps);
         setDuration(mGoal.duration);
         setBreak(mGoal.duration_break);
-        //setType(mGoal.type);
 
+        mRepBasedRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                mListener.onTypeChanged(GoalType.REPS);
+                repsContainer.setVisibility(View.VISIBLE);
+                durationContainer.setVisibility(View.GONE);
+            }
+        });
+
+        mDurationRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                mListener.onTypeChanged(GoalType.TIME);
+                repsContainer.setVisibility(View.GONE);
+                durationContainer.setVisibility(View.VISIBLE);
+            }
+        });
+
+        typeContainer.clearCheck();
         switch (mGoal.type) {
             case TIME:
                 mDurationRadio.setChecked(true);
-                repsContainer.setVisibility(View.GONE);
-                durationContainer.setVisibility(View.VISIBLE);
                 break;
             case REPS:
                 mRepBasedRadio.setChecked(true);
-                repsContainer.setVisibility(View.VISIBLE);
-                durationContainer.setVisibility(View.GONE);
                 break;
         }
 
@@ -172,28 +186,6 @@ public class GoalConfigurator implements SetNumberDialog.Listener {
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-
-        mRepBasedRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                mListener.onTypeChanged(GoalType.REPS);
-                repsContainer.setVisibility(View.VISIBLE);
-                durationContainer.setVisibility(View.GONE);
-            }
-        });
-
-        mDurationRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                mListener.onTypeChanged(GoalType.TIME);
-                repsContainer.setVisibility(View.GONE);
-                durationContainer.setVisibility(View.VISIBLE);
-            }
-        });
-    }
-
-    //TODO needed?
-    private void setType(GoalType type) {
-        mDurationRadio.setChecked(type == GoalType.TIME);
-        mRepBasedRadio.setChecked(type == GoalType.REPS);
     }
 
     //TODO: set maximum values
