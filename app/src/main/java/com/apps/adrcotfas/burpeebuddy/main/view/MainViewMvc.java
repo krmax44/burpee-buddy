@@ -12,7 +12,7 @@ public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
 
     void showIntroduction();
 
-    void updateExerciseTypes(List<Exercise> exercises);
+    void updateExercise(List<Exercise> exercises);
     void updateGoals(List<Goal> goals);
 
     /**

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -52,12 +51,12 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
         AppDatabase.getDatabase(getContext()).exerciseDao().getAllVisible().observe(
                 getViewLifecycleOwner(), exerciseTypes ->
-                        mViewMvc.updateExerciseTypes(exerciseTypes));
+                        mViewMvc.updateExercise(exerciseTypes));
 
         mViewMvc.getExercise().observe(getViewLifecycleOwner(), exercise -> {
-            LiveData<List<Goal>> goalsLd;
-            mExercise = exercise;
 
+            mExercise = exercise;
+            LiveData<List<Goal>> goalsLd;
             if (mExercise.type.equals(TIME_BASED)) {
                 goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.TIME);
             } else {

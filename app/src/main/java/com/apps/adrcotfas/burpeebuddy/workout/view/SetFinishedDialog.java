@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.fragment.app.DialogFragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
@@ -31,8 +30,8 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
+import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.BREAK_DURATION_FACTOR;
 import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.formatSeconds;
-import static com.apps.adrcotfas.burpeebuddy.edit_goals.dialog.AddEditGoalDialog.BREAK_DURATION_FACTOR;
 
 public class SetFinishedDialog extends DialogFragment {
 
@@ -141,7 +140,7 @@ public class SetFinishedDialog extends DialogFragment {
         breakContainer.setVisibility(View.VISIBLE);
 
         AppCompatSeekBar breakSeekbar = v.findViewById(R.id.break_seekbar);
-        TextView breakDesc = v.findViewById(R.id.break_title);
+        TextView breakDesc = v.findViewById(R.id.break_value);
         breakSeekbar.setProgress(getWorkout().getGoalDurationBreak() / BREAK_DURATION_FACTOR);
 
         breakSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

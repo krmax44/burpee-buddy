@@ -18,6 +18,10 @@ import timber.log.Timber;
 
 public class BuddyApplication extends Application {
 
+    public static int REPS_FACTOR = 5;
+    public static int DURATION_FACTOR = 30;
+    public static int BREAK_DURATION_FACTOR = 15;
+
     static {
         AppCompatDelegate.setDefaultNightMode(
                 AppCompatDelegate.MODE_NIGHT_YES);

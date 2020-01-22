@@ -44,7 +44,7 @@ public class GoalToString {
 
         String result;
         if (seconds != 0) {
-            result =  minutes > 10
+            result =  minutes >= 10
                     ? minutes + ":" + (remSec < 10 ? "0" + remSec : remSec)
                     : "0" + minutes + ":" + (remSec < 10 ? "0" + remSec : remSec);
         } else {

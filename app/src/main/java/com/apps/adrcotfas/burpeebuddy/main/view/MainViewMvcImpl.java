@@ -4,14 +4,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.MutableLiveData;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
+import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalConfigurator;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -27,39 +31,43 @@ import timber.log.Timber;
 import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.goalToString;
 
 public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
-        implements MainViewMvc {
+        implements MainViewMvc, GoalConfigurator.Listener {
 
     private static final String TAG = "MainViewMvcImpl";
 
     private final CoordinatorLayout mCoordinatorLayout;
     private final ChipGroup mExerciseTypeChipGroup;
     private final ChipGroup mGoalsChipGroup;
-
-    private List<Exercise> mExercises = new ArrayList<>();
-    private List<Goal> mGoals = new ArrayList<>();
     private final MaterialButton mStartButton;
 
-    public MutableLiveData<Exercise> getExercise() {
-        return mExercise;
-    }
-
+    private List<Exercise> mExercises = new ArrayList<>();
+    private List<Goal> mFavoriteGoals = new ArrayList<>();
     private MutableLiveData<Exercise> mExercise = new MutableLiveData<>();
+    private final ImageView mFavoriteGoalButton;
+    private GoalConfigurator mGoalConfigurator;
 
     public MainViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
-        setRootView(inflater.inflate(R.layout.fragment_main, parent, false));
+        final View view = inflater.inflate(R.layout.fragment_main, parent, false);
+        setRootView(view);
+        mGoalConfigurator = new GoalConfigurator(view, SettingsHelper.getGoal(), this, getContext());
 
         mExerciseTypeChipGroup = findViewById(R.id.exercise_type);
         mStartButton = findViewById(R.id.start_button);
         mExerciseTypeChipGroup.setSelectionRequired(true);
         mExerciseTypeChipGroup.setSingleSelection(true);
-        mExerciseTypeChipGroup.setOnCheckedChangeListener((group, checkedId) -> onExerciseSelected());
+        mExerciseTypeChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            onExerciseSelected();
+            updateGoalType();
+        });
 
         mGoalsChipGroup = findViewById(R.id.goal_type);
         mGoalsChipGroup.setSelectionRequired(true);
         mGoalsChipGroup.setSingleSelection(true);
         mGoalsChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
             for (Listener listener : MainViewMvcImpl.this.getListeners()) {
-                listener.onGoalSelectionChanged(checkedId != View.NO_ID);
+                if (SettingsHelper.isGoalFavoritesVisible()) {
+                    listener.onGoalSelectionChanged(checkedId != View.NO_ID);
+                }
             }
         });
 
@@ -72,7 +80,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             }
         });
 
-        FrameLayout editGoals = findViewById(R.id.edit_goals);
+        FrameLayout editGoals = findViewById(R.id.button_edit_goals);
         editGoals.setOnClickListener(v -> {
             for (Listener listener : getListeners()) {
                 listener.onEditGoalsClicked();
@@ -80,6 +88,35 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         });
 
         mStartButton.setOnClickListener(v -> onStartButtonClicked());
+
+        FrameLayout favoriteGoalsContainer = findViewById(R.id.button_favorite_goals);
+        mFavoriteGoalButton = favoriteGoalsContainer.findViewById(R.id.button_drawable);
+        updateGoalSectionState(SettingsHelper.isGoalFavoritesVisible());
+        favoriteGoalsContainer.setOnClickListener(v -> {
+            SettingsHelper.setGoalFavoritesVisibility(!SettingsHelper.isGoalFavoritesVisible());
+            updateGoalSectionState(SettingsHelper.isGoalFavoritesVisible());
+        });
+    }
+
+    private void updateGoalSectionState(boolean isFavoritesVisible) {
+        findViewById(R.id.goals_container).setVisibility(isFavoritesVisible ? View.VISIBLE : View.GONE);
+        findViewById(R.id.goal_seekbars).setVisibility(isFavoritesVisible ? View.GONE : View.VISIBLE);
+        mFavoriteGoalButton.setImageDrawable(getContext().getResources().getDrawable(
+                isFavoritesVisible ? R.drawable.ic_tune : R.drawable.ic_star_outline));
+        mStartButton.setEnabled(!isFavoritesVisible);
+        mGoalsChipGroup.clearCheck();
+    }
+
+    private void updateGoalType() {
+        final LinearLayout repsContainer = findViewById(R.id.reps_container);
+        final LinearLayout durationContainer = findViewById(R.id.duration_container);
+        if (mExercise.getValue().type == ExerciseType.TIME_BASED) {
+            repsContainer.setVisibility(View.GONE);
+            durationContainer.setVisibility(View.VISIBLE);
+        } else {
+            repsContainer.setVisibility(View.VISIBLE);
+            durationContainer.setVisibility(View.GONE);
+        }
     }
 
     public void onStartButtonClicked() {
@@ -101,7 +138,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     }
 
     @Override
-    public void updateExerciseTypes(List<Exercise> exercises) {
+    public void updateExercise(List<Exercise> exercises) {
         mExercises = exercises;
         mExerciseTypeChipGroup.removeAllViews();
         for (Exercise w : mExercises) {
@@ -121,9 +158,9 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     @Override
     public void updateGoals(List<Goal> goals) {
-        mGoals = goals;
+        mFavoriteGoals = goals;
         mGoalsChipGroup.removeAllViews();
-        for (Goal g : mGoals) {
+        for (Goal g : mFavoriteGoals) {
             Chip c = new Chip(getContext());
             c.setText(goalToString(g));
             ChipDrawable d = ChipDrawable.createFromAttributes(
@@ -164,17 +201,21 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     @Override
     public Goal getGoal() {
+        if (!SettingsHelper.isGoalFavoritesVisible()) {
+            return mGoalConfigurator.getGoal();
+        }
+
         int id = -1;
         for (int i = 0; i < mGoalsChipGroup.getChildCount(); ++i) {
             Chip crt = (Chip)mGoalsChipGroup.getChildAt(i);
             if (crt.getId() == mGoalsChipGroup.getCheckedChipId()) {
-                id = mGoals.get(i).id;
+                id = mFavoriteGoals.get(i).id;
                 break;
             }
         }
 
         if (id != -1) {
-            for (Goal g : mGoals) {
+            for (Goal g : mFavoriteGoals) {
                 if (g.id == id) {
                     return g;
                 }
@@ -185,8 +226,18 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         return null;
     }
 
+    public MutableLiveData<Exercise> getExercise() {
+        return mExercise;
+    }
+
     @Override
     public void toggleStartButtonState(boolean enabled) {
         mStartButton.setEnabled(enabled);
     }
+
+    @Override public void onTypeChanged(GoalType type) { SettingsHelper.setGoalType(type); }
+    @Override public void onSetsChanged(int sets) { SettingsHelper.setGoalSets(sets); }
+    @Override public void onRepsChanged(int reps) { SettingsHelper.setGoalReps(reps); }
+    @Override public void onDurationChanged(int duration) { SettingsHelper.setGoalDuration(duration); }
+    @Override public void onBreakChanged(int duration) { SettingsHelper.setGoalBreak(duration); }
 }

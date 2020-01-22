@@ -13,7 +13,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:orientation="horizontal">
         <TextView
@@ -24,7 +24,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:text="Exercise"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:textStyle="bold"/>
 
         <include layout="@layout/button_edit"
@@ -40,9 +40,9 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/exercise_section">
@@ -63,7 +63,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/exercise_type_container"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:orientation="horizontal">
         <TextView
@@ -71,29 +71,46 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Goal"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
+        <include layout="@layout/button_favorites"
+            android:id="@+id/button_favorite_goals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@id/button_edit_goals"/>
+
         <include layout="@layout/button_edit"
-            android:id="@+id/edit_goals"
+            android:id="@+id/button_edit_goals"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"/>
     </RelativeLayout>
 
+    <include
+        android:id="@+id/goal_seekbars"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/goal_section"
+        layout="@layout/section_edit_goal_seekbars"/>
+
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/goals_container"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/goal_section">
-        <!--    TODO: extract to styles -->
+        app:layout_constraintTop_toBottomOf="@id/goal_section"
+        android:visibility="gone">
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/goal_type"
             android:layout_width="match_parent"
@@ -116,7 +133,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
+        app:layout_constraintTop_toBottomOf="@+id/goals_container"
         app:layout_constraintVertical_bias="1.0" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
