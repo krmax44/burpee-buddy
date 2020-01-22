@@ -1,10 +1,11 @@
 package com.apps.adrcotfas.burpeebuddy.edit_goals.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
@@ -13,6 +14,8 @@ import androidx.fragment.app.DialogFragment;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE;
 import static com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper.GOAL_DURATION;
 import static com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper.GOAL_BREAK;
 import static com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper.GOAL_REPS;
@@ -55,25 +58,32 @@ public class SetNumberDialog extends DialogFragment {
                 break;
         }
 
+        final EditText input = v.findViewById(R.id.value);
+        input.setOnClickListener(v12 -> {
+            input.setFocusable(false);
+            input.setFocusableInTouchMode(true);
+        });
         AlertDialog d = new MaterialAlertDialogBuilder(getActivity())
                 .setTitle(title)
                 .setView(v)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    final EditText input = v.findViewById(R.id.value);
                     final String name = input.getText().toString();
                     if (!TextUtils.isEmpty(name)) {
                         mListener.onValueSet(mType, Integer.parseInt(name));
                     }
+                    ((InputMethodManager) this.getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE))
+                            .toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
                 })
-                .setNegativeButton(android.R.string.cancel, ((dialog, which) -> {}))
+                .setNegativeButton(android.R.string.cancel, ((dialog, which) -> {
+                    ((InputMethodManager) this.getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE))
+                            .toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                }))
                 .create();
 
-
-        v.findViewById(R.id.value).setOnFocusChangeListener((v1, hasFocus) -> {
-            if (hasFocus) {
-                d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            }
-        });
+        input.setOnFocusChangeListener((v1, hasFocus)
+                -> d.getWindow().setSoftInputMode(hasFocus
+                ? SOFT_INPUT_STATE_ALWAYS_VISIBLE
+                : SOFT_INPUT_STATE_ALWAYS_HIDDEN));
         return d;
     }
 }
