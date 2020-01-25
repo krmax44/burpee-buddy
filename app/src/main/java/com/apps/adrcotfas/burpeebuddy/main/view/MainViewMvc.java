@@ -3,6 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.main.view;
 import androidx.lifecycle.MutableLiveData;
 
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 
@@ -14,6 +15,7 @@ public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
 
     void updateExercise(List<Exercise> exercises);
     void updateGoals(List<Goal> goals);
+    void updateChallenges(List<Challenge> challenges);
 
     /**
      * Returns the currently selected exercise

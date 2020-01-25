@@ -13,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
+import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
@@ -20,6 +21,7 @@ import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvc;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvcImpl;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -65,6 +67,13 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
             goalsLd.observe(getViewLifecycleOwner(),
                     goals -> mViewMvc.updateGoals(goals));
         });
+
+        //TODO: get challenges from DB and update accordingly
+        List<Challenge> list = new ArrayList<>();
+        list.add(new Challenge("day 11/100 ‧ 16/100 burpees "));
+        list.add(new Challenge("day 25/100 ‧ 3:00/3:00 plank"));
+        list.add(new Challenge("66/50 pull-ups ‧ day 65/100"));
+        mViewMvc.updateChallenges(list);
 
         // when navigating from Workout to Main
         if (getWorkoutManager().getWorkout().getState() != State.ACTIVE &&

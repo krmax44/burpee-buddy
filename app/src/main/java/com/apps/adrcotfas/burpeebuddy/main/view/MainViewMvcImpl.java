@@ -9,14 +9,20 @@ import android.widget.RadioButton;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalConfigurator;
+import com.apps.adrcotfas.burpeebuddy.main.view.challenges.ChallengesAdapter;
+import com.apps.adrcotfas.burpeebuddy.main.view.challenges.LinePagerIndicatorDecoration;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -43,10 +49,15 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     private List<Exercise> mExercises = new ArrayList<>();
     private List<Goal> mFavoriteGoals = new ArrayList<>();
+    private List<Challenge> mChallenges = new ArrayList<>();
+
     private MutableLiveData<Exercise> mExercise = new MutableLiveData<>();
     private final ImageView mFavoriteGoalButton;
     private GoalConfigurator mGoalConfigurator;
-    private final ImageView mEditGoals;
+    private final FrameLayout mEditGoalButton;
+
+    private RecyclerView mChallengesRecyler;
+    private ChallengesAdapter mChallengesAdapter;
 
     public MainViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         final View view = inflater.inflate(R.layout.fragment_main, parent, false);
@@ -82,8 +93,8 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             }
         });
 
-        mEditGoals = findViewById(R.id.button_edit_goals).findViewById(R.id.button_edit);
-        mEditGoals.setOnClickListener(v -> {
+        mEditGoalButton = findViewById(R.id.button_edit_goals);
+        mEditGoalButton.findViewById(R.id.button_edit).setOnClickListener(v -> {
             for (Listener listener : getListeners()) {
                 listener.onEditGoalsClicked();
             }
@@ -98,6 +109,22 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             SettingsHelper.setGoalFavoritesVisibility(!SettingsHelper.isGoalFavoritesVisible());
             updateGoalSectionState(SettingsHelper.isGoalFavoritesVisible());
         });
+
+        setupChallengesView(inflater);
+    }
+
+    private void setupChallengesView(LayoutInflater inflater) {
+        mChallengesRecyler = findViewById(R.id.horizontal_scroll);
+        mChallengesRecyler.setLayoutManager(
+                new LinearLayoutManager(getContext(),
+                        LinearLayoutManager.HORIZONTAL,
+                        false));
+        mChallengesAdapter = new ChallengesAdapter(inflater);
+        mChallengesRecyler.setAdapter(mChallengesAdapter);
+
+        PagerSnapHelper snapHelperCenter = new PagerSnapHelper();
+        snapHelperCenter.attachToRecyclerView(mChallengesRecyler);
+        mChallengesRecyler.addItemDecoration(new LinePagerIndicatorDecoration());
     }
 
     private void updateGoalSectionState(boolean isFavoritesVisible) {
@@ -105,6 +132,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         findViewById(R.id.goal_seekbars).setVisibility(isFavoritesVisible ? View.GONE : View.VISIBLE);
         mFavoriteGoalButton.setImageDrawable(getContext().getResources().getDrawable(
                 isFavoritesVisible ? R.drawable.ic_tune : R.drawable.ic_star_outline));
+        mEditGoalButton.setVisibility(isFavoritesVisible ? View.VISIBLE : View.GONE);
         mStartButton.setEnabled(!isFavoritesVisible);
         mGoalsChipGroup.clearCheck();
     }
@@ -169,6 +197,13 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
             mGoalsChipGroup.addView(c);
         }
         mGoalsChipGroup.clearCheck();
+    }
+
+    @Override
+    public void updateChallenges(List<Challenge> challenges) {
+        mChallenges = challenges;
+        mChallengesAdapter.bindChallenges(challenges);
+        //TODO: color container based on progress
     }
 
     private void onExerciseSelected() {
