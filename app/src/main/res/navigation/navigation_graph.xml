@@ -24,7 +24,7 @@
             app:launchSingleTop="true"/>
         <action
             android:id="@+id/action_main_to_exercises"
-            app:destination="@id/editExercisesFragment"
+            app:destination="@id/exercisesFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -63,7 +63,7 @@
             app:destination="@id/confirmStopDialog"/>
     </fragment>
     <fragment
-        android:id="@+id/editExercisesFragment"
+        android:id="@+id/exercisesFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.edit_exercises.ExercisesFragment"
         android:label="@string/title_exercises">
     </fragment>

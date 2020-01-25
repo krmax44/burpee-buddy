@@ -56,7 +56,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     private GoalConfigurator mGoalConfigurator;
     private final FrameLayout mEditGoalButton;
 
-    private RecyclerView mChallengesRecyler;
+    private RecyclerView mChallengesRecycler;
     private ChallengesAdapter mChallengesAdapter;
 
     public MainViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
@@ -86,13 +86,6 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
         mCoordinatorLayout = findViewById(R.id.top_coordinator);
 
-        ImageView editExercisesButton = findViewById(R.id.edit_exercises).findViewById(R.id.button_edit);
-        editExercisesButton.setOnClickListener(v -> {
-            for (Listener listener : getListeners()) {
-                listener.onEditExercisesClicked();
-            }
-        });
-
         mEditGoalButton = findViewById(R.id.button_edit_goals);
         mEditGoalButton.findViewById(R.id.button_edit).setOnClickListener(v -> {
             for (Listener listener : getListeners()) {
@@ -114,15 +107,15 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     }
 
     private void setupChallengesView(LayoutInflater inflater) {
-        mChallengesRecyler = findViewById(R.id.horizontal_scroll);
-        mChallengesRecyler.setLayoutManager(
+        mChallengesRecycler = findViewById(R.id.horizontal_scroll);
+        mChallengesRecycler.setLayoutManager(
                 new LinearLayoutManager(getContext(),
                         LinearLayoutManager.HORIZONTAL,
                         false));
         mChallengesAdapter = new ChallengesAdapter(inflater);
-        mChallengesRecyler.setAdapter(mChallengesAdapter);
+        mChallengesRecycler.setAdapter(mChallengesAdapter);
         PagerSnapHelper snapHelperCenter = new PagerSnapHelper();
-        snapHelperCenter.attachToRecyclerView(mChallengesRecyler);
+        snapHelperCenter.attachToRecyclerView(mChallengesRecycler);
     }
 
     private void updateGoalSectionState(boolean isFavoritesVisible) {
@@ -203,16 +196,17 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         mChallengesAdapter.bindChallenges(challenges, progress);
 
         if (challenges.size() > 1) {
-            mChallengesRecyler.addItemDecoration(new LinePagerIndicatorDecoration());
+            mChallengesRecycler.addItemDecoration(new LinePagerIndicatorDecoration());
         }
 
         for (int i = 0; i < challenges.size(); ++i) {
             Challenge c = challenges.get(i);
-            FrameLayout challengesContainer = findViewById(R.id.challenges);
+            //FrameLayout challengesContainer = findViewById(R.id.challenges);
             if ((c.type == GoalType.TIME && progress.get(i) < c.duration) ||
                  c.type == GoalType.REPS && progress.get(i) < c.reps) {
-                challengesContainer.setBackgroundColor(
-                        getContext().getResources().getColor(R.color.transparent_red));
+                //TODO: do I want this?
+//                challengesContainer.setBackgroundColor(
+//                        getContext().getResources().getColor(R.color.transparent_red));
                 break;
             }
         }

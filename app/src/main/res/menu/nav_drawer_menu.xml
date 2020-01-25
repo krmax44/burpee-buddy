@@ -10,4 +10,12 @@
     <item android:id="@+id/challengesFragment"
         android:title="@string/title_challenges"
         android:icon="@drawable/ic_star_outline"/>
+
+    <item android:id="@+id/exercisesFragment"
+        android:title="@string/title_exercises"
+        android:icon="@drawable/ic_edit"/>
+
+    <item android:id="@+id/goalsFragment"
+        android:title="@string/title_goals"
+        android:icon="@drawable/ic_edit"/>
 </menu>
