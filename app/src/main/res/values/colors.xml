@@ -14,7 +14,8 @@
 
     <color name="gray800">#424242</color>
     <color name="transparent_gray">#08FFFFFF</color>
-    <color name="transparent_red">#1A03A9F4</color>
+    <color name="transparent_red">#0DE91E63</color>
+    <color name="transparent_blue">#1A03A9F4</color>
 
     <color name="transparent">#00000000</color>
 </resources>

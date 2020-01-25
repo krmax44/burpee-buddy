@@ -8,5 +8,5 @@ public interface ChallengesItemView extends ObservableViewMvc<ChallengesItemView
     public interface Listener{
     }
 
-    void bindChallenge(Challenge challenge);
+    void bindChallenge(Challenge challenge, int progress);
 }

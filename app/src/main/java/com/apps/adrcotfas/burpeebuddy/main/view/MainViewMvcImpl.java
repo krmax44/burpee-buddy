@@ -198,14 +198,24 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     }
 
     @Override
-    public void updateChallenges(List<Challenge> challenges) {
+    public void updateChallenges(List<Challenge> challenges, List<Integer> progress) {
         mChallenges = challenges;
-        mChallengesAdapter.bindChallenges(challenges);
+        mChallengesAdapter.bindChallenges(challenges, progress);
 
         if (challenges.size() > 1) {
             mChallengesRecyler.addItemDecoration(new LinePagerIndicatorDecoration());
         }
-        //TODO: color container based on progress
+
+        for (int i = 0; i < challenges.size(); ++i) {
+            Challenge c = challenges.get(i);
+            FrameLayout challengesContainer = findViewById(R.id.challenges);
+            if ((c.type == GoalType.TIME && progress.get(i) < c.duration) ||
+                 c.type == GoalType.REPS && progress.get(i) < c.reps) {
+                challengesContainer.setBackgroundColor(
+                        getContext().getResources().getColor(R.color.transparent_red));
+                break;
+            }
+        }
     }
 
     private void onExerciseSelected() {

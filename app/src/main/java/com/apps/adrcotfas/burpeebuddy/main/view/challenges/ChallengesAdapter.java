@@ -15,14 +15,17 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesViewHolder
     implements ChallengesItemView.Listener {
 
     private final LayoutInflater mInflater;
-    private List<Challenge> mChallenges = new ArrayList<>();
+    private List<Challenge> challenges = new ArrayList<>();
+    private List<Integer> mProgress = new ArrayList<>();
 
     public ChallengesAdapter(LayoutInflater inflater) {
         mInflater = inflater;
     }
 
-    public void bindChallenges(List<Challenge> challenges) {
-        mChallenges = challenges;
+    public void bindChallenges(List<Challenge> challenges, List<Integer> progress) {
+        this.challenges = challenges;
+        this.mProgress = progress;
+
         notifyDataSetChanged();
     }
 
@@ -35,11 +38,11 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ChallengesViewHolder holder, int position) {
-        holder.getViewMvc().bindChallenge(mChallenges.get(position));
+        holder.getViewMvc().bindChallenge(challenges.get(position), mProgress.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mChallenges.size();
+        return challenges.size();
     }
 }

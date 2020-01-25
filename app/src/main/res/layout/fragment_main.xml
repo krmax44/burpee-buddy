@@ -6,13 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".main.MainFragment">
 
-    <include
+    <FrameLayout
         android:id="@+id/challenges"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        layout="@layout/section_challenge_summary_container"/>
+        android:background="@color/transparent_blue">
+        <include layout="@layout/section_challenge_summary_container"/>
+    </FrameLayout>
 
     <RelativeLayout
         android:visibility="gone"

@@ -22,6 +22,9 @@ public interface WorkoutDao {
     @Query("select * from Workout where id = :id")
     Workout getWorkout(int id);
 
+    @Query("select * from Workout where exerciseName = :name and timestamp > :yesterday")
+    LiveData<List<Workout>> getTodaysWorkouts(String name, long yesterday);
+
     @Insert(onConflict = REPLACE)
     void addWorkout(Workout workout);
 

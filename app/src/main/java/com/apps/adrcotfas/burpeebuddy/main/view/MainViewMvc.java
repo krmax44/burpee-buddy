@@ -15,7 +15,7 @@ public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
 
     void updateExercise(List<Exercise> exercises);
     void updateGoals(List<Goal> goals);
-    void updateChallenges(List<Challenge> challenges);
+    void updateChallenges(List<Challenge> challenges, List<Integer> metrics);
 
     /**
      * Returns the currently selected exercise

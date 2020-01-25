@@ -13,13 +13,18 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
+import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvc;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvcImpl;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 
+import org.joda.time.DateTime;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -54,7 +59,6 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                         mViewMvc.updateExercise(exerciseTypes));
 
         mViewMvc.getExercise().observe(getViewLifecycleOwner(), exercise -> {
-
             mExercise = exercise;
             LiveData<List<Goal>> goalsLd;
             if (mExercise.type.equals(TIME_BASED)) {
@@ -66,8 +70,30 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                     goals -> mViewMvc.updateGoals(goals));
         });
 
+        final DateTime now = new DateTime();
+        final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
+
         AppDatabase.getDatabase(getContext()).challengeDao().getInProgress().observe(
-                getViewLifecycleOwner(), challenges -> mViewMvc.updateChallenges(challenges));
+                getViewLifecycleOwner(), challenges -> {
+                    List<Integer> progress = new ArrayList<>(challenges.size());
+                    for (Challenge c : challenges) {
+                        AppDatabase.getDatabase(getContext()).workoutDao().getTodaysWorkouts(c.exerciseName, startOfToday.getMillis()).observe(
+                                getViewLifecycleOwner(), workouts -> {
+                                    int total = 0;
+                                    for (Workout w : workouts) {
+                                        if (w.type == TIME_BASED) {
+                                            total += w.duration;
+                                        } else {
+                                            total += w.reps;
+                                        }
+                                    }
+                                    progress.add(total);
+                                    if (challenges.size() == progress.size()) {
+                                        mViewMvc.updateChallenges(challenges, progress);
+                                    }
+                                });
+                    }
+                });
 
         // when navigating from Workout to Main
         if (getWorkoutManager().getWorkout().getState() != State.ACTIVE &&
