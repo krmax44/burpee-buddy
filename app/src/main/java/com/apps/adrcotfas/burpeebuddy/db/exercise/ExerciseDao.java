@@ -36,8 +36,8 @@ public interface ExerciseDao {
     void editOrder(String name, int order);
 
     @TypeConverters(ExerciseTypeConverter.class)
-    @Query("update Exercise SET `name` = :newName, 'type' = :type, 'color' = :color WHERE name = :name")
-    void editExercise(String name, String newName, ExerciseType type, int color);
+    @Query("update Exercise SET `name` = :newName, 'type' = :type WHERE name = :name")
+    void editExercise(String name, String newName, ExerciseType type);
 
     @Query("update Exercise SET visible= :visibility WHERE name = :name")
     void editVisibility(String name, boolean visibility);

@@ -121,10 +121,8 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
                         false));
         mChallengesAdapter = new ChallengesAdapter(inflater);
         mChallengesRecyler.setAdapter(mChallengesAdapter);
-
         PagerSnapHelper snapHelperCenter = new PagerSnapHelper();
         snapHelperCenter.attachToRecyclerView(mChallengesRecyler);
-        mChallengesRecyler.addItemDecoration(new LinePagerIndicatorDecoration());
     }
 
     private void updateGoalSectionState(boolean isFavoritesVisible) {
@@ -203,6 +201,10 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     public void updateChallenges(List<Challenge> challenges) {
         mChallenges = challenges;
         mChallengesAdapter.bindChallenges(challenges);
+
+        if (challenges.size() > 1) {
+            mChallengesRecyler.addItemDecoration(new LinePagerIndicatorDecoration());
+        }
         //TODO: color container based on progress
     }
 

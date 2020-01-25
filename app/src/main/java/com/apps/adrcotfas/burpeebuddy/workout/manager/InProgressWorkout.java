@@ -85,10 +85,6 @@ public class InProgressWorkout {
         return mExercise.name;
     }
 
-    public int getExerciseColor() {
-        return mExercise.color;
-    }
-
     public String getGoalName() {
         return GoalToString.goalToString(mGoal);
     }

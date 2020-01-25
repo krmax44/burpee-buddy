@@ -7,6 +7,8 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
+import com.apps.adrcotfas.burpeebuddy.db.challenge.ChallengeDao;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseDao;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseGenerator;
@@ -19,7 +21,8 @@ import com.apps.adrcotfas.burpeebuddy.db.workout.WorkoutDao;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Workout.class, Exercise.class, Goal.class}, version = 1, exportSchema = false)
+@Database(entities = {Workout.class, Exercise.class, Goal.class, Challenge.class},
+        version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final Object LOCK = new Object();
@@ -53,6 +56,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract WorkoutDao workoutDao();
     public abstract ExerciseDao exerciseDao();
     public abstract GoalDao goalDao();
+    public abstract ChallengeDao challengeDao();
 
     /**
      * To be called once when the user first opens the app to populate the database with
@@ -83,8 +87,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 -> getDatabase(context).exerciseDao().editExercise(
                 name,
                 exercise.name,
-                exercise.type,
-                exercise.color));
+                exercise.type));
     }
 
     public static void addExercise(Context context, Exercise exercise) {
@@ -97,6 +100,15 @@ public abstract class AppDatabase extends RoomDatabase {
                 -> getDatabase(context).exerciseDao().delete(name));
     }
 
+    public static void addChallenge(Context context, Challenge challenge) {
+        mExecutorService.execute(()
+                -> getDatabase(context).challengeDao().addChallenge(challenge));
+    }
+
+    public static void deleteChallenge(Context context, int id) {
+        mExecutorService.execute(()
+                -> getDatabase(context).challengeDao().delete(id));
+    }
     public static void addGoal(Context context, Goal goal) {
         mExecutorService.execute(()
                 -> getDatabase(context).goalDao()
@@ -125,12 +137,9 @@ public abstract class AppDatabase extends RoomDatabase {
                 -> getDatabase(context).workoutDao().editWorkout(
                         id,
                 workout.type,
-                workout.color,
                 workout.timestamp,
                 workout.duration,
                 workout.reps,
-                workout.distance,
-                workout.weight,
                 workout.pace));
     }
 

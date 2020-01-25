@@ -8,8 +8,6 @@ import androidx.room.TypeConverters;
 
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseTypeConverter;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalTypeConverter;
 
 import java.util.List;
 
@@ -28,11 +26,10 @@ public interface WorkoutDao {
     void addWorkout(Workout workout);
 
     @TypeConverters(ExerciseTypeConverter.class)
-    @Query("update Workout SET `type` = :type, 'color' = :color, 'timestamp' = :timestamp, " +
-            "'duration' = :duration, 'reps' = :reps, 'distance' = :distance, 'weight' = :weight, 'pace' = :pace WHERE id = :id")
-    void editWorkout(int id, ExerciseType type, int color, long timestamp, int duration, int reps, int distance, double weight, double pace);
+    @Query("update Workout SET `type` = :type, 'timestamp' = :timestamp, " +
+            "'duration' = :duration, 'reps' = :reps, 'pace' = :pace WHERE id = :id")
+    void editWorkout(int id, ExerciseType type, long timestamp, int duration, int reps, double pace);
 
     @Query("delete from Workout where id = :id")
     void delete(int id);
-
 }

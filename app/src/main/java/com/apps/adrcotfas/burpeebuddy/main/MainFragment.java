@@ -70,19 +70,13 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
         //TODO: get challenges from DB and update accordingly
         List<Challenge> list = new ArrayList<>();
-        list.add(new Challenge("day 11/100 ‧ 16/100 burpees "));
         list.add(new Challenge("day 25/100 ‧ 3:00/3:00 plank"));
-        list.add(new Challenge("66/50 pull-ups ‧ day 65/100"));
         mViewMvc.updateChallenges(list);
 
         // when navigating from Workout to Main
         if (getWorkoutManager().getWorkout().getState() != State.ACTIVE &&
                 MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
             Timber.tag(TAG).d( "show finished dialog");
-            //TODO: refactoring
-//            SetFinishedDialog.getInstance(
-//                    BuddyApplication.getWorkoutManager().getWorkout())
-//                    .show(getActivity().getSupportFragmentManager(), TAG);
             getWorkoutManager().getWorkout().setState(State.INACTIVE);
         }
 

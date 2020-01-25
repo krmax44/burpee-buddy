@@ -178,13 +178,10 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
         final Workout workout = new Workout(
                 getWorkout().getExerciseName(),
                 getWorkout().getExerciseType(),
-                getWorkout().getExerciseColor(),
                 System.currentTimeMillis(),
                 getWorkout().getTotalDuration(),
                 getWorkout().getTotalReps(),
-                0,
-                getWorkout().getTotalAvgPace(),
-                0);
+                getWorkout().getTotalAvgPace());
 
         AppDatabase.addWorkout(getContext(), workout);
     }

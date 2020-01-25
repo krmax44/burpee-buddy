@@ -16,38 +16,32 @@ import static androidx.room.ForeignKey.CASCADE;
 @Entity(
         foreignKeys = {@ForeignKey(
                 entity = Exercise.class,
-                parentColumns = {"name", "type", "color"},
-                childColumns = {"exerciseName", "type", "color"},
+                parentColumns = {"name", "type"},
+                childColumns = {"exerciseName", "type"},
                 onUpdate = CASCADE, onDelete = CASCADE)},
-        indices = {@Index(value = {"exerciseName", "type", "color"})})
+        indices = {@Index(value = {"exerciseName", "type"})})
 public class Workout {
 
     public Workout() {
         this.id = 0;
         this.exerciseName = "";
         this.type = ExerciseType.INVALID;
-        this.color = 0;
         this.timestamp = System.currentTimeMillis();
         this.reps = 0;
         this.duration = 0;
-        this.distance = 0;
         this.pace = 0;
-        this.weight = 0;
     }
 
     @Ignore
-    public Workout(String exerciseName, ExerciseType type, int color, long timestamp, int duration, int reps,
-            int distance, double pace, double weight) {
+    public Workout(String exerciseName, ExerciseType type, long timestamp, int duration, int reps,
+            double pace) {
         this.id = 0;
         this.exerciseName = exerciseName;
         this.type = type;
-        this.color = color;
         this.timestamp =  timestamp;
         this.reps = reps;
         this.duration = duration;
-        this.distance = distance;
         this.pace = pace;
-        this.weight = weight;
     }
 
     @PrimaryKey(autoGenerate = true)
@@ -56,13 +50,10 @@ public class Workout {
     public String exerciseName;
     @TypeConverters(ExerciseTypeConverter.class)
     public ExerciseType type;
-    public int color;
 
     public long timestamp;
     public int duration;  // [seconds]
     public int reps;      // [number of reps]
-    public int distance;  // [meters]
-    public double weight; // [kg]
     public double pace;   // [reps/min] or [min/km] or [min/mile]
 
     // TODO maybe later: public float weight;

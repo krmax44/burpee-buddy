@@ -7,7 +7,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-@Entity(indices = {@Index(value = {"name", "type", "color"}, unique = true)})
+@Entity(indices = {@Index(value = {"name", "type"}, unique = true)})
 public class Exercise {
 
     /**
@@ -21,11 +21,6 @@ public class Exercise {
     @TypeConverters(ExerciseTypeConverter.class)
     public ExerciseType type;
 
-    /**
-     * Index of the color used to represent this workout type.
-     */
-    public int color;
-
     public boolean visible;
     public int order;
 
@@ -33,7 +28,6 @@ public class Exercise {
     public Exercise() {
         this.name = "";
         this.type = ExerciseType.INVALID;
-        this.color = 0;
         this.visible = true;
         this.order = Integer.MAX_VALUE;
     }
@@ -41,7 +35,6 @@ public class Exercise {
     public Exercise(String name, ExerciseType type) {
         this.name = name;
         this.type = type;
-        this.color = 0; //TODO: implement this
         this.visible = true;
         this.order = Integer.MAX_VALUE;
     }
