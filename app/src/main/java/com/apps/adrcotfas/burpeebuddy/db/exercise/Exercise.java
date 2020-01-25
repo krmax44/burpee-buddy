@@ -7,7 +7,9 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-@Entity(indices = {@Index(value = {"name", "type"}, unique = true)})
+@Entity(indices =
+        {@Index(value = {"name", "type"}, unique = true),
+         @Index(value = {"name"}, unique = true)})
 public class Exercise {
 
     /**

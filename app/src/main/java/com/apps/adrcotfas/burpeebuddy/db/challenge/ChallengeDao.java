@@ -15,10 +15,15 @@ public interface ChallengeDao {
     @Query("select * from Challenge")
     LiveData<List<Challenge>> getAll();
 
+    @Query("select * from Challenge where complete = 0")
+    LiveData<List<Challenge>> getInProgress();
+
     @Insert(onConflict = REPLACE)
     void addChallenge(Challenge challenge);
 
     @Query("delete from Challenge where id = :id")
     void delete(int id);
 
+    @Query("update Challenge set `complete` = 1, 'date' = :date, 'failed' = :failed where id = :id")
+    void completeChallenge(int id, long date, boolean failed);
 }

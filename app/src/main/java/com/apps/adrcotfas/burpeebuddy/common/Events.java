@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.common;
 
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
+import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
@@ -135,6 +136,13 @@ public class Events {
         public EditWorkout(int id, Workout workout) {
             this.id = id;
             this.workout = workout;
+        }
+    }
+
+    public static class AddChallenge {
+        public Challenge challenge;
+        public AddChallenge(Challenge challenge) {
+            this.challenge = challenge;
         }
     }
 }

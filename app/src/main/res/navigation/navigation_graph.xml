@@ -98,4 +98,8 @@
         android:id="@+id/statisticsFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.statistics.StatisticsFragment"
         android:label="@string/title_statistics" />
+    <fragment
+        android:id="@+id/challengesFragment"
+        android:name="com.apps.adrcotfas.burpeebuddy.edit_challenges.ChallengesFragment"
+        android:label="ChallengesFragment" />
 </navigation>
