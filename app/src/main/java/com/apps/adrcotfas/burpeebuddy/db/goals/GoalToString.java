@@ -10,10 +10,10 @@ public class GoalToString {
         final int sets = goal.sets;
         GoalType goalType = goal.type;
         if (goalType.equals(TIME)) {
-            s += sets == 1 ? "" : sets + " x ";
+            s += sets == 1 ? "" : sets + " × ";
             s += formatSeconds(goal.duration);
         } else if (goalType.equals(REPS)) {
-            s += sets == 1 ? "" : sets + " x ";
+            s += sets == 1 ? "" : sets + " × ";
             s += goal.reps + " reps";
         }
 

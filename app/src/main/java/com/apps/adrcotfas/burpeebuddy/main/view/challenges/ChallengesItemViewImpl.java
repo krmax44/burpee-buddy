@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.core.util.Pair;
+
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
@@ -31,7 +33,14 @@ class ChallengesItemViewImpl extends BaseObservableViewMvc<ChallengesItemView.Li
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void bindChallenge(Challenge challenge, int progressValue) {
+    public void bindChallenge(Pair<Challenge, Integer> challengeData) {
+
+        final Challenge challenge = challengeData.first;
+        final Integer progress = challengeData.second;
+
+        if (challenge == null || progress == null) {
+            return;
+        }
 
         text.setText(challenge.exerciseName);
 
@@ -40,20 +49,20 @@ class ChallengesItemViewImpl extends BaseObservableViewMvc<ChallengesItemView.Li
         final DateTime end = new DateTime().plusDays(1);
         final DateTime endOfToday = end.toLocalDate().toDateTimeAtStartOfDay(end.getZone());
 
-        int day = Days.daysBetween(start, endOfToday).getDays() + 1;
+        int day = Days.daysBetween(start, endOfToday).getDays();
 
         if (challenge.type == GoalType.TIME) {
-            text.setText(StringUtils.secondsToTimerFormatAlt(progressValue) + "/" +
+            text.setText(StringUtils.secondsToTimerFormatAlt(progress) + "/" +
                     StringUtils.secondsToTimerFormatAlt(challenge.duration) + " "
                     + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
         } else {
-            text.setText(progressValue + "/" + challenge.reps + " " + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
+            text.setText(progress + "/" + challenge.reps + " " + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
         }
-        int progress = day * 100 / challenge.days;
+        int progressPercent = (int) Math.ceil(day * 100.F / (double) challenge.days);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            this.progress.setProgress(progress, true);
+            this.progress.setProgress(progressPercent, true);
         } else {
-            this.progress.setProgress(progress);
+            this.progress.setProgress(progressPercent);
         }
     }
 }

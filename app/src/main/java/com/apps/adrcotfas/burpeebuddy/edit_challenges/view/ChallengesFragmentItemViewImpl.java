@@ -1,8 +1,11 @@
 package com.apps.adrcotfas.burpeebuddy.edit_challenges.view;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.core.util.Pair;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
@@ -16,11 +19,9 @@ import org.joda.time.Days;
 public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<ChallengesFragmentItemView.Listener>
         implements ChallengesFragmentItemView {
 
-    private Challenge challenge;
-
-    TextView status;
-    TextView date;
-    TextView text;
+    private TextView status;
+    private TextView date;
+    private TextView text;
 
     public ChallengesFragmentItemViewImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.challenge_list_item, parent, false));
@@ -29,15 +30,21 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
         text = findViewById(R.id.description);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void bindChallenge(Challenge challenge, int progressValue) {
-        this.challenge = challenge;
+    public void bindChallenge(Pair<Challenge, Integer> challengeData) {
+        final Challenge challenge = challengeData.first;
+        final Integer progress = challengeData.second;
+
+        if (challenge == null || progress == null) {
+            return;
+        }
 
         if (challenge.complete) {
             if (challenge.type == GoalType.TIME) {
-                text.setText(StringUtils.secondsToTimerFormatAlt(challenge.duration) + " " + challenge.exerciseName + " x " + challenge.days + " days");
+                text.setText(StringUtils.secondsToTimerFormatAlt(challenge.duration) + " " + challenge.exerciseName + " × " + challenge.days + " days");
             } else {
-                text.setText(challenge.reps + " " + challenge.exerciseName + " x " + challenge.days + " days");
+                text.setText(challenge.reps + " " + challenge.exerciseName + " × " + challenge.days + " days");
             }
             if (challenge.failed) {
                 status.setText("failed");
@@ -52,14 +59,14 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
             final DateTime end = new DateTime().plusDays(1);
             final DateTime endOfToday = end.toLocalDate().toDateTimeAtStartOfDay(end.getZone());
 
-            int day = Days.daysBetween(start, endOfToday).getDays() + 1;
+            int day = Days.daysBetween(start, endOfToday).getDays();
 
             if (challenge.type == GoalType.TIME) {
-                text.setText(StringUtils.secondsToTimerFormatAlt(progressValue) + "/" +
+                text.setText(StringUtils.secondsToTimerFormatAlt(progress) + "/" +
                         StringUtils.secondsToTimerFormatAlt(challenge.duration) + " "
                         + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
             } else {
-                text.setText(progressValue + "/" + challenge.reps + " " + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
+                text.setText(progress + "/" + challenge.reps + " " + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
             }
             status.setText("in progress");
             status.setTextColor(getContext().getResources().getColor(R.color.yellow));

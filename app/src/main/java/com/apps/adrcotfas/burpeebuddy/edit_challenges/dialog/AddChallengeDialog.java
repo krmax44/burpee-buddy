@@ -192,7 +192,7 @@ public class AddChallengeDialog extends DialogFragment {
                     value = Integer.valueOf(s.toString());
                 }
                 challenge.days = value;
-                final long endMillis = new DateTime(challenge.date).plusDays(challenge.days).getMillis();
+                final long endMillis = new DateTime(challenge.date).plusDays(challenge.days - 1).getMillis();
                 endDate.setText(StringUtils.formatDate(endMillis));
             }
         });
@@ -267,7 +267,7 @@ public class AddChallengeDialog extends DialogFragment {
         final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
         challenge.date = startOfToday.getMillis();
         startDate.setText("Today");
-        final long endMillis = new DateTime(challenge.date).plusDays(challenge.days).getMillis();
+        final long endMillis = new DateTime(challenge.date).plusDays(challenge.days - 1).getMillis();
         endDate.setText(StringUtils.formatDate(endMillis));
     }
 

@@ -3,6 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.edit_challenges.view;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,7 +29,7 @@ public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Liste
     }
 
     @Override
-    public void bindChallenges(List<Challenge> challenges, List<Integer> progress) {
-        adapter.bindChallenges(challenges, progress);
+    public void bindChallenges(List<Pair<Challenge, Integer>> challenges) {
+        adapter.bindChallenges(challenges);
     }
 }

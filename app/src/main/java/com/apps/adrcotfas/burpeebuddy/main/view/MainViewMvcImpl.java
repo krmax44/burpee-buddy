@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
@@ -49,7 +50,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     private List<Exercise> mExercises = new ArrayList<>();
     private List<Goal> mFavoriteGoals = new ArrayList<>();
-    private List<Challenge> mChallenges = new ArrayList<>();
+    private List<Pair<Challenge, Integer>> mChallenges = new ArrayList<>();
 
     private MutableLiveData<Exercise> mExercise = new MutableLiveData<>();
     private final ImageView mFavoriteGoalButton;
@@ -191,25 +192,27 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     }
 
     @Override
-    public void updateChallenges(List<Challenge> challenges, List<Integer> progress) {
+    public void updateChallenges(List<Pair<Challenge, Integer>> challenges) {
         mChallenges = challenges;
-        mChallengesAdapter.bindChallenges(challenges, progress);
+        mChallengesAdapter.bindChallenges(challenges);
 
         if (challenges.size() > 1) {
             mChallengesRecycler.addItemDecoration(new LinePagerIndicatorDecoration());
         }
 
-        for (int i = 0; i < challenges.size(); ++i) {
-            Challenge c = challenges.get(i);
-            //FrameLayout challengesContainer = findViewById(R.id.challenges);
-            if ((c.type == GoalType.TIME && progress.get(i) < c.duration) ||
-                 c.type == GoalType.REPS && progress.get(i) < c.reps) {
-                //TODO: do I want this?
+//        for (int i = 0; i < challenges.size(); ++i) {
+//            final Challenge c = challenges.get(i);
+//            final Integer crtProgress = progress.get(c.exerciseName);
+//            final LinearLayout challengesContainer = findViewById(R.id.challenges);
+//
+//            if (crtProgress != null &&
+//                    ((c.type == GoalType.TIME && crtProgress < c.duration) ||
+//                      c.type == GoalType.REPS && crtProgress < c.reps)) {
 //                challengesContainer.setBackgroundColor(
 //                        getContext().getResources().getColor(R.color.transparent_red));
-                break;
-            }
-        }
+//                break;
+//            }
+//        }
     }
 
     private void onExerciseSelected() {

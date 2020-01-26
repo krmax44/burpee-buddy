@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
@@ -25,7 +27,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
@@ -73,32 +77,50 @@ public class ChallengesFragment extends Fragment implements ChallengeView.Listen
     }
 
     private void setupChallenges() {
+
         final DateTime now = new DateTime();
         final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
 
-        AppDatabase.getDatabase(getContext()).challengeDao().getInProgress().observe(
-                getViewLifecycleOwner(), challenges -> {
-                    List<Integer> progress = new ArrayList<>(challenges.size());
-                    for (Challenge c : challenges) {
-                        AppDatabase.getDatabase(getContext()).workoutDao().getWorkouts(c.exerciseName, startOfToday.getMillis()).observe(
-                                getViewLifecycleOwner(), workouts -> {
-                                    int total = 0;
-                                    for (Workout w : workouts) {
-                                        if (w.type == TIME_BASED) {
-                                            total += w.duration;
-                                        } else {
-                                            total += w.reps;
-                                        }
-                                    }
-                                    progress.add(total);
-                                    if (challenges.size() == progress.size()) {
-                                        //TODO: logic to complete challenges
+        // first add the ones in progress
+        final LiveData<List<Challenge>> allLd = AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
+        allLd.observe(getViewLifecycleOwner(), challenges -> {
+            List<Pair<Challenge, Integer>> output = new ArrayList<>();
+            Map<String, Integer> progress = new HashMap<>(challenges.size());
 
-                                        view.bindChallenges(challenges, progress);
-                                    }
-                                });
+            for (Challenge c : challenges) {
+                final LiveData<List<Workout>> workoutsLd = AppDatabase.getDatabase(
+                        getContext()).workoutDao().getWorkouts(c.exerciseName, startOfToday.getMillis());
+
+                workoutsLd.observe(getViewLifecycleOwner(), workouts -> {
+                    int total = 0;
+                    for (Workout w : workouts) {
+                        if (w.type == TIME_BASED) {
+                            total += w.duration;
+                        } else {
+                            total += w.reps;
+                        }
+                    }
+                    progress.put(c.exerciseName, total);
+                    if (challenges.size() == progress.size()) {
+                        for (int i = 0; i < challenges.size(); ++i) {
+                            final Challenge crt = challenges.get(i);
+                            final Integer crtProgress = progress.get(crt.exerciseName);
+                            output.add(new Pair<>(crt, crtProgress));
+                        }
+                        // then add the completed or failed challenges
+                        final LiveData<List<Challenge>> completedLd = AppDatabase.getDatabase(getContext()).challengeDao().getCompleted();
+                        completedLd.observe(getViewLifecycleOwner(), completed -> {
+                            completedLd.removeObservers(getViewLifecycleOwner());
+                            for (int i = 0; i < completed.size(); ++i) {
+                                final Challenge crt = completed.get(i);
+                                output.add(new Pair<>(crt, 0));
+                            }
+                            view.bindChallenges(output);
+                        });
                     }
                 });
+            }
+        });
     }
 
     @Subscribe

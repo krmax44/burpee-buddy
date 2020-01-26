@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.navigation.fragment.NavHostFragment;
@@ -20,17 +21,17 @@ import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvc;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvcImpl;
-import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import timber.log.Timber;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.getWorkoutManager;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
 public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
@@ -72,12 +73,13 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
         setupChallenges();
 
-        // when navigating from Workout to Main
-        if (getWorkoutManager().getWorkout().getState() != State.ACTIVE &&
-                MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
-            Timber.tag(TAG).d( "show finished dialog");
-            getWorkoutManager().getWorkout().setState(State.INACTIVE);
-        }
+        //TODO: needed?
+//        // when navigating from Workout to Main
+//        if (getWorkoutManager().getWorkout().getState() != State.ACTIVE &&
+//                MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
+//            Timber.tag(TAG).d( "show finished dialog");
+//            getWorkoutManager().getWorkout().setState(State.INACTIVE);
+//        }
 
         return mViewMvc.getRootView();
     }
@@ -86,29 +88,101 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         final DateTime now = new DateTime();
         final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
 
-        AppDatabase.getDatabase(getContext()).challengeDao().getInProgress().observe(
-                getViewLifecycleOwner(), challenges -> {
-                    List<Integer> progress = new ArrayList<>(challenges.size());
-                    for (Challenge c : challenges) {
-                        AppDatabase.getDatabase(getContext()).workoutDao().getWorkouts(c.exerciseName, startOfToday.getMillis()).observe(
-                                getViewLifecycleOwner(), workouts -> {
-                                    int total = 0;
-                                    for (Workout w : workouts) {
-                                        if (w.type == TIME_BASED) {
-                                            total += w.duration;
-                                        } else {
-                                            total += w.reps;
-                                        }
-                                    }
-                                    progress.add(total);
-                                    if (challenges.size() == progress.size()) {
-                                        //TODO: logic to complete challenges
+        final DateTime yesterday = new DateTime().minusDays(1);
+        final DateTime startOfYesterday = yesterday.toLocalDate().toDateTimeAtStartOfDay(yesterday.getZone());
 
-                                        mViewMvc.updateChallenges(challenges, progress);
-                                    }
-                                });
+        // a challenge corresponds to an exercise
+        // you can have only one challenge in progress for one exercise at a time
+        final LiveData<List<Challenge>> challengesLd =
+                AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
+
+        challengesLd.observe(getViewLifecycleOwner(), challenges -> {
+            challengesLd.removeObservers(getViewLifecycleOwner());
+
+            // accumulate the progress for each exercise
+            Map<String, Integer> progress = new HashMap<>(challenges.size());
+
+            for (Challenge c : challenges) {
+                // get yesterday's workouts to check for failed challenges
+                LiveData<List<Workout>> workoutsLd = AppDatabase.getDatabase(getContext()).workoutDao().getWorkouts(
+                        c.exerciseName, startOfYesterday.getMillis(), startOfToday.getMillis());
+
+                workoutsLd.observe(getViewLifecycleOwner(), workouts -> {
+                    workoutsLd.removeObservers(getViewLifecycleOwner());
+
+                    // accumulate total time or reps for each exercise
+                    int total = 0;
+                    for (Workout w : workouts) {
+                        if (c.type == GoalType.TIME) {
+                            total += w.duration;
+                        } else {
+                            total += w.reps;
+                        }
+                    }
+
+                    progress.put(c.exerciseName, total);
+
+                    if (challenges.size() == progress.size()) {
+                        for (int i = 0; i < challenges.size(); ++i) {
+                            Challenge crt = challenges.get(i);
+                            Integer crtProgress = progress.get(crt.exerciseName);
+                            if (crtProgress != null &&
+                                    ((crt.type == GoalType.TIME && crtProgress < crt.duration ) ||
+                                      crt.type == GoalType.REPS && crtProgress < crt.reps)) {
+
+                                // if you started the challenge today, skip this
+                                if (crt.date == startOfToday.getMillis()) {
+                                    continue;
+                                }
+                                AppDatabase.completeChallenge(getContext(), crt.id,
+                                        startOfYesterday.getMillis(), true);
+                            }
+                        }
+                        // now setup the challenges which are in progress
+                        setupChallengesInProgress();
                     }
                 });
+            }
+        });
+    }
+
+    private void setupChallengesInProgress() {
+        final DateTime now = new DateTime();
+        final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
+
+        List<Pair<Challenge, Integer>> output = new ArrayList<>();
+
+        final LiveData<List<Challenge>> challengesLd = AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
+
+        challengesLd.observe(getViewLifecycleOwner(), challenges -> {
+            challengesLd.removeObservers(getViewLifecycleOwner());
+
+            Map<String, Integer> progress = new HashMap<>(challenges.size());
+            for (Challenge c : challenges) {
+                final LiveData<List<Workout>> workoutsLd = AppDatabase.getDatabase(
+                        getContext()).workoutDao().getWorkouts(c.exerciseName, startOfToday.getMillis());
+                workoutsLd.observe(getViewLifecycleOwner(), workouts -> {
+                    workoutsLd.removeObservers(getViewLifecycleOwner());
+                    int total = 0;
+                    for (Workout w : workouts) {
+                        if (w.type == TIME_BASED) {
+                            total += w.duration;
+                        } else {
+                            total += w.reps;
+                        }
+                    }
+                    progress.put(c.exerciseName, total);
+                    if (challenges.size() == progress.size()) {
+                        for (int i = 0; i < challenges.size(); ++i) {
+                            final Challenge crt = challenges.get(i);
+                            final Integer crtProgress = progress.get(crt.exerciseName);
+                            output.add(new Pair<>(crt, crtProgress));
+                        }
+                        mViewMvc.updateChallenges(output);
+                    }
+                });
+            }
+        });
     }
 
     @Override

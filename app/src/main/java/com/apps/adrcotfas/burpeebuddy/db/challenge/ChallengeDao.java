@@ -12,11 +12,11 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface ChallengeDao {
 
-    @Query("select * from Challenge")
-    LiveData<List<Challenge>> getAll();
-
     @Query("select * from Challenge where complete = 0")
     LiveData<List<Challenge>> getInProgress();
+
+    @Query("select * from Challenge where complete = 1")
+    LiveData<List<Challenge>> getCompleted();
 
     @Insert(onConflict = REPLACE)
     void addChallenge(Challenge challenge);

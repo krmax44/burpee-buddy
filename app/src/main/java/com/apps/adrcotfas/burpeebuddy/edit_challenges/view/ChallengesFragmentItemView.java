@@ -1,5 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.edit_challenges.view;
 
+import androidx.core.util.Pair;
+
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 
@@ -9,5 +11,5 @@ public interface ChallengesFragmentItemView extends ObservableViewMvc<Challenges
 
     }
 
-    void bindChallenge(Challenge challenge, int progressValue);
+    void bindChallenge(Pair<Challenge, Integer> challenge);
 }

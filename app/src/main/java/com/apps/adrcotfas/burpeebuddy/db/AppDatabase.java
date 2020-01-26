@@ -147,4 +147,9 @@ public abstract class AppDatabase extends RoomDatabase {
         mExecutorService.execute(()
             -> getDatabase(context).workoutDao().delete(id));
     }
+
+    public static void completeChallenge(Context context, int id, long date, boolean failed) {
+        mExecutorService.execute(()
+                -> getDatabase(context).challengeDao().completeChallenge(id, date, failed));
+    }
 }

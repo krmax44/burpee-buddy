@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
@@ -16,8 +17,7 @@ public class ChallengesFragmentAdapter extends RecyclerView.Adapter<ChallengesFr
 
     private final LayoutInflater inflater;
     private final Listener listener;
-    private List<Challenge> challenges = new ArrayList<>();
-    private List<Integer> progress = new ArrayList<>();
+    private List<Pair<Challenge, Integer>> challenges = new ArrayList<>();
 
     public interface Listener {
     }
@@ -27,9 +27,8 @@ public class ChallengesFragmentAdapter extends RecyclerView.Adapter<ChallengesFr
         this.listener = listener;
     }
 
-    public void bindChallenges(List<Challenge> challenges, List<Integer> progress) {
+    public void bindChallenges(List<Pair<Challenge, Integer>> challenges) {
         this.challenges = new ArrayList<>(challenges);
-        this.progress = new ArrayList<>(progress);
         notifyDataSetChanged();
     }
 
@@ -43,7 +42,8 @@ public class ChallengesFragmentAdapter extends RecyclerView.Adapter<ChallengesFr
 
     @Override
     public void onBindViewHolder(@NonNull ChallengesFragmentViewHolder holder, int position) {
-        holder.getView().bindChallenge(challenges.get(position), progress.get(position));
+        holder.getView().bindChallenge(
+                challenges.get(position));
     }
 
     @Override
