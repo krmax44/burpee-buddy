@@ -91,6 +91,11 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         final DateTime yesterday = new DateTime().minusDays(1);
         final DateTime startOfYesterday = yesterday.toLocalDate().toDateTimeAtStartOfDay(yesterday.getZone());
 
+        setupChallengesFailed(startOfToday, startOfYesterday);
+        setupChallengesInProgress(startOfToday);
+    }
+
+    private void setupChallengesFailed(DateTime startOfToday, DateTime startOfYesterday) {
         // a challenge corresponds to an exercise
         // you can have only one challenge in progress for one exercise at a time
         final LiveData<List<Challenge>> challengesLd =
@@ -99,7 +104,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         challengesLd.observe(getViewLifecycleOwner(), challenges -> {
             challengesLd.removeObservers(getViewLifecycleOwner());
 
-            // accumulate the progress for each exercise
+            // accumulate yesterday's progress for each challenge
             Map<String, Integer> progress = new HashMap<>(challenges.size());
 
             for (Challenge c : challenges) {
@@ -126,32 +131,32 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                         for (int i = 0; i < challenges.size(); ++i) {
                             Challenge crt = challenges.get(i);
                             Integer crtProgress = progress.get(crt.exerciseName);
-                            if (crtProgress != null &&
-                                    ((crt.type == GoalType.TIME && crtProgress < crt.duration ) ||
-                                      crt.type == GoalType.REPS && crtProgress < crt.reps)) {
 
-                                // if you started the challenge today, skip this
-                                if (crt.date == startOfToday.getMillis()) {
-                                    continue;
-                                }
+                            if (crtProgress == null) {
+                                Timber.tag(TAG).wtf("something went wrong here");
+                                continue;
+                            }
+
+                            // if you started the challenge today, skip this
+                            if (crt.date == startOfToday.getMillis()) {
+                                continue;
+                            }
+
+                            if ((crt.type == GoalType.TIME && crtProgress < crt.duration) ||
+                                    crt.type == GoalType.REPS && crtProgress < crt.reps) {
+                                //TODO: challenge failed -> notify user
                                 AppDatabase.completeChallenge(getContext(), crt.id,
                                         startOfYesterday.getMillis(), true);
                             }
                         }
-                        // now setup the challenges which are in progress
-                        setupChallengesInProgress();
                     }
                 });
             }
         });
     }
 
-    private void setupChallengesInProgress() {
-        final DateTime now = new DateTime();
-        final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
-
+    private void setupChallengesInProgress(DateTime startOfToday) {
         List<Pair<Challenge, Integer>> output = new ArrayList<>();
-
         final LiveData<List<Challenge>> challengesLd = AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
 
         challengesLd.observe(getViewLifecycleOwner(), challenges -> {
@@ -176,7 +181,24 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                         for (int i = 0; i < challenges.size(); ++i) {
                             final Challenge crt = challenges.get(i);
                             final Integer crtProgress = progress.get(crt.exerciseName);
-                            output.add(new Pair<>(crt, crtProgress));
+
+                            if (crtProgress == null) {
+                                Timber.tag(TAG).wtf("something went wrong here");
+                                continue;
+                            }
+
+                            final DateTime endOfChallenge = new DateTime(crt.date).plusDays(crt.days - 1);
+                            final boolean thisIsTheLastDay = endOfChallenge.getMillis() == startOfToday.getMillis();
+                            if (thisIsTheLastDay &&
+                                    ((crt.type == GoalType.TIME && crtProgress >= crt.duration) ||
+                                            crt.type == GoalType.REPS && crtProgress >= crt.reps)) {
+                                // Hurray, challenge completed
+                                //TODO: notify user
+                                AppDatabase.completeChallenge(getContext(), crt.id,
+                                        startOfToday.getMillis(), false);
+                            } else {
+                                output.add(new Pair<>(crt, crtProgress));
+                            }
                         }
                         mViewMvc.updateChallenges(output);
                     }
