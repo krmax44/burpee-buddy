@@ -17,6 +17,7 @@ public class ChallengesFragmentAdapter extends RecyclerView.Adapter<ChallengesFr
     private final LayoutInflater inflater;
     private final Listener listener;
     private List<Challenge> challenges = new ArrayList<>();
+    private List<Integer> progress = new ArrayList<>();
 
     public interface Listener {
     }
@@ -26,8 +27,9 @@ public class ChallengesFragmentAdapter extends RecyclerView.Adapter<ChallengesFr
         this.listener = listener;
     }
 
-    public void bindChallenges(List<Challenge> challenges) {
+    public void bindChallenges(List<Challenge> challenges, List<Integer> progress) {
         this.challenges = new ArrayList<>(challenges);
+        this.progress = new ArrayList<>(progress);
         notifyDataSetChanged();
     }
 
@@ -41,7 +43,7 @@ public class ChallengesFragmentAdapter extends RecyclerView.Adapter<ChallengesFr
 
     @Override
     public void onBindViewHolder(@NonNull ChallengesFragmentViewHolder holder, int position) {
-        holder.getView().bindChallenge(challenges.get(position));
+        holder.getView().bindChallenge(challenges.get(position), progress.get(position));
     }
 
     @Override

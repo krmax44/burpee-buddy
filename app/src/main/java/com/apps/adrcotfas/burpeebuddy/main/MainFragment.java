@@ -70,6 +70,19 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                     goals -> mViewMvc.updateGoals(goals));
         });
 
+        setupChallenges();
+
+        // when navigating from Workout to Main
+        if (getWorkoutManager().getWorkout().getState() != State.ACTIVE &&
+                MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
+            Timber.tag(TAG).d( "show finished dialog");
+            getWorkoutManager().getWorkout().setState(State.INACTIVE);
+        }
+
+        return mViewMvc.getRootView();
+    }
+
+    private void setupChallenges() {
         final DateTime now = new DateTime();
         final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
 
@@ -77,7 +90,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                 getViewLifecycleOwner(), challenges -> {
                     List<Integer> progress = new ArrayList<>(challenges.size());
                     for (Challenge c : challenges) {
-                        AppDatabase.getDatabase(getContext()).workoutDao().getTodaysWorkouts(c.exerciseName, startOfToday.getMillis()).observe(
+                        AppDatabase.getDatabase(getContext()).workoutDao().getWorkouts(c.exerciseName, startOfToday.getMillis()).observe(
                                 getViewLifecycleOwner(), workouts -> {
                                     int total = 0;
                                     for (Workout w : workouts) {
@@ -89,20 +102,13 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                                     }
                                     progress.add(total);
                                     if (challenges.size() == progress.size()) {
+                                        //TODO: logic to complete challenges
+
                                         mViewMvc.updateChallenges(challenges, progress);
                                     }
                                 });
                     }
                 });
-
-        // when navigating from Workout to Main
-        if (getWorkoutManager().getWorkout().getState() != State.ACTIVE &&
-                MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
-            Timber.tag(TAG).d( "show finished dialog");
-            getWorkoutManager().getWorkout().setState(State.INACTIVE);
-        }
-
-        return mViewMvc.getRootView();
     }
 
     @Override

@@ -30,7 +30,7 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
     }
 
     @Override
-    public void bindChallenge(Challenge challenge) {
+    public void bindChallenge(Challenge challenge, int progressValue) {
         this.challenge = challenge;
 
         if (challenge.complete) {
@@ -49,14 +49,17 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
             }
         } else {
             DateTime start = new DateTime(challenge.date);
-            DateTime now = new DateTime();
+            final DateTime end = new DateTime().plusDays(1);
+            final DateTime endOfToday = end.toLocalDate().toDateTimeAtStartOfDay(end.getZone());
 
-            int day = Days.daysBetween(start, now).getDays() + 1;
+            int day = Days.daysBetween(start, endOfToday).getDays() + 1;
 
             if (challenge.type == GoalType.TIME) {
-                text.setText(StringUtils.secondsToTimerFormatAlt(challenge.duration) + " " + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
+                text.setText(StringUtils.secondsToTimerFormatAlt(progressValue) + "/" +
+                        StringUtils.secondsToTimerFormatAlt(challenge.duration) + " "
+                        + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
             } else {
-                text.setText(challenge.reps + " " + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
+                text.setText(progressValue + "/" + challenge.reps + " " + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
             }
             status.setText("in progress");
             status.setTextColor(getContext().getResources().getColor(R.color.yellow));

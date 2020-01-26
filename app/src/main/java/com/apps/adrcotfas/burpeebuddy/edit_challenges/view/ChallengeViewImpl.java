@@ -28,7 +28,7 @@ public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Liste
     }
 
     @Override
-    public void bindChallenges(List<Challenge> challenges) {
-        adapter.bindChallenges(challenges);
+    public void bindChallenges(List<Challenge> challenges, List<Integer> progress) {
+        adapter.bindChallenges(challenges, progress);
     }
 }

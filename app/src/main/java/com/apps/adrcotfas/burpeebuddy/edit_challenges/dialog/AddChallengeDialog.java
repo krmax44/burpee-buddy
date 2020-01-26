@@ -263,8 +263,9 @@ public class AddChallengeDialog extends DialogFragment {
     }
 
     private void setupStartDate() {
-        Calendar now = Calendar.getInstance();
-        challenge.date = now.getTimeInMillis();
+        final DateTime now = new DateTime();
+        final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
+        challenge.date = startOfToday.getMillis();
         startDate.setText("Today");
         final long endMillis = new DateTime(challenge.date).plusDays(challenge.days).getMillis();
         endDate.setText(StringUtils.formatDate(endMillis));

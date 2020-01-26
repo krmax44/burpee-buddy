@@ -9,5 +9,5 @@ public interface ChallengesFragmentItemView extends ObservableViewMvc<Challenges
 
     }
 
-    void bindChallenge(Challenge challenge);
+    void bindChallenge(Challenge challenge, int progressValue);
 }

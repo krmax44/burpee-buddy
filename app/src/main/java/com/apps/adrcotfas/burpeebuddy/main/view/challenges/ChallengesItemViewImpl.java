@@ -36,8 +36,11 @@ class ChallengesItemViewImpl extends BaseObservableViewMvc<ChallengesItemView.Li
         text.setText(challenge.exerciseName);
 
         DateTime start = new DateTime(challenge.date);
-        DateTime now = new DateTime();
-        int day = Days.daysBetween(start, now).getDays() + 1;
+
+        final DateTime end = new DateTime().plusDays(1);
+        final DateTime endOfToday = end.toLocalDate().toDateTimeAtStartOfDay(end.getZone());
+
+        int day = Days.daysBetween(start, endOfToday).getDays() + 1;
 
         if (challenge.type == GoalType.TIME) {
             text.setText(StringUtils.secondsToTimerFormatAlt(progressValue) + "/" +

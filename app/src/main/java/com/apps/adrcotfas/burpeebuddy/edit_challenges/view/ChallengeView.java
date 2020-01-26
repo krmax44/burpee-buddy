@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ChallengeView extends ObservableViewMvc<ChallengeView.Listener> {
 
-    void bindChallenges(List<Challenge> challenges);
+    void bindChallenges(List<Challenge> challenges, List<Integer> progress);
 
     public interface Listener {
         //TODO: implement long click for delete
