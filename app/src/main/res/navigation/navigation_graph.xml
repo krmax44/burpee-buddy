@@ -101,5 +101,5 @@
     <fragment
         android:id="@+id/challengesFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.edit_challenges.ChallengesFragment"
-        android:label="ChallengesFragment" />
+        android:label="@string/title_challenges" />
 </navigation>
