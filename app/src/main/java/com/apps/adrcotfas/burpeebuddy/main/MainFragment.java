@@ -71,8 +71,6 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                     goals -> mViewMvc.updateGoals(goals));
         });
 
-        setupChallenges();
-
         //TODO: needed?
 //        // when navigating from Workout to Main
 //        if (getWorkoutManager().getWorkout().getState() != State.ACTIVE &&
@@ -92,7 +90,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         final DateTime startOfYesterday = yesterday.toLocalDate().toDateTimeAtStartOfDay(yesterday.getZone());
 
         setupChallengesFailed(startOfToday, startOfYesterday);
-        setupChallengesInProgress(startOfToday);
+        setupChallengesInProgress(startOfToday, startOfYesterday);
     }
 
     private void setupChallengesFailed(DateTime startOfToday, DateTime startOfYesterday) {
@@ -102,7 +100,6 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                 AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
 
         challengesLd.observe(getViewLifecycleOwner(), challenges -> {
-            challengesLd.removeObservers(getViewLifecycleOwner());
 
             // accumulate yesterday's progress for each challenge
             Map<String, Integer> progress = new HashMap<>(challenges.size());
@@ -113,8 +110,6 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                         c.exerciseName, startOfYesterday.getMillis(), startOfToday.getMillis());
 
                 workoutsLd.observe(getViewLifecycleOwner(), workouts -> {
-                    workoutsLd.removeObservers(getViewLifecycleOwner());
-
                     // accumulate total time or reps for each exercise
                     int total = 0;
                     for (Workout w : workouts) {
@@ -155,19 +150,15 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         });
     }
 
-    private void setupChallengesInProgress(DateTime startOfToday) {
-        List<Pair<Challenge, Integer>> output = new ArrayList<>();
+    private void setupChallengesInProgress(DateTime startOfToday, DateTime startOfYesterday) {
         final LiveData<List<Challenge>> challengesLd = AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
 
         challengesLd.observe(getViewLifecycleOwner(), challenges -> {
-            challengesLd.removeObservers(getViewLifecycleOwner());
-
             Map<String, Integer> progress = new HashMap<>(challenges.size());
             for (Challenge c : challenges) {
                 final LiveData<List<Workout>> workoutsLd = AppDatabase.getDatabase(
                         getContext()).workoutDao().getWorkouts(c.exerciseName, startOfToday.getMillis());
                 workoutsLd.observe(getViewLifecycleOwner(), workouts -> {
-                    workoutsLd.removeObservers(getViewLifecycleOwner());
                     int total = 0;
                     for (Workout w : workouts) {
                         if (w.type == TIME_BASED) {
@@ -176,6 +167,9 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                             total += w.reps;
                         }
                     }
+
+                    List<Pair<Challenge, Integer>> output = new ArrayList<>();
+
                     progress.put(c.exerciseName, total);
                     if (challenges.size() == progress.size()) {
                         for (int i = 0; i < challenges.size(); ++i) {
@@ -184,6 +178,14 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
                             if (crtProgress == null) {
                                 Timber.tag(TAG).wtf("something went wrong here");
+                                continue;
+                            }
+
+                            final DateTime lastDay = new DateTime(c.date).plusDays(c.days);
+                            if (lastDay.isBefore(startOfToday) || lastDay.equals(startOfToday)) {
+                                //TODO: challenge failed -> notify user
+                                AppDatabase.completeChallenge(getContext(), c.id,
+                                        startOfYesterday.getMillis(), true);
                                 continue;
                             }
 
@@ -214,6 +216,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         Timber.tag(TAG).d( "onResume");
         mViewMvc.registerListener(this);
         mViewMvc.showIntroduction();
+        setupChallenges();
     }
 
     @Override

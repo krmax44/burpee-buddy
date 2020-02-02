@@ -12,10 +12,10 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface ChallengeDao {
 
-    @Query("select * from Challenge where complete = 0")
+    @Query("select * from Challenge where complete = 0 order by date desc")
     LiveData<List<Challenge>> getInProgress();
 
-    @Query("select * from Challenge where complete = 1")
+    @Query("select * from Challenge where complete = 1 order by date desc")
     LiveData<List<Challenge>> getCompleted();
 
     @Insert(onConflict = REPLACE)

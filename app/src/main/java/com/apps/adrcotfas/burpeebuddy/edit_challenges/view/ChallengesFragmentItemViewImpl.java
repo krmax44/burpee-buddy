@@ -22,18 +22,25 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
     private TextView status;
     private TextView date;
     private TextView text;
+    private Challenge challenge;
 
     public ChallengesFragmentItemViewImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.challenge_list_item, parent, false));
         status = findViewById(R.id.status);
         date = findViewById(R.id.end_date);
         text = findViewById(R.id.description);
+
+        findViewById(R.id.parent).setOnClickListener(v -> {
+            for (Listener l : getListeners()) {
+                l.onLongPress(challenge.id);
+            }
+        });
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void bindChallenge(Pair<Challenge, Integer> challengeData) {
-        final Challenge challenge = challengeData.first;
+        challenge = challengeData.first;
         final Integer progress = challengeData.second;
 
         if (challenge == null || progress == null) {

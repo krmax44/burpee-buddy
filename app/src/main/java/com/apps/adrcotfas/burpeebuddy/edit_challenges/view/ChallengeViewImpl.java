@@ -32,4 +32,11 @@ public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Liste
     public void bindChallenges(List<Pair<Challenge, Integer>> challenges) {
         adapter.bindChallenges(challenges);
     }
+
+    @Override
+    public void onLongPress(int id) {
+        for (Listener l : getListeners()) {
+            l.onLongClick(id);
+        }
+    }
 }

@@ -12,6 +12,6 @@ public interface ChallengeView extends ObservableViewMvc<ChallengeView.Listener>
     void bindChallenges(List<Pair<Challenge, Integer>> challenges);
 
     public interface Listener {
-        //TODO: implement long click for delete
+        void onLongClick(int id);
     }
 }

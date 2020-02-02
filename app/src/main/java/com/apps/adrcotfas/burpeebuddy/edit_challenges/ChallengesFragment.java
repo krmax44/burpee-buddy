@@ -19,6 +19,7 @@ import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.edit_challenges.dialog.AddChallengeDialog;
+import com.apps.adrcotfas.burpeebuddy.edit_challenges.livedata.ChallengesCombinedLiveData;
 import com.apps.adrcotfas.burpeebuddy.edit_challenges.view.ChallengeView;
 import com.apps.adrcotfas.burpeebuddy.edit_challenges.view.ChallengeViewImpl;
 
@@ -44,6 +45,7 @@ public class ChallengesFragment extends Fragment implements ChallengeView.Listen
                              Bundle savedInstanceState) {
         EventBus.getDefault().register(this);
         view = new ChallengeViewImpl(inflater, container);
+        view.registerListener(this);
 
         setupChallenges();
 
@@ -81,16 +83,37 @@ public class ChallengesFragment extends Fragment implements ChallengeView.Listen
         final DateTime now = new DateTime();
         final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
 
-        // first add the ones in progress
-        final LiveData<List<Challenge>> allLd = AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
-        allLd.observe(getViewLifecycleOwner(), challenges -> {
-            List<Pair<Challenge, Integer>> output = new ArrayList<>();
+        final LiveData<List<Challenge>> completedLd = AppDatabase.getDatabase(getContext()).challengeDao().getCompleted();
+
+        ChallengesCombinedLiveData result = new ChallengesCombinedLiveData();
+
+        result.addSource(completedLd, completed -> {
+            List<Pair<Challenge, Integer>> list = new ArrayList<>();
+            result.completed = new ArrayList<>();
+            for (int i = 0; i < completed.size(); ++i) {
+                final Challenge crt = completed.get(i);
+                Pair<Challenge, Integer> e = new Pair<>(crt, 0);
+                list.add(e);
+                result.completed.add(e);
+            }
+            if (result.inProgress != null) {
+                list.addAll(result.inProgress);
+            }
+            result.setValue(list);
+        });
+
+        final LiveData<List<Challenge>> inProgressLd = AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
+        result.addSource(inProgressLd, challenges -> {
+
             Map<String, Integer> progress = new HashMap<>(challenges.size());
+
+            if (challenges.isEmpty()) {
+                result.setValue(result.completed);
+            }
 
             for (Challenge c : challenges) {
                 final LiveData<List<Workout>> workoutsLd = AppDatabase.getDatabase(
                         getContext()).workoutDao().getWorkouts(c.exerciseName, startOfToday.getMillis());
-
                 workoutsLd.observe(getViewLifecycleOwner(), workouts -> {
                     int total = 0;
                     for (Workout w : workouts) {
@@ -102,29 +125,37 @@ public class ChallengesFragment extends Fragment implements ChallengeView.Listen
                     }
                     progress.put(c.exerciseName, total);
                     if (challenges.size() == progress.size()) {
+
+                        List<Pair<Challenge, Integer>> list = new ArrayList<>();
+                        result.inProgress = new ArrayList<>();
                         for (int i = 0; i < challenges.size(); ++i) {
                             final Challenge crt = challenges.get(i);
                             final Integer crtProgress = progress.get(crt.exerciseName);
-                            output.add(new Pair<>(crt, crtProgress));
+
+                            final Pair<Challenge, Integer> e = new Pair<>(crt, crtProgress);
+                            list.add(e);
+                            result.inProgress.add(e);
                         }
-                        // then add the completed or failed challenges
-                        final LiveData<List<Challenge>> completedLd = AppDatabase.getDatabase(getContext()).challengeDao().getCompleted();
-                        completedLd.observe(getViewLifecycleOwner(), completed -> {
-                            completedLd.removeObservers(getViewLifecycleOwner());
-                            for (int i = 0; i < completed.size(); ++i) {
-                                final Challenge crt = completed.get(i);
-                                output.add(new Pair<>(crt, 0));
-                            }
-                            view.bindChallenges(output);
-                        });
+                        if (result.completed != null) {
+                            list.addAll(result.completed);
+                        }
+                        result.setValue(list);
                     }
                 });
             }
+        });
+        result.observe(getViewLifecycleOwner(), output -> {
+            view.bindChallenges(output);
         });
     }
 
     @Subscribe
     public void onMessageEvent(Events.AddChallenge event) {
         AppDatabase.addChallenge(getContext(), event.challenge);
+    }
+
+    @Override
+    public void onLongClick(int id) {
+        AppDatabase.deleteChallenge(getContext(), id);
     }
 }

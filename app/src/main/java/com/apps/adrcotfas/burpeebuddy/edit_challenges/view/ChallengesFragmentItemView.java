@@ -8,7 +8,7 @@ import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 public interface ChallengesFragmentItemView extends ObservableViewMvc<ChallengesFragmentItemView.Listener> {
 
     public interface Listener {
-
+        void onLongPress(int id);
     }
 
     void bindChallenge(Pair<Challenge, Integer> challenge);

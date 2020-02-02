@@ -187,7 +187,17 @@ public class AddChallengeDialog extends DialogFragment {
                     }
                 } else {
                     if (dialog != null) {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if ((challenge.type == GoalType.REPS
+                                && (repsOrMinutesEdit.length() != 0
+                                    && !repsOrMinutesEdit.getText().toString().equals("0")))
+
+                                || (challenge.type == GoalType.TIME
+                                    && (repsOrMinutesEdit.length() != 0
+                                        && !repsOrMinutesEdit.getText().toString().equals("0"))
+                                            || (secondsEdit.length() != 0
+                                                && !secondsEdit.getText().toString().equals("0")))) {
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        }
                     }
                     value = Integer.valueOf(s.toString());
                 }
