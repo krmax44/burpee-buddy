@@ -70,30 +70,18 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
             goalsLd.observe(getViewLifecycleOwner(),
                     goals -> mViewMvc.updateGoals(goals));
         });
-
-        //TODO: needed?
-//        // when navigating from Workout to Main
-//        if (getWorkoutManager().getWorkout().getState() != State.ACTIVE &&
-//                MainFragmentArgs.fromBundle(getArguments()).getShowFinishedDialog()) {
-//            Timber.tag(TAG).d( "show finished dialog");
-//            getWorkoutManager().getWorkout().setState(State.INACTIVE);
-//        }
-
         return mViewMvc.getRootView();
     }
 
     private void setupChallenges() {
         final DateTime now = new DateTime();
         final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
+        final long startOfTodayM = startOfToday.getMillis();
 
         final DateTime yesterday = new DateTime().minusDays(1);
         final DateTime startOfYesterday = yesterday.toLocalDate().toDateTimeAtStartOfDay(yesterday.getZone());
+        final long startOfYesterdayM = startOfYesterday.getMillis();
 
-        setupChallengesFailed(startOfToday, startOfYesterday);
-        setupChallengesInProgress(startOfToday, startOfYesterday);
-    }
-
-    private void setupChallengesFailed(DateTime startOfToday, DateTime startOfYesterday) {
         // a challenge corresponds to an exercise
         // you can have only one challenge in progress for one exercise at a time
         final LiveData<List<Challenge>> challengesLd =
@@ -102,104 +90,75 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
         challengesLd.observe(getViewLifecycleOwner(), challenges -> {
 
             // accumulate yesterday's progress for each challenge
-            Map<String, Integer> progress = new HashMap<>(challenges.size());
+            Map<String, Pair<Integer, Integer>> progress = new HashMap<>(challenges.size());
 
             for (Challenge c : challenges) {
-                // get yesterday's workouts to check for failed challenges
+                // get workouts starting from yesterday to check for failed challenges and set the progress for today
                 LiveData<List<Workout>> workoutsLd = AppDatabase.getDatabase(getContext()).workoutDao().getWorkouts(
-                        c.exerciseName, startOfYesterday.getMillis(), startOfToday.getMillis());
+                        c.exerciseName, startOfYesterdayM);
 
                 workoutsLd.observe(getViewLifecycleOwner(), workouts -> {
                     // accumulate total time or reps for each exercise
-                    int total = 0;
+                    int totalToday = 0;
+                    int totalYesterday = 0;
+
                     for (Workout w : workouts) {
+                        final DateTime workoutDt = new DateTime(w.timestamp);
+                        final DateTime workoutStartOfDay = workoutDt.toLocalDate().toDateTimeAtStartOfDay(workoutDt.getZone());
+
                         if (c.type == GoalType.TIME) {
-                            total += w.duration;
+                            if (workoutStartOfDay.equals(startOfToday)) {
+                                totalToday += w.duration;
+                            } else if (workoutStartOfDay.equals(startOfYesterday)) {
+                                totalYesterday += w.duration;
+                            }
                         } else {
-                            total += w.reps;
+                            if (workoutStartOfDay.equals(startOfToday)) {
+                                totalToday += w.reps;
+                            } else if (workoutStartOfDay.equals(startOfYesterday)) {
+                                totalYesterday += w.reps;
+                            }
                         }
                     }
 
-                    progress.put(c.exerciseName, total);
+                    progress.put(c.exerciseName, new Pair<>(totalToday, totalYesterday));
 
                     if (challenges.size() == progress.size()) {
-                        for (int i = 0; i < challenges.size(); ++i) {
-                            Challenge crt = challenges.get(i);
-                            Integer crtProgress = progress.get(crt.exerciseName);
 
-                            if (crtProgress == null) {
-                                Timber.tag(TAG).wtf("something went wrong here");
-                                continue;
-                            }
+                        List<Pair<Challenge, Integer>> output = new ArrayList<>();
 
-                            // if you started the challenge today, skip this
-                            if (crt.date == startOfToday.getMillis()) {
-                                continue;
-                            }
+                        for (Challenge ch : challenges) {
+                            final int crtProgress = progress.get(ch.exerciseName).first;
+                            final int crtProgressYesterday = progress.get(ch.exerciseName).second;
 
-                            if ((crt.type == GoalType.TIME && crtProgress < crt.duration) ||
-                                    crt.type == GoalType.REPS && crtProgress < crt.reps) {
+                            // did not start today and did not complete yesterday
+                            if ((ch.date < startOfTodayM)
+                                    && ((ch.type == GoalType.TIME && crtProgressYesterday < ch.duration)
+                                    || ch.type == GoalType.REPS && crtProgressYesterday < ch.reps)) {
                                 //TODO: challenge failed -> notify user
-                                AppDatabase.completeChallenge(getContext(), crt.id,
-                                        startOfYesterday.getMillis(), true);
-                            }
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    private void setupChallengesInProgress(DateTime startOfToday, DateTime startOfYesterday) {
-        final LiveData<List<Challenge>> challengesLd = AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
-
-        challengesLd.observe(getViewLifecycleOwner(), challenges -> {
-            Map<String, Integer> progress = new HashMap<>(challenges.size());
-            for (Challenge c : challenges) {
-                final LiveData<List<Workout>> workoutsLd = AppDatabase.getDatabase(
-                        getContext()).workoutDao().getWorkouts(c.exerciseName, startOfToday.getMillis());
-                workoutsLd.observe(getViewLifecycleOwner(), workouts -> {
-                    int total = 0;
-                    for (Workout w : workouts) {
-                        if (w.type == TIME_BASED) {
-                            total += w.duration;
-                        } else {
-                            total += w.reps;
-                        }
-                    }
-
-                    List<Pair<Challenge, Integer>> output = new ArrayList<>();
-
-                    progress.put(c.exerciseName, total);
-                    if (challenges.size() == progress.size()) {
-                        for (int i = 0; i < challenges.size(); ++i) {
-                            final Challenge crt = challenges.get(i);
-                            final Integer crtProgress = progress.get(crt.exerciseName);
-
-                            if (crtProgress == null) {
-                                Timber.tag(TAG).wtf("something went wrong here");
+                                AppDatabase.completeChallenge(getContext(), ch.id, startOfYesterdayM, true);
                                 continue;
                             }
 
+                            // last day was yesterday or earlier
                             final DateTime lastDay = new DateTime(c.date).plusDays(c.days);
-                            if (lastDay.isBefore(startOfToday) || lastDay.equals(startOfToday)) {
+                            if (lastDay.isBefore(startOfToday)) {
                                 //TODO: challenge failed -> notify user
                                 AppDatabase.completeChallenge(getContext(), c.id,
-                                        startOfYesterday.getMillis(), true);
+                                        startOfYesterdayM, true);
                                 continue;
                             }
 
-                            final DateTime endOfChallenge = new DateTime(crt.date).plusDays(crt.days - 1);
-                            final boolean thisIsTheLastDay = endOfChallenge.getMillis() == startOfToday.getMillis();
+                            final DateTime endOfChallenge = new DateTime(ch.date).plusDays(ch.days - 1);
+                            final boolean thisIsTheLastDay = endOfChallenge.getMillis() == startOfTodayM;
                             if (thisIsTheLastDay &&
-                                    ((crt.type == GoalType.TIME && crtProgress >= crt.duration) ||
-                                            crt.type == GoalType.REPS && crtProgress >= crt.reps)) {
+                                    ((ch.type == GoalType.TIME && crtProgress >= ch.duration) ||
+                                            ch.type == GoalType.REPS && crtProgress >= ch.reps)) {
                                 // Hurray, challenge completed
                                 //TODO: notify user
-                                AppDatabase.completeChallenge(getContext(), crt.id,
-                                        startOfToday.getMillis(), false);
+                                AppDatabase.completeChallenge(getContext(), ch.id, startOfTodayM, false);
                             } else {
-                                output.add(new Pair<>(crt, crtProgress));
+                                output.add(new Pair<>(ch, crtProgress));
                             }
                         }
                         mViewMvc.updateChallenges(output);
