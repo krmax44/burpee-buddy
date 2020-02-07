@@ -48,11 +48,8 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
         }
 
         if (challenge.complete) {
-            if (challenge.type == GoalType.TIME) {
-                text.setText(StringUtils.secondsToTimerFormatAlt(challenge.duration) + " " + challenge.exerciseName + " × " + challenge.days + " days");
-            } else {
-                text.setText(challenge.reps + " " + challenge.exerciseName + " × " + challenge.days + " days");
-            }
+
+            text.setText(buildChallengeText(challenge));
             if (challenge.failed) {
                 status.setText("failed");
                 status.setTextColor(getContext().getResources().getColor(R.color.red));
@@ -79,5 +76,13 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
             status.setTextColor(getContext().getResources().getColor(R.color.yellow));
         }
         date.setText(StringUtils.formatDate(challenge.date));
+    }
+
+    public static String buildChallengeText(Challenge challenge) {
+        if (challenge.type == GoalType.TIME) {
+            return StringUtils.secondsToTimerFormatAlt(challenge.duration) + " " + challenge.exerciseName + " × " + challenge.days + " days";
+        } else {
+            return challenge.reps + " " + challenge.exerciseName + " × " + challenge.days + " days";
+        }
     }
 }

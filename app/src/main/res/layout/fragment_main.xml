@@ -21,9 +21,24 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/smallTextSize"
             android:fontFamily="@font/source_sans_lite_"
-            android:text="Challanges"
+            android:text="@string/title_challenges"
             />
-        <include layout="@layout/section_challenge_summary_container"/>
+
+        <include
+            android:id="@+id/challenges_container"
+            layout="@layout/section_challenge_summary_container"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_challenge_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create a challenge"
+            android:visibility="gone"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -156,5 +171,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <nl.dionsegijn.konfetti.KonfettiView
+        android:id="@+id/viewKonfetti"
+        android:translationZ="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

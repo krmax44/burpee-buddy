@@ -1,10 +1,12 @@
 package com.apps.adrcotfas.burpeebuddy.main.view;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -34,6 +36,9 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.dionsegijn.konfetti.KonfettiView;
+import nl.dionsegijn.konfetti.models.Shape;
+import nl.dionsegijn.konfetti.models.Size;
 import timber.log.Timber;
 
 import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.goalToString;
@@ -44,13 +49,16 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     private static final String TAG = "MainViewMvcImpl";
 
     private final CoordinatorLayout mCoordinatorLayout;
+
+    private final MaterialButton mAddChallengeButton;
+    private final LinearLayout mChallengesContainer;
+
     private final ChipGroup mExerciseTypeChipGroup;
     private final ChipGroup mGoalsChipGroup;
     private final MaterialButton mStartButton;
 
     private List<Exercise> mExercises = new ArrayList<>();
     private List<Goal> mFavoriteGoals = new ArrayList<>();
-    private List<Pair<Challenge, Integer>> mChallenges = new ArrayList<>();
 
     private MutableLiveData<Exercise> mExercise = new MutableLiveData<>();
     private final ImageView mFavoriteGoalButton;
@@ -60,10 +68,18 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     private RecyclerView mChallengesRecycler;
     private ChallengesAdapter mChallengesAdapter;
 
+    private KonfettiView mKonfetti;
+
     public MainViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         final View view = inflater.inflate(R.layout.fragment_main, parent, false);
         setRootView(view);
         mGoalConfigurator = new GoalConfigurator(view, SettingsHelper.getGoal(), this, getContext());
+
+        mAddChallengeButton = findViewById(R.id.add_challenge_button);
+        mChallengesContainer = findViewById(R.id.challenges_container);
+        mAddChallengeButton.setOnClickListener(v -> onAddChallengeButtonClicked());
+        mChallengesContainer.setVisibility(View.GONE);
+        mAddChallengeButton.setVisibility(View.VISIBLE);
 
         mExerciseTypeChipGroup = findViewById(R.id.exercise_type);
         mStartButton = findViewById(R.id.start_button);
@@ -95,6 +111,8 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         });
 
         mStartButton.setOnClickListener(v -> onStartButtonClicked());
+
+        mKonfetti = findViewById(R.id.viewKonfetti);
 
         FrameLayout favoriteGoalsContainer = findViewById(R.id.button_favorite_goals);
         mFavoriteGoalButton = favoriteGoalsContainer.findViewById(R.id.button_drawable);
@@ -141,6 +159,12 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     public void onStartButtonClicked() {
         for (Listener listener : getListeners()) {
             listener.onStartButtonClicked();
+        }
+    }
+
+    public void onAddChallengeButtonClicked() {
+        for (Listener listener : getListeners()) {
+            listener.onAddChallengeButtonClicked();
         }
     }
 
@@ -193,7 +217,16 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     @Override
     public void updateChallenges(List<Pair<Challenge, Integer>> challenges) {
-        mChallenges = challenges;
+
+        if (challenges.isEmpty()) {
+            mChallengesContainer.setVisibility(View.GONE);
+            mAddChallengeButton.setVisibility(View.VISIBLE);
+            return;
+        } else {
+            mChallengesContainer.setVisibility(View.VISIBLE);
+            mAddChallengeButton.setVisibility(View.GONE);
+        }
+
         mChallengesAdapter.bindChallenges(challenges);
 
         if (challenges.size() > 1) {
@@ -213,6 +246,21 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 //                break;
 //            }
 //        }
+    }
+
+    @Override
+    public void showKonfeti() {
+        mKonfetti.build()
+                //TODO: add nicer colors
+                .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA)
+                .setDirection(0.0, 359.0)
+                .setSpeed(1f, 5f)
+                .setFadeOutEnabled(true)
+                .setTimeToLive(2000L)
+                .addShapes(Shape.RECT, Shape.CIRCLE)
+                .addSizes(new Size(12, 5))
+                .setPosition(-50f, mKonfetti.getWidth() + 50f, -50f, -50f)
+                .streamFor(300, 3000L);
     }
 
     private void onExerciseSelected() {

@@ -45,7 +45,7 @@ public class LinePagerIndicatorDecoration extends RecyclerView.ItemDecoration {
     /**
      * Height of the space the indicator takes up at the bottom of the view.
      */
-    private final int mIndicatorHeight = (int) (DP * 16);
+    private final int mIndicatorHeight = (int) (DP * 2);
 
     /**
      * Indicator stroke width.

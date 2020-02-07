@@ -18,6 +18,8 @@ public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
     void updateGoals(List<Goal> goals);
     void updateChallenges(List<Pair<Challenge, Integer>> challenges);
 
+    void showKonfeti();
+
     /**
      * Returns the currently selected exercise
      */
@@ -36,5 +38,6 @@ public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
         void onEditGoalsClicked();
 
         void onGoalSelectionChanged(boolean valid);
+        void onAddChallengeButtonClicked();
     }
 }

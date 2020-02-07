@@ -19,6 +19,7 @@ import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
+import com.apps.adrcotfas.burpeebuddy.main.dialog.ChallengeCompleteDialog;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvc;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvcImpl;
 
@@ -91,6 +92,11 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
             // accumulate yesterday's progress for each challenge
             Map<String, Pair<Integer, Integer>> progress = new HashMap<>(challenges.size());
+            List<Pair<Challenge, Integer>> output = new ArrayList<>();
+
+            if (challenges.isEmpty()) {
+                mViewMvc.updateChallenges(output);
+            }
 
             for (Challenge c : challenges) {
                 // get workouts starting from yesterday to check for failed challenges and set the progress for today
@@ -125,8 +131,6 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
                     if (challenges.size() == progress.size()) {
 
-                        List<Pair<Challenge, Integer>> output = new ArrayList<>();
-
                         for (Challenge ch : challenges) {
                             final int crtProgress = progress.get(ch.exerciseName).first;
                             final int crtProgressYesterday = progress.get(ch.exerciseName).second;
@@ -135,7 +139,8 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                             if ((ch.date < startOfTodayM)
                                     && ((ch.type == GoalType.TIME && crtProgressYesterday < ch.duration)
                                     || ch.type == GoalType.REPS && crtProgressYesterday < ch.reps)) {
-                                //TODO: challenge failed -> notify user
+                                final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, false);
+                                dialog.show(getParentFragmentManager(), TAG);
                                 AppDatabase.completeChallenge(getContext(), ch.id, startOfYesterdayM, true);
                                 continue;
                             }
@@ -143,7 +148,8 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                             // last day was yesterday or earlier
                             final DateTime lastDay = new DateTime(c.date).plusDays(c.days);
                             if (lastDay.isBefore(startOfToday)) {
-                                //TODO: challenge failed -> notify user
+                                final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, false);
+                                dialog.show(getParentFragmentManager(), TAG);
                                 AppDatabase.completeChallenge(getContext(), c.id,
                                         startOfYesterdayM, true);
                                 continue;
@@ -155,7 +161,10 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
                                     ((ch.type == GoalType.TIME && crtProgress >= ch.duration) ||
                                             ch.type == GoalType.REPS && crtProgress >= ch.reps)) {
                                 // Hurray, challenge completed
-                                //TODO: notify user
+                                mViewMvc.showKonfeti();
+
+                                final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, true);
+                                dialog.show(getParentFragmentManager(), TAG);
                                 AppDatabase.completeChallenge(getContext(), ch.id, startOfTodayM, false);
                             } else {
                                 output.add(new Pair<>(ch, crtProgress));
@@ -206,5 +215,10 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     @Override
     public void onGoalSelectionChanged(boolean valid) {
         mViewMvc.toggleStartButtonState(valid);
+    }
+
+    @Override
+    public void onAddChallengeButtonClicked() {
+        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_challenges);
     }
 }
