@@ -14,7 +14,7 @@ public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
 
     void showIntroduction();
 
-    void updateExercise(List<Exercise> exercises);
+    void updateExercises(List<Exercise> exercises);
     void updateGoals(List<Goal> goals);
     void updateChallenges(List<Pair<Challenge, Integer>> challenges);
 
@@ -36,8 +36,10 @@ public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
         void onStartButtonClicked();
         void onEditExercisesClicked();
         void onEditGoalsClicked();
-
         void onGoalSelectionChanged(boolean valid);
+
         void onAddChallengeButtonClicked();
+        void onAddGoalButtonClicked();
+        void onAddExerciseButtonClicked();
     }
 }

@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.ScrollView;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.util.Pair;
@@ -54,6 +55,9 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     private final LinearLayout mChallengesContainer;
 
     private final ChipGroup mExerciseTypeChipGroup;
+    private final MaterialButton mAddExerciseButton;
+    private final MaterialButton mAddGoalButton;
+
     private final ChipGroup mGoalsChipGroup;
     private final MaterialButton mStartButton;
 
@@ -64,6 +68,9 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     private final ImageView mFavoriteGoalButton;
     private GoalConfigurator mGoalConfigurator;
     private final FrameLayout mEditGoalButton;
+
+    private ScrollView mExercisesContainer;
+    private ScrollView mGoalsContainer;
 
     private RecyclerView mChallengesRecycler;
     private ChallengesAdapter mChallengesAdapter;
@@ -80,6 +87,9 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         mAddChallengeButton.setOnClickListener(v -> onAddChallengeButtonClicked());
         mChallengesContainer.setVisibility(View.GONE);
         mAddChallengeButton.setVisibility(View.VISIBLE);
+
+        mExercisesContainer = findViewById(R.id.exercises_container);
+        mGoalsContainer = findViewById(R.id.goals_container);
 
         mExerciseTypeChipGroup = findViewById(R.id.exercise_type);
         mStartButton = findViewById(R.id.start_button);
@@ -112,6 +122,12 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
         mStartButton.setOnClickListener(v -> onStartButtonClicked());
 
+        mAddExerciseButton = findViewById(R.id.add_exercise_button);
+        mAddGoalButton = findViewById(R.id.add_goal_button);
+
+        mAddExerciseButton.setOnClickListener(v -> onAddExerciseButtonClicked());
+        mAddGoalButton.setOnClickListener(v -> onAddGoalButtonClicked());
+
         mKonfetti = findViewById(R.id.viewKonfetti);
 
         FrameLayout favoriteGoalsContainer = findViewById(R.id.button_favorite_goals);
@@ -123,6 +139,18 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         });
 
         setupChallengesView(inflater);
+    }
+
+    private void onAddGoalButtonClicked() {
+        for (Listener l : getListeners()) {
+            l.onAddGoalButtonClicked();
+        }
+    }
+
+    private void onAddExerciseButtonClicked() {
+        for (Listener l : getListeners()) {
+            l.onAddExerciseButtonClicked();
+        }
     }
 
     private void setupChallengesView(LayoutInflater inflater) {
@@ -138,8 +166,16 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     }
 
     private void updateGoalSectionState(boolean isFavoritesVisible) {
+
         findViewById(R.id.goals_container).setVisibility(isFavoritesVisible ? View.VISIBLE : View.GONE);
         findViewById(R.id.goal_seekbars).setVisibility(isFavoritesVisible ? View.GONE : View.VISIBLE);
+
+        if (!isFavoritesVisible || mGoalsChipGroup.getChildCount() != 0) {
+            mAddGoalButton.setVisibility(View.GONE);
+        } else {
+            mAddGoalButton.setVisibility(View.VISIBLE);
+        }
+
         mFavoriteGoalButton.setImageDrawable(getContext().getResources().getDrawable(
                 isFavoritesVisible ? R.drawable.ic_tune : R.drawable.ic_star_outline));
         mEditGoalButton.setVisibility(isFavoritesVisible ? View.VISIBLE : View.GONE);
@@ -181,7 +217,12 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     }
 
     @Override
-    public void updateExercise(List<Exercise> exercises) {
+    public void updateExercises(List<Exercise> exercises) {
+
+        mAddExerciseButton.setVisibility(exercises.isEmpty() ? View.VISIBLE : View.GONE);
+        mExercisesContainer.setVisibility(exercises.isEmpty() ? View.GONE : View.VISIBLE);
+        mStartButton.setEnabled(!exercises.isEmpty());
+
         mExercises = exercises;
         mExerciseTypeChipGroup.removeAllViews();
         for (Exercise w : mExercises) {
@@ -201,6 +242,10 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     @Override
     public void updateGoals(List<Goal> goals) {
+
+        mAddGoalButton.setVisibility(goals.isEmpty() ? View.VISIBLE : View.GONE);
+        mGoalsContainer.setVisibility(goals.isEmpty() ? View.GONE : View.VISIBLE);
+
         mFavoriteGoals = goals;
         mGoalsChipGroup.removeAllViews();
         for (Goal g : mFavoriteGoals) {

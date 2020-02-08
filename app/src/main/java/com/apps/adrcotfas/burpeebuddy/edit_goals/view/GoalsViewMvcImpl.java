@@ -1,7 +1,9 @@
 package com.apps.adrcotfas.burpeebuddy.edit_goals.view;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,21 +18,26 @@ public class GoalsViewMvcImpl
         extends BaseObservableViewMvc<GoalsViewMvc.Listener>
         implements GoalsViewMvc, GoalsAdapter.Listener {
 
-    private RecyclerView mRecyclerView;
-    private GoalsAdapter mAdapter;
+    private RecyclerView recyclerView;
+    private GoalsAdapter adapter;
+
+    private LinearLayout emptyState;
 
     public GoalsViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
+        emptyState = findViewById(R.id.empty_state);
 
-        mRecyclerView = findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mAdapter = new GoalsAdapter(inflater, this);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new GoalsAdapter(inflater, this);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
     public void bindGoals(List<Goal> goals) {
-        mAdapter.bindGoals(goals);
+        recyclerView.setVisibility(goals.isEmpty() ? View.GONE : View.VISIBLE);
+        emptyState.setVisibility(goals.isEmpty() ? View.VISIBLE : View.GONE);
+        adapter.bindGoals(goals);
     }
 
     @Override

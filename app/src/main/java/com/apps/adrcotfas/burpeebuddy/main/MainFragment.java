@@ -58,7 +58,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
 
         AppDatabase.getDatabase(getContext()).exerciseDao().getAllVisible().observe(
                 getViewLifecycleOwner(), exerciseTypes ->
-                        mViewMvc.updateExercise(exerciseTypes));
+                        mViewMvc.updateExercises(exerciseTypes));
 
         mViewMvc.getExercise().observe(getViewLifecycleOwner(), exercise -> {
             mExercise = exercise;
@@ -220,5 +220,15 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     @Override
     public void onAddChallengeButtonClicked() {
         NavHostFragment.findNavController(this).navigate(R.id.action_main_to_challenges);
+    }
+
+    @Override
+    public void onAddGoalButtonClicked() {
+        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_goals);
+    }
+
+    @Override
+    public void onAddExerciseButtonClicked() {
+        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_exercises);
     }
 }

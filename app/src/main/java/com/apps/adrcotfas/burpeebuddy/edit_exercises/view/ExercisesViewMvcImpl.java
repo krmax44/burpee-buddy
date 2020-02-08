@@ -1,8 +1,9 @@
 package com.apps.adrcotfas.burpeebuddy.edit_exercises.view;
 
-
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,26 +21,32 @@ public class ExercisesViewMvcImpl
         extends BaseObservableViewMvc<ExercisesViewMvc.Listener>
         implements ExercisesViewMvc, ExercisesAdapter.Listener {
 
-    private RecyclerView mRecyclerView;
-    private ExercisesAdapter mAdapter;
-    private ItemTouchHelper mItemTouchHelper;
+    private RecyclerView recyclerView;
+    private ExercisesAdapter adapter;
+    private ItemTouchHelper itemTouchHelper;
+
+    private LinearLayout emptyState;
 
     public ExercisesViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
 
-        mRecyclerView = findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mAdapter = new ExercisesAdapter(inflater, this);
-        mRecyclerView.setAdapter(mAdapter);
+        emptyState = findViewById(R.id.empty_state);
 
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
-        mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new ExercisesAdapter(inflater, this);
+        recyclerView.setAdapter(adapter);
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
     public void bindExercises(List<Exercise> exercises) {
-        mAdapter.bindExercises(exercises);
+        recyclerView.setVisibility(exercises.isEmpty() ? View.GONE : View.VISIBLE);
+        emptyState.setVisibility(exercises.isEmpty() ? View.VISIBLE : View.GONE);
+        adapter.bindExercises(exercises);
     }
 
     @Override
@@ -58,7 +65,7 @@ public class ExercisesViewMvcImpl
 
     @Override
     public void onDragStarted(ExercisesViewHolder viewHolder) {
-        mItemTouchHelper.startDrag(viewHolder);
+        itemTouchHelper.startDrag(viewHolder);
     }
 
     @Override
