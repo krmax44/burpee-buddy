@@ -3,6 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.statistics.view;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,21 +18,26 @@ public class StatisticsViewMvcImpl
         extends BaseObservableViewMvc<StatisticsViewMvc.Listener>
     implements StatisticsViewMvc, StatisticsAdapter.Listener {
 
-    private RecyclerView mRecyclerView;
-    private StatisticsAdapter mAdapter;
+    private RecyclerView recyclerView;
+    private StatisticsAdapter adapter;
+
+    private LinearLayout emptyState;
 
     public StatisticsViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
+        emptyState = findViewById(R.id.empty_state);
 
-        mRecyclerView = findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mAdapter = new StatisticsAdapter(inflater, this);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new StatisticsAdapter(inflater, this);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
     public void bindWorkouts(List<Workout> workouts) {
-        mAdapter.bindWorkouts(workouts);
+        recyclerView.setVisibility(workouts.isEmpty() ? View.GONE : View.VISIBLE);
+        emptyState.setVisibility(workouts.isEmpty() ? View.VISIBLE : View.GONE);
+        adapter.bindWorkouts(workouts);
     }
 
     @Override

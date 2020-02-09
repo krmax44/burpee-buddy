@@ -20,9 +20,12 @@
             android:id="@+id/name"
             android:imeOptions="actionSearch"
             android:completionThreshold="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.AutoCompleteTextView.FilledBox"/>
+            android:layout_height="match_parent"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,12 +35,12 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/reps_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="68dp"
             android:layout_height="wrap_content"
-            android:hint="@string/reps"
-            app:errorEnabled="true"
+
             android:visibility="gone"
+            android:hint="@string/reps"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/minutes_layout"
