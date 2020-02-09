@@ -166,7 +166,6 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     }
 
     private void updateGoalSectionState(boolean isFavoritesVisible) {
-
         findViewById(R.id.goals_container).setVisibility(isFavoritesVisible ? View.VISIBLE : View.GONE);
         findViewById(R.id.goal_seekbars).setVisibility(isFavoritesVisible ? View.GONE : View.VISIBLE);
 
@@ -243,8 +242,10 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
     @Override
     public void updateGoals(List<Goal> goals) {
 
-        mAddGoalButton.setVisibility(goals.isEmpty() ? View.VISIBLE : View.GONE);
-        mGoalsContainer.setVisibility(goals.isEmpty() ? View.GONE : View.VISIBLE);
+        if (SettingsHelper.isGoalFavoritesVisible()) {
+            mAddGoalButton.setVisibility(goals.isEmpty() ? View.VISIBLE : View.GONE);
+            mGoalsContainer.setVisibility(goals.isEmpty() ? View.GONE : View.VISIBLE);
+        }
 
         mFavoriteGoals = goals;
         mGoalsChipGroup.removeAllViews();

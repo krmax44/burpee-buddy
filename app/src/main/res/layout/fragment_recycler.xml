@@ -19,14 +19,16 @@
         android:layout_gravity="center"
         android:visibility="gone">
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_empty_state"/>
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_list_large"
+            android:tint="@color/grey500"/>
         <TextView
             android:text="No items"
             android:textSize="@dimen/largeTextSize"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey500"/>
     </LinearLayout>
 
 </LinearLayout>

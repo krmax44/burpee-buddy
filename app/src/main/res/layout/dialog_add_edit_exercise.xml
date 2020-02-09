@@ -15,11 +15,12 @@
         android:hint="@string/exercise_dialog_exercise_name"
         app:errorEnabled="true"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/name"
-            android:maxLength="30"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:maxLength="30" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
