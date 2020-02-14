@@ -2,6 +2,7 @@ package com.apps.adrcotfas.burpeebuddy.edit_challenges.view;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -23,23 +24,19 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
     private TextView date;
     private TextView text;
     private Challenge challenge;
+    private View background;
 
     public ChallengesFragmentItemViewImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.challenge_list_item, parent, false));
         status = findViewById(R.id.status);
         date = findViewById(R.id.end_date);
         text = findViewById(R.id.description);
-
-        findViewById(R.id.parent).setOnClickListener(v -> {
-            for (Listener l : getListeners()) {
-                l.onLongPress(challenge.id);
-            }
-        });
+        background = findViewById(R.id.overlay);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void bindChallenge(Pair<Challenge, Integer> challengeData) {
+    public void bindChallenge(Pair<Challenge, Integer> challengeData, boolean selected) {
         challenge = challengeData.first;
         final Integer progress = challengeData.second;
 
@@ -51,11 +48,11 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
 
             text.setText(buildChallengeText(challenge));
             if (challenge.failed) {
-                status.setText("failed");
+                status.setText("FAILED");
                 status.setTextColor(getContext().getResources().getColor(R.color.red));
             }
             else {
-                status.setText("complete");
+                status.setText("COMPLETE");
                 status.setTextColor(getContext().getResources().getColor(R.color.green));
             }
         } else {
@@ -72,10 +69,12 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
             } else {
                 text.setText(progress + "/" + challenge.reps + " " + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
             }
-            status.setText("in progress");
+            status.setText("IN PROGRESS");
             status.setTextColor(getContext().getResources().getColor(R.color.yellow));
         }
         date.setText(StringUtils.formatDate(challenge.date));
+
+        background.setVisibility(selected ? View.VISIBLE : View.GONE);
     }
 
     public static String buildChallengeText(Challenge challenge) {

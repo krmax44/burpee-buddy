@@ -10,8 +10,13 @@ import java.util.List;
 public interface ChallengeView extends ObservableViewMvc<ChallengeView.Listener> {
 
     void bindChallenges(List<Pair<Challenge, Integer>> challenges);
+    void selectAllItems();
+    void unselectItems();
+    List<Integer> getSelectedEntries();
 
     public interface Listener {
-        void onLongClick(int id);
+        void startActionMode();
+        void updateTitle(String valueOf);
+        void finishAction();
     }
 }

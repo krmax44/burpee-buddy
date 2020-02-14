@@ -14,7 +14,7 @@ public class ExerciseGenerator {
         workouts.add(new Exercise("dips", ExerciseType.UNCOUNTABLE));
         workouts.add(new Exercise("squats", ExerciseType.UNCOUNTABLE));
         workouts.add(new Exercise("kettlebell swings", ExerciseType.UNCOUNTABLE));
-        workouts.add(new Exercise("dumbbell curl", ExerciseType.UNCOUNTABLE));
+        workouts.add(new Exercise("dumbbell curls", ExerciseType.UNCOUNTABLE));
         workouts.add(new Exercise("single-unders", ExerciseType.UNCOUNTABLE));
         workouts.add(new Exercise("double-unders", ExerciseType.UNCOUNTABLE));
 

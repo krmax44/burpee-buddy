@@ -15,17 +15,12 @@ import java.util.List;
 public class ChallengesFragmentAdapter extends RecyclerView.Adapter<ChallengesFragmentViewHolder>
     implements ChallengesFragmentItemView.Listener {
 
-    public interface Listener {
-        void onLongPress(int id);
-    }
-
     private final LayoutInflater inflater;
-    private final Listener listener;
     private List<Pair<Challenge, Integer>> challenges = new ArrayList<>();
+    private List<Integer> selectedItems = new ArrayList<>();
 
-    public ChallengesFragmentAdapter(LayoutInflater inflater, Listener listener) {
+    public ChallengesFragmentAdapter(LayoutInflater inflater) {
         this.inflater = inflater;
-        this.listener = listener;
     }
 
     public void bindChallenges(List<Pair<Challenge, Integer>> challenges) {
@@ -43,8 +38,9 @@ public class ChallengesFragmentAdapter extends RecyclerView.Adapter<ChallengesFr
 
     @Override
     public void onBindViewHolder(@NonNull ChallengesFragmentViewHolder holder, int position) {
+        final boolean selected = selectedItems.contains(challenges.get(position).first.id);
         holder.getView().bindChallenge(
-                challenges.get(position));
+                challenges.get(position), selected);
     }
 
     @Override
@@ -52,8 +48,8 @@ public class ChallengesFragmentAdapter extends RecyclerView.Adapter<ChallengesFr
         return challenges.size();
     }
 
-    @Override
-    public void onLongPress(int id) {
-        listener.onLongPress(id);
+    public void setSelectedItems(List<Integer> selectedItems) {
+        this.selectedItems = selectedItems;
+        notifyDataSetChanged();
     }
 }

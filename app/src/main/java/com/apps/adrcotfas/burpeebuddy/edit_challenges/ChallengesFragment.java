@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.edit_challenges;
 
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +23,7 @@ import com.apps.adrcotfas.burpeebuddy.edit_challenges.dialog.AddChallengeDialog;
 import com.apps.adrcotfas.burpeebuddy.edit_challenges.livedata.ChallengesCombinedLiveData;
 import com.apps.adrcotfas.burpeebuddy.edit_challenges.view.ChallengeView;
 import com.apps.adrcotfas.burpeebuddy.edit_challenges.view.ChallengeViewImpl;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,11 +36,13 @@ import java.util.Map;
 
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
-public class ChallengesFragment extends Fragment implements ChallengeView.Listener {
+public class ChallengesFragment extends Fragment implements ChallengeView.Listener, ActionModeCallback.Listener {
 
     private static final String TAG = "ChallengesFragment";
 
     private ChallengeView view;
+    private ActionMode actionMode;
+    private ActionModeCallback mActionModeCallback;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -46,6 +50,8 @@ public class ChallengesFragment extends Fragment implements ChallengeView.Listen
         EventBus.getDefault().register(this);
         view = new ChallengeViewImpl(inflater, container);
         view.registerListener(this);
+
+        mActionModeCallback = new ActionModeCallback(this);
 
         setupChallenges();
 
@@ -144,9 +150,7 @@ public class ChallengesFragment extends Fragment implements ChallengeView.Listen
                 });
             }
         });
-        result.observe(getViewLifecycleOwner(), output -> {
-            view.bindChallenges(output);
-        });
+        result.observe(getViewLifecycleOwner(), output -> view.bindChallenges(output));
     }
 
     @Subscribe
@@ -155,7 +159,59 @@ public class ChallengesFragment extends Fragment implements ChallengeView.Listen
     }
 
     @Override
-    public void onLongClick(int id) {
-        AppDatabase.deleteChallenge(getContext(), id);
+    public void startActionMode() {
+        if (actionMode == null) {
+            actionMode = getActivity().startActionMode(mActionModeCallback);
+        }
     }
+
+    @Override
+    public void updateTitle(String numberOfSelectedItems) {
+        actionMode.setTitle(numberOfSelectedItems);
+    }
+
+    @Override
+    public void finishAction() {
+        actionMode.setTitle("");
+        actionMode.finish();
+    }
+
+    @Override
+    public void actionDelete() {
+        new MaterialAlertDialogBuilder(getActivity())
+                .setTitle("Delete challenges?")
+                .setMessage("This will delete the selected challenges")
+                .setPositiveButton(android.R.string.ok, (dialog, id) -> {
+                    deleteSessions(view.getSelectedEntries());
+                    finishAction();
+                })
+                .setNegativeButton(android.R.string.cancel, (dialog, id) -> dialog.cancel())
+                .show();
+    }
+
+    private void deleteSessions(List<Integer> ids) {
+        for (int id : ids) {
+            AppDatabase.deleteChallenge(getContext(), id);
+        }
+    }
+
+    @Override
+    public void destroyActionMode() {
+        view.unselectItems();
+        actionMode = null;
+    }
+
+    @Override
+    public void actionSelectAllItems() {
+        view.selectAllItems();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (actionMode != null) {
+            actionMode.finish();
+        }
+    }
+
 }

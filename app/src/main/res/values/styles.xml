@@ -8,6 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
 
         <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
+
+        <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="OverviewTextValue">
@@ -23,5 +27,7 @@
 
     <style name="mdtp_ActionButton.Text" parent="Widget.MaterialComponents.Button.TextButton.Dialog"/>
 
-
+    <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">?attr/colorPrimary</item>
+    </style>
 </resources>
