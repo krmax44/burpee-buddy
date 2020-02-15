@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_challenges;
+package com.apps.adrcotfas.burpeebuddy.common;
 
 import android.view.ActionMode;
 import android.view.Menu;
@@ -13,18 +13,24 @@ public class ActionModeCallback implements ActionMode.Callback{
         void actionSelectAllItems();
         void actionDelete();
         void destroyActionMode();
+        void editSelected();
     }
 
     private Listener listener;
+    private Menu menu;
+    private boolean showEdit;
 
-    public ActionModeCallback(Listener listener) {
+    public ActionModeCallback(Listener listener, boolean showEdit) {
         this.listener = listener;
+        this.showEdit = showEdit;
     }
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.menu_all_entries_selection, menu);
+        this.menu = menu;
+        menu.getItem(0).setVisible(showEdit);
         return true;
     }
 
@@ -36,6 +42,9 @@ public class ActionModeCallback implements ActionMode.Callback{
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_edit:
+                listener.editSelected();
+                break;
             case R.id.action_select_all:
                 listener.actionSelectAllItems();
                 break;
@@ -49,5 +58,9 @@ public class ActionModeCallback implements ActionMode.Callback{
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         listener.destroyActionMode();
+    }
+
+    public void toggleEditButtonVisibility(boolean visible) {
+        menu.getItem(0).setVisible(visible);
     }
 }

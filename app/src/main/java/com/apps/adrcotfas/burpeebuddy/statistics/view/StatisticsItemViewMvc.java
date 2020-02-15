@@ -7,8 +7,7 @@ import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 public interface StatisticsItemViewMvc extends ObservableViewMvc<StatisticsItemViewMvc.Listener> {
 
     public interface Listener {
-        void onWorkoutLongPress(int id);
     }
 
-    void bindWorkout(Workout workout);
+    void bindWorkout(Workout workout, boolean selected);
 }

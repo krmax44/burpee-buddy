@@ -8,7 +8,16 @@ import java.util.List;
 public interface StatisticsViewMvc extends ObservableViewMvc<StatisticsViewMvc.Listener> {
 
     void bindWorkouts(List<Workout> workouts);
+
+    void selectAllItems();
+    void unselectItems();
+    List<Integer> getSelectedEntriesIds();
+
     public interface Listener {
-        void onWorkoutLongPress(int id);
+        void startActionMode();
+        void updateTitle(String valueOf);
+        void finishAction();
+
+        void toggleEditButtonVisibility(boolean visible);
     }
 }

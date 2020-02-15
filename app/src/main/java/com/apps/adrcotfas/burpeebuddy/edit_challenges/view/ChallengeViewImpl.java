@@ -25,8 +25,8 @@ public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Liste
     private LinearLayout emptyState;
     private List<Challenge> challenges = new ArrayList<>();
 
-    private List<Integer> mSelectedEntries = new ArrayList<>();
-    private boolean mIsMultiSelect = false;
+    private List<Integer> selectedEntries = new ArrayList<>();
+    private boolean isMultiSelect = false;
 
     public ChallengeViewImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
@@ -43,16 +43,15 @@ public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Liste
 
             @Override
             public void onItemClick(View view, int position) {
-                if (mIsMultiSelect) {
+                if (isMultiSelect) {
                     multiSelect(position);
                 }
             }
-
             @Override
             public void onItemLongClick(View view, int position) {
-                if (!mIsMultiSelect) {
+                if (!isMultiSelect) {
                     adapter.setSelectedItems(new ArrayList<>());
-                    mIsMultiSelect = true;
+                    isMultiSelect = true;
 
                     for(Listener l : getListeners()) {
                         l.startActionMode();
@@ -79,36 +78,36 @@ public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Liste
     private void multiSelect(int position) {
         Challenge s = challenges.get(position);
         if (s != null) {
-            int idx = mSelectedEntries.indexOf(s.id);
+            int idx = selectedEntries.indexOf(s.id);
             if (idx != -1) {
-                mSelectedEntries.remove(idx);
+                selectedEntries.remove(idx);
             }  else {
-                mSelectedEntries.add(s.id);
+                selectedEntries.add(s.id);
             }
-            if (!mSelectedEntries.isEmpty()) {
+            if (!selectedEntries.isEmpty()) {
                 for(Listener l : getListeners()) {
-                    l.updateTitle(String.valueOf(mSelectedEntries.size()));
+                    l.updateTitle(String.valueOf(selectedEntries.size()));
                 }
             } else {
                 for(Listener l : getListeners()) {
                     l.finishAction();
                 }
             }
-            adapter.setSelectedItems(mSelectedEntries);
+            adapter.setSelectedItems(selectedEntries);
         }
     }
 
     public void selectAllItems() {
-        mSelectedEntries.clear();
-        for (int i = 0; i < challenges.size(); ++i) {
-            mSelectedEntries.add(i, challenges.get(i).id);
+        selectedEntries.clear();
+        for (Challenge c : challenges) {
+            selectedEntries.add(c.id);
         }
 
-        if (!mSelectedEntries.isEmpty()) {
+        if (!selectedEntries.isEmpty()) {
             for(Listener l : getListeners()) {
-                l.updateTitle(String.valueOf(mSelectedEntries.size()));
+                l.updateTitle(String.valueOf(selectedEntries.size()));
             }
-            adapter.setSelectedItems(mSelectedEntries);
+            adapter.setSelectedItems(selectedEntries);
         }  else {
             for(Listener l : getListeners()) {
                 l.finishAction();
@@ -118,13 +117,13 @@ public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Liste
 
     @Override
     public void unselectItems() {
-        mIsMultiSelect = false;
-        mSelectedEntries = new ArrayList<>();
+        isMultiSelect = false;
+        selectedEntries = new ArrayList<>();
         adapter.setSelectedItems(new ArrayList<>());
     }
 
     @Override
-    public List<Integer> getSelectedEntries() {
-        return mSelectedEntries;
+    public List<Integer> getSelectedEntriesIds() {
+        return selectedEntries;
     }
 }

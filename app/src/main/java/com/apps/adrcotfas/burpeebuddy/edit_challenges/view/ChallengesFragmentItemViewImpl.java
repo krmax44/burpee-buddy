@@ -24,14 +24,14 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
     private TextView date;
     private TextView text;
     private Challenge challenge;
-    private View background;
+    private View overlay;
 
     public ChallengesFragmentItemViewImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.challenge_list_item, parent, false));
         status = findViewById(R.id.status);
         date = findViewById(R.id.end_date);
         text = findViewById(R.id.description);
-        background = findViewById(R.id.overlay);
+        overlay = findViewById(R.id.overlay);
     }
 
     @SuppressLint("SetTextI18n")
@@ -74,7 +74,7 @@ public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<Challe
         }
         date.setText(StringUtils.formatDate(challenge.date));
 
-        background.setVisibility(selected ? View.VISIBLE : View.GONE);
+        overlay.setVisibility(selected ? View.VISIBLE : View.GONE);
     }
 
     public static String buildChallengeText(Challenge challenge) {

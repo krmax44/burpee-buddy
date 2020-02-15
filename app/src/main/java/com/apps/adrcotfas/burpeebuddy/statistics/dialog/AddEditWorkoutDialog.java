@@ -74,17 +74,6 @@ public class AddEditWorkoutDialog extends DialogFragment
         setupDurationsEditText(v);
         setupDateAndTimeViews(v);
 
-        if(mEditMode) {
-            b.setNeutralButton(getString(R.string.delete), ((dialog, which)
-                    -> new MaterialAlertDialogBuilder(getActivity())
-                    .setPositiveButton(android.R.string.ok, ((dialog2, which2)
-                            -> EventBus.getDefault().post(new Events.DeleteWorkout(mWorkout.id))))
-                    .setNegativeButton(android.R.string.cancel, (dialog3, which3) -> {})
-                    .setTitle("Delete workout")
-                    .setMessage("Are you sure you want to delete this workout?")
-                    .create().show()));
-        }
-
         Dialog d = b
                 .setCancelable(false)
                 .setTitle(mEditMode ? "Edit Workout" : "Add Workout")
@@ -147,6 +136,9 @@ public class AddEditWorkoutDialog extends DialogFragment
                     }
                     nameEditText.setAdapter(new ArrayAdapter<>(getContext(),
                             R.layout.select_dialog_item, mExercisesNames));
+                    if(mEditMode) {
+                        nameEditText.setText(mWorkout.exerciseName);
+                    }
                 });
 
         nameEditText.addTextChangedListener(new TextWatcher() {

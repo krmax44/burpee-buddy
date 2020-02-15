@@ -10,11 +10,12 @@ import java.util.List;
 public interface ChallengeView extends ObservableViewMvc<ChallengeView.Listener> {
 
     void bindChallenges(List<Pair<Challenge, Integer>> challenges);
+
     void selectAllItems();
     void unselectItems();
-    List<Integer> getSelectedEntries();
+    List<Integer> getSelectedEntriesIds();
 
-    public interface Listener {
+    interface Listener {
         void startActionMode();
         void updateTitle(String valueOf);
         void finishAction();

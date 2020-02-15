@@ -15,55 +15,57 @@ import com.google.android.material.chip.Chip;
 class StatisticsItemViewMvcImpl extends BaseObservableViewMvc<StatisticsItemViewMvc.Listener>
         implements StatisticsItemViewMvc {
 
-    private Workout mWorkout;
+    private Workout workout;
 
-    private Chip mExerciseName;
-    private TextView mDate;
-    private TextView mReps;
-    private TextView mPace;
-    private TextView mDuration;
+    private Chip exerciseName;
+
+    private TextView date;
+    private TextView reps;
+    private TextView pace;
+    private TextView duration;
+
+    private View overlay;
 
     public StatisticsItemViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
-        setRootView(inflater.inflate(R.layout.view_statistics_list_item, parent, false));
+        setRootView(inflater.inflate(R.layout.statistics_list_item, parent, false));
 
-        mExerciseName = findViewById(R.id.exercise);
-        mDate = findViewById(R.id.date);
-        mReps = findViewById(R.id.reps);
-        mPace = findViewById(R.id.pace);
-        mDuration = findViewById(R.id.duration);
-        findViewById(R.id.parent).setOnClickListener(v -> {
-            for (Listener l : getListeners()) {
-                l.onWorkoutLongPress(mWorkout.id);
-            }
-        });
+        exerciseName = findViewById(R.id.exercise);
+        date = findViewById(R.id.date);
+        reps = findViewById(R.id.reps);
+        pace = findViewById(R.id.pace);
+        duration = findViewById(R.id.duration);
+        overlay = findViewById(R.id.overlay);
     }
 
     @Override
-    public void bindWorkout(Workout workout) {
-        mWorkout = workout;
-        if (mWorkout.type == ExerciseType.TIME_BASED) {
-            mReps.setText("");
-            mPace.setText("");
+    public void bindWorkout(Workout workout, boolean selected) {
+
+        this.workout = workout;
+        if (this.workout.type == ExerciseType.TIME_BASED) {
+            reps.setText("");
+            pace.setText("");
         }
-        mExerciseName.setText(mWorkout.exerciseName);
-        mDate.setText(StringUtils.formatDateAndTime(mWorkout.timestamp));
-        if (mWorkout.reps == 0) {
-            mReps.setText("");
+        exerciseName.setText(this.workout.exerciseName);
+        date.setText(StringUtils.formatDateAndTime(this.workout.timestamp));
+        if (this.workout.reps == 0) {
+            reps.setText("");
         } else {
-            mReps.setText(mWorkout.reps == 1 ? mWorkout.reps + " rep" : mWorkout.reps + " reps");
+            reps.setText(this.workout.reps == 1 ? this.workout.reps + " rep" : this.workout.reps + " reps");
         }
 
-        if (mWorkout.pace == 0) {
-            mPace.setText("");
+        if (this.workout.pace == 0) {
+            pace.setText("");
         } else {
-            mPace.setText(mWorkout.pace == (long) mWorkout.pace
-                    ? (long) mWorkout.pace + " reps/min"
-                    : mWorkout.pace + " reps/min");
+            pace.setText(this.workout.pace == (long) this.workout.pace
+                    ? (long) this.workout.pace + " reps/min"
+                    : this.workout.pace + " reps/min");
         }
-        if (mWorkout.duration == 0) {
-            mDuration.setText("");
+        if (this.workout.duration == 0) {
+            duration.setText("");
         } else {
-            mDuration.setText(StringUtils.secondsToTimerFormatAlt(mWorkout.duration));
+            duration.setText(StringUtils.secondsToTimerFormatAlt(this.workout.duration));
         }
+
+        overlay.setVisibility(selected ? View.VISIBLE : View.GONE);
     }
 }

@@ -15,20 +15,18 @@ public class StatisticsAdapter extends RecyclerView.Adapter<StatisticsViewHolder
     implements StatisticsItemViewMvc.Listener {
 
     public interface Listener {
-        void onWorkoutLongPress(int id);
     }
 
     private final LayoutInflater mInflater;
-    private final Listener mListener;
-    private List<Workout> mWorkouts = new ArrayList<>();
+    private List<Workout> workouts = new ArrayList<>();
+    private List<Integer> selectedItems = new ArrayList<>();
 
-    public StatisticsAdapter(LayoutInflater inflater, Listener listener) {
+    public StatisticsAdapter(LayoutInflater inflater) {
         mInflater = inflater;
-        mListener = listener;
     }
 
     public void bindWorkouts(List<Workout> workouts) {
-        mWorkouts = workouts;
+        this.workouts = workouts;
         notifyDataSetChanged();
     }
 
@@ -42,16 +40,17 @@ public class StatisticsAdapter extends RecyclerView.Adapter<StatisticsViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull StatisticsViewHolder holder, int position) {
-        holder.getViewMvc().bindWorkout(mWorkouts.get(position));
+        final boolean selected = selectedItems.contains(workouts.get(position).id);
+        holder.getViewMvc().bindWorkout(workouts.get(position), selected);
     }
 
     @Override
     public int getItemCount() {
-        return mWorkouts.size();
+        return workouts.size();
     }
 
-    @Override
-    public void onWorkoutLongPress(int id) {
-        mListener.onWorkoutLongPress(id);
+    public void setSelectedItems(List<Integer> selectedItems) {
+        this.selectedItems = selectedItems;
+        notifyDataSetChanged();
     }
 }
