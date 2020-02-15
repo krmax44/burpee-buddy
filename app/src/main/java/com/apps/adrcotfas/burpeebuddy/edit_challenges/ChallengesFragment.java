@@ -16,12 +16,13 @@ import androidx.lifecycle.LiveData;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.actionMode.ActionModeBaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.actionMode.ActionModeCallback;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.edit_challenges.dialog.AddChallengeDialog;
 import com.apps.adrcotfas.burpeebuddy.edit_challenges.livedata.ChallengesCombinedLiveData;
-import com.apps.adrcotfas.burpeebuddy.edit_challenges.view.ChallengeView;
 import com.apps.adrcotfas.burpeebuddy.edit_challenges.view.ChallengeViewImpl;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -36,13 +37,15 @@ import java.util.Map;
 
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
-public class ChallengesFragment extends Fragment implements ChallengeView.Listener, ActionModeCallback.Listener {
+public class ChallengesFragment extends Fragment
+        implements ActionModeBaseObservableViewMvc.Listener, ActionModeCallback.Listener {
 
     private static final String TAG = "ChallengesFragment";
 
-    private ChallengeView view;
+    private ActionModeBaseObservableViewMvc<List<Pair<Challenge, Integer>>> view;
     private ActionMode actionMode;
     private ActionModeCallback mActionModeCallback;
+    private List<Integer> challengeIds = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -150,7 +153,13 @@ public class ChallengesFragment extends Fragment implements ChallengeView.Listen
                 });
             }
         });
-        result.observe(getViewLifecycleOwner(), output -> view.bindChallenges(output));
+        result.observe(getViewLifecycleOwner(), output -> {
+            view.bindItems(output);
+            challengeIds.clear();
+            for (Pair<Challenge, Integer> o : output) {
+                challengeIds.add(o.first.id);
+            }
+        });
     }
 
     @Subscribe
@@ -203,7 +212,7 @@ public class ChallengesFragment extends Fragment implements ChallengeView.Listen
 
     @Override
     public void actionSelectAllItems() {
-        view.selectAllItems();
+        view.selectAllItems(challengeIds);
     }
 
     @Override

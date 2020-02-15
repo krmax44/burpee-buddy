@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.edit_challenges;
+package com.apps.adrcotfas.burpeebuddy.common.viewmvc.actionMode;
 
 import android.view.ActionMode;
 import android.view.Menu;
@@ -7,7 +7,7 @@ import android.view.MenuItem;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 
-public class ActionModeCallback implements ActionMode.Callback{
+public class ActionModeCallback implements ActionMode.Callback {
 
     public interface Listener {
         void actionSelectAllItems();

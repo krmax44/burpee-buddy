@@ -35,7 +35,7 @@ import timber.log.Timber;
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
-public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
+public class MainFragment extends Fragment implements MainViewMvc.Listener {
 
     private static final String TAG = "MainFragment";
     private MainViewMvc mViewMvc;
