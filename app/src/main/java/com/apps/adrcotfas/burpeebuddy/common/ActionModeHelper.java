@@ -10,18 +10,17 @@ import com.apps.adrcotfas.burpeebuddy.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActionModeHelper implements ActionMode.Callback {
+public class ActionModeHelper<IdType> implements ActionMode.Callback {
 
     public interface Listener {
         void actionSelectAllItems();
         void actionDeleteSelected();
         void actionEditSelected();
-
         void startActionMode();
-        void destroyActionMode();
+        void stopActionMode();
     }
 
-    private List<Integer> selectedEntries = new ArrayList<>();
+    private List<IdType> selectedEntries = new ArrayList<>();
 
     private Listener listener;
     private Menu menu;
@@ -67,24 +66,28 @@ public class ActionModeHelper implements ActionMode.Callback {
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
+        listener.stopActionMode();
+        finishAction();
         isMultiSelect = false;
         selectedEntries = new ArrayList<>();
         actionMode = null;
-        listener.destroyActionMode();
     }
 
     public void toggleEditButtonVisibility(boolean visible) {
+        if (!visible && selectedEntries.size() == 1) {
+            return;
+        }
         menu.getItem(0).setVisible(visible);
     }
 
 
-    public void onItemClick(int id) {
+    public void onItemClick(IdType id) {
         if (isMultiSelect) {
             multiSelect(id);
         }
     }
 
-    public void onItemLongClick(int id) {
+    public void onItemLongClick(IdType id) {
         if (!isMultiSelect) {
             isMultiSelect = true;
             selectedEntries.clear();
@@ -93,7 +96,7 @@ public class ActionModeHelper implements ActionMode.Callback {
         multiSelect(id);
     }
 
-    private void multiSelect(int id) {
+    private void multiSelect(IdType id) {
         int idx = selectedEntries.indexOf(id);
         if (idx != -1) {
             selectedEntries.remove(idx);
@@ -104,22 +107,27 @@ public class ActionModeHelper implements ActionMode.Callback {
             toggleEditButtonVisibility(showEdit && selectedEntries.size() == 1);
             actionMode.setTitle(String.valueOf(selectedEntries.size()));
         } else {
+            finishAction();
+        }
+    }
+
+    private void finishAction() {
+        if (actionMode != null) {
             actionMode.setTitle("");
             actionMode.finish();
         }
     }
 
-    public List<Integer> getSelectedEntries() {
+    public List<IdType> getSelectedEntries() {
         return selectedEntries;
     }
 
-    public void setSelectedEntries(List<Integer> ids) {
+    public void setSelectedEntries(List<IdType> ids) {
         selectedEntries = ids;
         if (!selectedEntries.isEmpty()) {
             actionMode.setTitle(String.valueOf(selectedEntries.size()));
         }  else {
-            actionMode.setTitle("");
-            actionMode.finish();
+            finishAction();
         }
     }
 
@@ -127,5 +135,13 @@ public class ActionModeHelper implements ActionMode.Callback {
         if (this.actionMode == null) {
             this.actionMode = actionMode;
         }
+    }
+
+    public void destroyActionMode() {
+        onDestroyActionMode(actionMode);
+    }
+
+    public boolean isMultiSelect() {
+        return isMultiSelect;
     }
 }

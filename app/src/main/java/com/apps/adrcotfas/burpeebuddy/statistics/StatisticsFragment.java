@@ -50,7 +50,6 @@ public class StatisticsFragment extends Fragment
         view.registerListener(this);
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
@@ -92,7 +91,6 @@ public class StatisticsFragment extends Fragment
         AppDatabase.editWorkout(getContext(), e.id, e.workout);
     }
 
-
     @Override
     public void startActionMode(ActionModeHelper actionModeHelper) {
         actionModeHelper.setActionMode(getActivity().startActionMode(actionModeHelper));
@@ -115,9 +113,8 @@ public class StatisticsFragment extends Fragment
 
     @Override
     public void onEditSelected(Workout selectedWorkout) {
-        if (selectedWorkout != null) {
-            AddEditWorkoutDialog.getInstance(selectedWorkout, true)
-                    .show(getActivity().getSupportFragmentManager(), TAG);
-        }
+        AddEditWorkoutDialog.getInstance(selectedWorkout, true)
+                .show(getActivity().getSupportFragmentManager(), TAG);
+        view.destroyActionMode();
     }
 }

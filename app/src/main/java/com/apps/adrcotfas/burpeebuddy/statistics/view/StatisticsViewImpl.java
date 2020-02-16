@@ -27,11 +27,11 @@ public class StatisticsViewImpl
 
     private List<Workout> workouts = new ArrayList<>();
 
-    private ActionModeHelper actionModeHelper;
+    private ActionModeHelper<Integer> actionModeHelper;
 
     public StatisticsViewImpl(LayoutInflater inflater, ViewGroup parent) {
 
-        actionModeHelper = new ActionModeHelper(this, true);
+        actionModeHelper = new ActionModeHelper<>(this, true);
 
         setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
         emptyState = findViewById(R.id.empty_state);
@@ -111,7 +111,13 @@ public class StatisticsViewImpl
     }
 
     @Override
+    public void stopActionMode() {
+        adapter.setSelectedItems(new ArrayList<>());
+    }
+
+    @Override
     public void destroyActionMode() {
+        actionModeHelper.destroyActionMode();
         adapter.setSelectedItems(new ArrayList<>());
     }
 }

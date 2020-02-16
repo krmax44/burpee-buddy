@@ -33,15 +33,16 @@ public class StatisticsAdapter extends RecyclerView.Adapter<StatisticsViewHolder
     @NonNull
     @Override
     public StatisticsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        StatisticsItemView viewMvc = new StatisticsItemViewImpl(inflater, parent);
-        viewMvc.registerListener(this);
-        return new StatisticsViewHolder(viewMvc);
+        StatisticsItemView view = new StatisticsItemViewImpl(inflater, parent);
+        view.registerListener(this);
+        return new StatisticsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull StatisticsViewHolder holder, int position) {
-        final boolean selected = selectedItems.contains(workouts.get(position).id);
-        holder.getViewMvc().bindWorkout(workouts.get(position), selected);
+        final Workout workout = workouts.get(position);
+        final boolean selected = selectedItems.contains(workout.id);
+        holder.getViewMvc().bindWorkout(workout, selected);
     }
 
     @Override

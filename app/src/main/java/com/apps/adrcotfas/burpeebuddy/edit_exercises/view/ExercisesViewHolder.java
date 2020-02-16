@@ -10,7 +10,7 @@ public class ExercisesViewHolder extends RecyclerView.ViewHolder implements Item
 
     private final ExercisesItemView view;
 
-    public ExercisesItemView getViewMvc() {
+    public ExercisesItemView getView() {
         return view;
     }
 

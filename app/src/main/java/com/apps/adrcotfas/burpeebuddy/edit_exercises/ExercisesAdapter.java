@@ -23,12 +23,15 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     private final LayoutInflater inflater;
     private final Listener listener;
     private List<Exercise> exercises = new ArrayList<>();
+    private List<String> selectedItems = new ArrayList<>();
 
     public interface Listener {
         void onVisibilityToggle(String exercise, boolean visible);
-        void onExerciseEditClicked(Exercise exercise);
         void onDragStarted(ExercisesViewHolder viewHolder);
         void onExercisesRearranged(List<Exercise> exercises);
+
+        void onItemClick(int position);
+        void onItemLongClick(int position);
     }
 
     public ExercisesAdapter(LayoutInflater inflater, Listener listener) {
@@ -52,10 +55,19 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull ExercisesViewHolder holder, int position) {
-        holder.getViewMvc().bindExercise(exercises.get(position));
-        holder.getViewMvc().getScrollHandle().setOnTouchListener((v, event) -> {
+        final Exercise exercise = exercises.get(position);
+        final boolean selected = selectedItems.contains(exercise.name);
+
+        holder.getView().bindExercise(exercise, selected);
+        holder.getView().getScrollHandle().setOnTouchListener((v, event) -> {
             listener.onDragStarted(holder);
             return false;
+        });
+
+        holder.getView().getParentView().setOnClickListener(v -> listener.onItemClick(position));
+        holder.getView().getParentView().setOnLongClickListener(v -> {
+            listener.onItemLongClick(position);
+            return true;
         });
     }
 
@@ -67,11 +79,6 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     @Override
     public void onVisibilityToggle(String exercise, boolean visible) {
         listener.onVisibilityToggle(exercise, visible);
-    }
-
-    @Override
-    public void onExerciseEditClicked(Exercise exercise) {
-        listener.onExerciseEditClicked(exercise);
     }
 
     @Override
@@ -91,5 +98,10 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     @Override
     public void onClearView() {
         listener.onExercisesRearranged(exercises);
+    }
+
+    public void setSelectedItems(List<String> selectedItems) {
+        this.selectedItems = selectedItems;
+        notifyDataSetChanged();
     }
 }

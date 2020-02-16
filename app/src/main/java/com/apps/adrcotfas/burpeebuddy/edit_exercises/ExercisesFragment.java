@@ -12,12 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.common.ActionModeHelper;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.edit_exercises.dialog.AddEditExerciseDialog;
 import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesView;
 import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesViewImpl;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,6 +48,12 @@ public class ExercisesFragment extends Fragment implements ExercisesView.Listene
     public void onResume() {
         super.onResume();
         view.registerListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        view.destroyActionMode();
     }
 
     @Override
@@ -88,12 +96,6 @@ public class ExercisesFragment extends Fragment implements ExercisesView.Listene
         }
     }
 
-    @Override
-    public void onExerciseEditClicked(Exercise exercise) {
-        AddEditExerciseDialog.getInstance(exercise, true)
-                .show(getActivity().getSupportFragmentManager(), TAG);
-    }
-
     @Subscribe
     public void onMessageEvent(Events.EditExercise event) {
         AppDatabase.editExercise(getContext(), event.exerciseToEdit, event.exercise);
@@ -107,5 +109,32 @@ public class ExercisesFragment extends Fragment implements ExercisesView.Listene
     @Subscribe
     public void onMessageEvent(Events.DeleteExercise event) {
         AppDatabase.deleteExercise(getContext(), event.name);
+    }
+
+    @Override
+    public void startActionMode(ActionModeHelper actionModeHelper) {
+        actionModeHelper.setActionMode(getActivity().startActionMode(actionModeHelper));
+    }
+
+    @Override
+    public void onDeleteSelected(List<String> names) {
+        new MaterialAlertDialogBuilder(getActivity())
+                .setTitle("Delete workouts?")
+                .setMessage("This will delete the selected workouts")
+                .setPositiveButton(android.R.string.ok, (dialog, i) -> {
+                    for (String name : names) {
+                        AppDatabase.deleteExercise(getContext(), name);
+                    }
+                    view.destroyActionMode();
+                })
+                .setNegativeButton(android.R.string.cancel, (dialog, i) -> dialog.cancel())
+                .show();
+    }
+
+    @Override
+    public void onEditSelected(Exercise exercise) {
+        AddEditExerciseDialog.getInstance(exercise, true)
+                .show(getActivity().getSupportFragmentManager(), TAG);
+        view.destroyActionMode();
     }
 }

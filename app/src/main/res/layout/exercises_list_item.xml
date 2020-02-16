@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:clickable="true">
+
+    <RelativeLayout
+        android:id="@+id/item"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="4dp"
+
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <FrameLayout
+            android:id="@+id/scroll_icon_container"
+            android:layout_width="@dimen/menu_item_icon_size"
+            android:layout_height="@dimen/menu_item_size"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:focusable="false"
+            android:clickable="false">
+            <ImageView
+                android:id="@+id/scroll_icon"
+                android:src="@drawable/ic_dots_scroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end">
+            </ImageView>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/visibility_icon_container"
+            android:layout_width="@dimen/menu_item_size"
+            android:layout_height="@dimen/menu_item_size"
+            android:layout_toEndOf="@id/scroll_icon_container"
+            android:layout_centerVertical="true"
+            android:focusable="true"
+            android:clickable="true">
+            <ImageView
+                android:id="@+id/visibility_icon"
+                android:src="@drawable/ic_eye_outline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+            </ImageView>
+            <View
+                android:layout_width="@dimen/menu_item_ripple_size"
+                android:layout_height="@dimen/menu_item_ripple_size"
+                android:layout_gravity="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:duplicateParentState="true">
+            </View>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/visibility_icon_container"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="8dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:textSize="@dimen/regular_text_size"
+            />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/transparent_gray"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

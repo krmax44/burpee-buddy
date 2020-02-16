@@ -26,10 +26,10 @@ public class ChallengeViewImpl extends BaseObservableView<ChallengeView.Listener
     private LinearLayout emptyState;
     private List<Challenge> challenges = new ArrayList<>();
 
-    private ActionModeHelper actionModeHelper;
+    private ActionModeHelper<Integer> actionModeHelper;
 
     public ChallengeViewImpl(LayoutInflater inflater, ViewGroup parent) {
-        actionModeHelper = new ActionModeHelper(this, false);
+        actionModeHelper = new ActionModeHelper<>(this, false);
 
         setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
 
@@ -104,7 +104,13 @@ public class ChallengeViewImpl extends BaseObservableView<ChallengeView.Listener
     }
 
     @Override
+    public void stopActionMode() {
+        adapter.setSelectedItems(new ArrayList<>());
+    }
+
+    @Override
     public void destroyActionMode() {
+        actionModeHelper.destroyActionMode();
         adapter.setSelectedItems(new ArrayList<>());
     }
 

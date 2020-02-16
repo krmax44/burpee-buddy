@@ -173,7 +173,7 @@ public class ChallengesFragment extends Fragment
                 .setMessage("This will delete the selected challenges")
                 .setPositiveButton(android.R.string.ok, (dialog, i) -> {
                     for (int id : ids) {
-                        AppDatabase.deleteWorkout(getContext(), id);
+                        AppDatabase.deleteChallenge(getContext(), id);
                     }
                     view.destroyActionMode();
                 })
