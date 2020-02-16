@@ -20,9 +20,9 @@ import java.util.List;
 public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
         implements ExercisesItemView.Listener, ItemTouchHelperAdapter {
 
-    private final LayoutInflater mInflater;
-    private final Listener mListener;
-    private List<Exercise> mExercises = new ArrayList<>();
+    private final LayoutInflater inflater;
+    private final Listener listener;
+    private List<Exercise> exercises = new ArrayList<>();
 
     public interface Listener {
         void onVisibilityToggle(String exercise, boolean visible);
@@ -32,19 +32,19 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     }
 
     public ExercisesAdapter(LayoutInflater inflater, Listener listener) {
-        mInflater = inflater;
-        mListener = listener;
+        this.inflater = inflater;
+        this.listener = listener;
     }
 
     public void bindExercises(List<Exercise> exercises) {
-        mExercises = new ArrayList<>(exercises);
+        this.exercises = new ArrayList<>(exercises);
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public ExercisesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ExercisesItemView viewMvc = new ExercisesItemViewImpl(mInflater, parent);
+        ExercisesItemView viewMvc = new ExercisesItemViewImpl(inflater, parent);
         viewMvc.registerListener(this);
         return new ExercisesViewHolder(viewMvc);
     }
@@ -52,37 +52,37 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull ExercisesViewHolder holder, int position) {
-        holder.getViewMvc().bindExercise(mExercises.get(position));
+        holder.getViewMvc().bindExercise(exercises.get(position));
         holder.getViewMvc().getScrollHandle().setOnTouchListener((v, event) -> {
-            mListener.onDragStarted(holder);
+            listener.onDragStarted(holder);
             return false;
         });
     }
 
     @Override
     public int getItemCount() {
-        return mExercises.size();
+        return exercises.size();
     }
 
     @Override
     public void onVisibilityToggle(String exercise, boolean visible) {
-        mListener.onVisibilityToggle(exercise, visible);
+        listener.onVisibilityToggle(exercise, visible);
     }
 
     @Override
     public void onExerciseEditClicked(Exercise exercise) {
-        mListener.onExerciseEditClicked(exercise);
+        listener.onExerciseEditClicked(exercise);
     }
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(mExercises, i, i + 1);
+                Collections.swap(exercises, i, i + 1);
             }
         } else {
             for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(mExercises, i, i - 1);
+                Collections.swap(exercises, i, i - 1);
             }
         }
         notifyItemMoved(fromPosition, toPosition);
@@ -90,6 +90,6 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
 
     @Override
     public void onClearView() {
-        mListener.onExercisesRearranged(mExercises);
+        listener.onExercisesRearranged(exercises);
     }
 }

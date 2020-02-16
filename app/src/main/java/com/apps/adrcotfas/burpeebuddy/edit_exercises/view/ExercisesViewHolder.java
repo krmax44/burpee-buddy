@@ -8,28 +8,28 @@ import com.apps.adrcotfas.burpeebuddy.common.recyclerview.ItemTouchHelperViewHol
 
 public class ExercisesViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
-    private final ExercisesItemView mViewMvc;
+    private final ExercisesItemView view;
 
     public ExercisesItemView getViewMvc() {
-        return mViewMvc;
+        return view;
     }
 
     public ExercisesViewHolder(ExercisesItemView viewMvc) {
         super(viewMvc.getRootView());
-        mViewMvc = viewMvc;
+        view = viewMvc;
     }
 
     @Override
     public void onItemSelected() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mViewMvc.getItem().setElevation(4);
+            view.getItem().setElevation(4);
         }
     }
 
     @Override
     public void onItemClear() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mViewMvc.getItem().setElevation(0);
+            view.getItem().setElevation(0);
         }
     }
 }

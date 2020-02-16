@@ -9,10 +9,8 @@ public interface ExercisesView extends ObservableView<ExercisesView.Listener> {
 
     void bindExercises(List<Exercise> exercises);
 
-    public interface Listener {
-
+    interface Listener {
         void onExerciseEditClicked(Exercise exercise);
-
         void onVisibilityToggle(String exercise, boolean visibility);
         void onExercisesRearranged(List<Exercise> exercises);
     }
