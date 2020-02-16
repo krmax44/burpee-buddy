@@ -1,12 +1,12 @@
 package com.apps.adrcotfas.burpeebuddy.statistics.view;
 
 import com.apps.adrcotfas.burpeebuddy.common.ActionModeHelper;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 
 import java.util.List;
 
-public interface StatisticsView extends ObservableViewMvc<StatisticsView.Listener> {
+public interface StatisticsView extends ObservableView<StatisticsView.Listener> {
 
     void bindWorkouts(List<Workout> workouts);
     void destroyActionMode();

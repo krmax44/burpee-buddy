@@ -12,7 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
@@ -28,10 +28,10 @@ import timber.log.Timber;
 import static android.view.animation.AnimationUtils.loadAnimation;
 import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.formatSecondsAlt;
 
-public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Listener>
-        implements WorkoutViewMvc {
+public class WorkoutViewImpl extends BaseObservableView<WorkoutView.Listener>
+        implements WorkoutView {
 
-    private static final String TAG = "WorkoutViewMvcImpl";
+    private static final String TAG = "WorkoutViewImpl";
     private static final int STATS_TOTAL_ROW_INDEX = -1;
 
     private class SetViewRow {
@@ -60,7 +60,7 @@ public class WorkoutViewMvcImpl extends BaseObservableViewMvc<WorkoutViewMvc.Lis
 
     private boolean mIsTimeBased;
 
-    public WorkoutViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
+    public WorkoutViewImpl(LayoutInflater inflater, ViewGroup parent) {
         mInflater = inflater;
         setRootView(mInflater.inflate(R.layout.fragment_workout, parent, false));
 

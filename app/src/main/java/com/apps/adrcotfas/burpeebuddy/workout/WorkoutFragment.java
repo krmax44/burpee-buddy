@@ -24,8 +24,8 @@ import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
-import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewMvc;
-import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewMvcImpl;
+import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutView;
+import com.apps.adrcotfas.burpeebuddy.workout.view.WorkoutViewImpl;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,10 +34,10 @@ import timber.log.Timber;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 
-public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener {
+public class WorkoutFragment extends Fragment implements WorkoutView.Listener {
 
     private static final String TAG = "WorkoutFragment";
-    private WorkoutViewMvc mViewMvc;
+    private WorkoutView mViewMvc;
 
     public static boolean isInPausedBreakState = false;
 
@@ -60,7 +60,7 @@ public class WorkoutFragment extends Fragment implements WorkoutViewMvc.Listener
                              Bundle savedInstanceState) {
         Timber.tag(TAG).d( "onCreateView " + this.hashCode());
         getActivity().getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
-        mViewMvc = new WorkoutViewMvcImpl(inflater, container);
+        mViewMvc = new WorkoutViewImpl(inflater, container);
         EventBus.getDefault().register(this);
 
         return mViewMvc.getRootView();

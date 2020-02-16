@@ -3,10 +3,10 @@ package com.apps.adrcotfas.burpeebuddy.edit_exercises.view;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 
-public interface ExercisesItemViewMvc extends ObservableViewMvc<ExercisesItemViewMvc.Listener> {
+public interface ExercisesItemView extends ObservableView<ExercisesItemView.Listener> {
 
     public interface Listener {
         void onExerciseEditClicked(Exercise exercise);

@@ -5,17 +5,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString;
 
-public class GoalsItemViewMvcImpl extends BaseObservableViewMvc<GoalsItemViewMvc.Listener>
-        implements GoalsItemViewMvc{
+public class GoalsItemViewImpl extends BaseObservableView<GoalsItemView.Listener>
+        implements GoalsItemView {
 
     private Goal mGoal;
     private TextView mTitle;
 
-    public GoalsItemViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
+    public GoalsItemViewImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.view_goal_list_item, parent, false));
 
         mTitle = findViewById(R.id.title);

@@ -20,8 +20,8 @@ import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.main.dialog.ChallengeCompleteDialog;
-import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvc;
-import com.apps.adrcotfas.burpeebuddy.main.view.MainViewMvcImpl;
+import com.apps.adrcotfas.burpeebuddy.main.view.MainView;
+import com.apps.adrcotfas.burpeebuddy.main.view.MainViewImpl;
 
 import org.joda.time.DateTime;
 
@@ -35,10 +35,10 @@ import timber.log.Timber;
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
-public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
+public class MainFragment extends Fragment implements MainViewImpl.Listener {
 
     private static final String TAG = "MainFragment";
-    private MainViewMvc mViewMvc;
+    private MainView mViewMvc;
 
     private Exercise mExercise;
 
@@ -54,7 +54,7 @@ public class MainFragment extends Fragment implements MainViewMvcImpl.Listener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.tag(TAG).d( "onCreateView");
-        mViewMvc = new MainViewMvcImpl(inflater, container);
+        mViewMvc = new MainViewImpl(inflater, container);
 
         AppDatabase.getDatabase(getContext()).exerciseDao().getAllVisible().observe(
                 getViewLifecycleOwner(), exerciseTypes ->

@@ -1,6 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.common.viewmvc;
 
-public interface ObservableViewMvc<ListenerType> extends ViewMvc {
+public interface ObservableView<ListenerType> extends ViewMvc {
 
     void registerListener(ListenerType listener);
 

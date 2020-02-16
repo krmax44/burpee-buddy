@@ -12,13 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.ActionModeHelper;
 import com.apps.adrcotfas.burpeebuddy.common.recyclerview.RecyclerItemClickListener;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Listener>
+public class ChallengeViewImpl extends BaseObservableView<ChallengeView.Listener>
         implements ChallengeView, ActionModeHelper.Listener{
 
     private RecyclerView recyclerView;

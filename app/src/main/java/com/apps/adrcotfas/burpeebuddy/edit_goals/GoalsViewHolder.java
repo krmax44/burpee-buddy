@@ -2,18 +2,18 @@ package com.apps.adrcotfas.burpeebuddy.edit_goals;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsItemViewMvc;
+import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsItemView;
 
 public class GoalsViewHolder extends RecyclerView.ViewHolder {
 
-    private final GoalsItemViewMvc mViewMvc;
+    private final GoalsItemView mViewMvc;
 
-    public GoalsViewHolder(GoalsItemViewMvc viewMvc) {
+    public GoalsViewHolder(GoalsItemView viewMvc) {
         super(viewMvc.getRootView());
         this.mViewMvc = viewMvc;
     }
 
-    public GoalsItemViewMvc getViewMvc() {
+    public GoalsItemView getViewMvc() {
         return mViewMvc;
     }
 }

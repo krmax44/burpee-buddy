@@ -11,15 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.recyclerview.SimpleItemTouchHelperCallback;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.edit_exercises.ExercisesAdapter;
 
 import java.util.List;
 
-public class ExercisesViewMvcImpl
-        extends BaseObservableViewMvc<ExercisesViewMvc.Listener>
-        implements ExercisesViewMvc, ExercisesAdapter.Listener {
+public class ExercisesViewImpl
+        extends BaseObservableView<ExercisesView.Listener>
+        implements ExercisesView, ExercisesAdapter.Listener {
 
     private RecyclerView recyclerView;
     private ExercisesAdapter adapter;
@@ -27,7 +27,7 @@ public class ExercisesViewMvcImpl
 
     private LinearLayout emptyState;
 
-    public ExercisesViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
+    public ExercisesViewImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
 
         emptyState = findViewById(R.id.empty_state);

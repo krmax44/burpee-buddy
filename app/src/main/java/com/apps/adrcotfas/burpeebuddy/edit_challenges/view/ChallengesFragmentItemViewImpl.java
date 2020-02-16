@@ -10,14 +10,14 @@ import androidx.core.util.Pair;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
-public class ChallengesFragmentItemViewImpl extends BaseObservableViewMvc<ChallengesFragmentItemView.Listener>
+public class ChallengesFragmentItemViewImpl extends BaseObservableView<ChallengesFragmentItemView.Listener>
         implements ChallengesFragmentItemView {
 
     private TextView status;

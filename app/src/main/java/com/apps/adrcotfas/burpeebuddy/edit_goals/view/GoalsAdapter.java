@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class GoalsAdapter extends RecyclerView.Adapter<GoalsViewHolder>
-        implements GoalsItemViewMvc.Listener {
+        implements GoalsItemView.Listener {
 
     private final LayoutInflater mInflater;
     private final Listener mListener;
@@ -36,7 +36,7 @@ class GoalsAdapter extends RecyclerView.Adapter<GoalsViewHolder>
     @NonNull
     @Override
     public GoalsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        GoalsItemViewMvc viewMvc = new GoalsItemViewMvcImpl(mInflater, parent);
+        GoalsItemView viewMvc = new GoalsItemViewImpl(mInflater, parent);
         viewMvc.registerListener(this);
         return new GoalsViewHolder(viewMvc);
     }

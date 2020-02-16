@@ -1,11 +1,11 @@
 package com.apps.adrcotfas.burpeebuddy.edit_exercises.view;
 
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 
 import java.util.List;
 
-public interface ExercisesViewMvc extends ObservableViewMvc<ExercisesViewMvc.Listener> {
+public interface ExercisesView extends ObservableView<ExercisesView.Listener> {
 
     void bindExercises(List<Exercise> exercises);
 

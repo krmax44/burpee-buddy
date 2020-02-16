@@ -7,12 +7,12 @@ import android.widget.TextView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.google.android.material.chip.Chip;
 
-class StatisticsItemViewImpl extends BaseObservableViewMvc<StatisticsItemView.Listener>
+class StatisticsItemViewImpl extends BaseObservableView<StatisticsItemView.Listener>
         implements StatisticsItemView {
 
     private Workout workout;

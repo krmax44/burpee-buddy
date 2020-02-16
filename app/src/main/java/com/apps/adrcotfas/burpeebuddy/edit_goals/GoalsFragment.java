@@ -16,22 +16,22 @@ import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 import com.apps.adrcotfas.burpeebuddy.edit_goals.dialog.AddEditGoalDialog;
-import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsViewMvc;
-import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsViewMvcImpl;
+import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsView;
+import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalsViewImpl;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-public class GoalsFragment extends Fragment implements GoalsViewMvc.Listener {
+public class GoalsFragment extends Fragment implements GoalsView.Listener {
     private static final String TAG = "GoalsFragment";
 
-    private GoalsViewMvc mViewMvc;
+    private GoalsView mViewMvc;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         EventBus.getDefault().register(this);
-        mViewMvc = new GoalsViewMvcImpl(inflater, container);
+        mViewMvc = new GoalsViewImpl(inflater, container);
 
         AppDatabase.getDatabase(getContext()).goalDao().getAll().observe(
                 getViewLifecycleOwner(), goals ->

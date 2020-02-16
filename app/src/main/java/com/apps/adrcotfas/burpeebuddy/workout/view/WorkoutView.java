@@ -1,8 +1,8 @@
 package com.apps.adrcotfas.burpeebuddy.workout.view;
 
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableView;
 
-public interface WorkoutViewMvc extends ObservableViewMvc<WorkoutViewMvc.Listener> {
+public interface WorkoutView extends ObservableView<WorkoutView.Listener> {
 
     public interface Listener {
         void onStopButtonClicked();

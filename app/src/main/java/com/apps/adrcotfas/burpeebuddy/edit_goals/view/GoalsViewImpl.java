@@ -9,21 +9,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 
 import java.util.List;
 
-public class GoalsViewMvcImpl
-        extends BaseObservableViewMvc<GoalsViewMvc.Listener>
-        implements GoalsViewMvc, GoalsAdapter.Listener {
+public class GoalsViewImpl
+        extends BaseObservableView<GoalsView.Listener>
+        implements GoalsView, GoalsAdapter.Listener {
 
     private RecyclerView recyclerView;
     private GoalsAdapter adapter;
 
     private LinearLayout emptyState;
 
-    public GoalsViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
+    public GoalsViewImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
         emptyState = findViewById(R.id.empty_state);
 

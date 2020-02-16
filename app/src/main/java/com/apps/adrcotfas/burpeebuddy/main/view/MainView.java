@@ -3,14 +3,14 @@ package com.apps.adrcotfas.burpeebuddy.main.view;
 import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
 
 import java.util.List;
 
-public interface MainViewMvc extends ObservableViewMvc<MainViewMvc.Listener> {
+public interface MainView extends ObservableView<MainView.Listener> {
 
     void showIntroduction();
 

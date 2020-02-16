@@ -9,11 +9,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 
-public class ExercisesItemViewMvcImpl extends BaseObservableViewMvc<ExercisesItemViewMvc.Listener>
-        implements ExercisesItemViewMvc {
+public class ExercisesItemViewImpl extends BaseObservableView<ExercisesItemView.Listener>
+        implements ExercisesItemView {
 
     private final RelativeLayout mItem;
     private final TextView mTitle;
@@ -21,7 +21,7 @@ public class ExercisesItemViewMvcImpl extends BaseObservableViewMvc<ExercisesIte
     private final ImageView mVisibilityButton;
     private final FrameLayout mScroll;
 
-    public ExercisesItemViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
+    public ExercisesItemViewImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.view_exercise_list_item, parent, false));
 
         mItem = findViewById(R.id.item);

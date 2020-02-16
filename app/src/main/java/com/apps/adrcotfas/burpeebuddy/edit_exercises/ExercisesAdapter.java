@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.common.recyclerview.ItemTouchHelperAdapter;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesItemViewMvc;
-import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesItemViewMvcImpl;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesItemView;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesItemViewImpl;
 import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesViewHolder;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
-        implements ExercisesItemViewMvc.Listener, ItemTouchHelperAdapter {
+        implements ExercisesItemView.Listener, ItemTouchHelperAdapter {
 
     private final LayoutInflater mInflater;
     private final Listener mListener;
@@ -44,7 +44,7 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesViewHolder>
     @NonNull
     @Override
     public ExercisesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ExercisesItemViewMvc viewMvc = new ExercisesItemViewMvcImpl(mInflater, parent);
+        ExercisesItemView viewMvc = new ExercisesItemViewImpl(mInflater, parent);
         viewMvc.registerListener(this);
         return new ExercisesViewHolder(viewMvc);
     }

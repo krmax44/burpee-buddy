@@ -11,14 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.ActionModeHelper;
 import com.apps.adrcotfas.burpeebuddy.common.recyclerview.RecyclerItemClickListener;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class StatisticsViewImpl
-        extends BaseObservableViewMvc<StatisticsView.Listener>
+        extends BaseObservableView<StatisticsView.Listener>
         implements StatisticsView, ActionModeHelper.Listener {
 
     private RecyclerView recyclerView;

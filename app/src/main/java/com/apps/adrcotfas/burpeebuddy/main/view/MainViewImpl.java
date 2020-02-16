@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
+import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
@@ -44,10 +44,10 @@ import timber.log.Timber;
 
 import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.goalToString;
 
-public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
-        implements MainViewMvc, GoalConfigurator.Listener {
+public class MainViewImpl extends BaseObservableView<MainView.Listener>
+        implements MainView, GoalConfigurator.Listener {
 
-    private static final String TAG = "MainViewMvcImpl";
+    private static final String TAG = "MainViewImpl";
 
     private final CoordinatorLayout mCoordinatorLayout;
 
@@ -77,7 +77,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
 
     private KonfettiView mKonfetti;
 
-    public MainViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
+    public MainViewImpl(LayoutInflater inflater, ViewGroup parent) {
         final View view = inflater.inflate(R.layout.fragment_main, parent, false);
         setRootView(view);
         mGoalConfigurator = new GoalConfigurator(view, SettingsHelper.getGoal(), this, getContext());
@@ -104,7 +104,7 @@ public class MainViewMvcImpl extends BaseObservableViewMvc<MainViewMvc.Listener>
         mGoalsChipGroup.setSelectionRequired(true);
         mGoalsChipGroup.setSingleSelection(true);
         mGoalsChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            for (Listener listener : MainViewMvcImpl.this.getListeners()) {
+            for (Listener listener : MainViewImpl.this.getListeners()) {
                 if (SettingsHelper.isGoalFavoritesVisible()) {
                     listener.onGoalSelectionChanged(checkedId != View.NO_ID);
                 }

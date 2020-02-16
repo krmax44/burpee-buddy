@@ -16,42 +16,42 @@ import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.edit_exercises.dialog.AddEditExerciseDialog;
-import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesViewMvc;
-import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesViewMvcImpl;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesView;
+import com.apps.adrcotfas.burpeebuddy.edit_exercises.view.ExercisesViewImpl;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
-public class ExercisesFragment extends Fragment implements ExercisesViewMvc.Listener {
+public class ExercisesFragment extends Fragment implements ExercisesView.Listener {
     private static final String TAG = "ExercisesFragment";
 
-    private ExercisesViewMvc mViewMvc;
+    private ExercisesView view;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         EventBus.getDefault().register(this);
-        mViewMvc = new ExercisesViewMvcImpl(inflater, container);
+        view = new ExercisesViewImpl(inflater, container);
 
         AppDatabase.getDatabase(getContext()).exerciseDao().getAll().observe(
                 getViewLifecycleOwner(), exercises ->
-                        mViewMvc.bindExercises(exercises));
+                        view.bindExercises(exercises));
         setHasOptionsMenu(true);
-        return mViewMvc.getRootView();
+        return view.getRootView();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mViewMvc.registerListener(this);
+        view.registerListener(this);
     }
 
     @Override
     public void onDestroy() {
-        if (mViewMvc != null){
-            mViewMvc.unregisterListener(this);
+        if (view != null){
+            view.unregisterListener(this);
         }
         EventBus.getDefault().unregister(this);
         super.onDestroy();
