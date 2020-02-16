@@ -11,15 +11,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
 import com.apps.adrcotfas.burpeebuddy.edit_goals.dialog.SetNumberDialog;
 import com.google.android.material.radiobutton.MaterialRadioButton;
 
 import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.BREAK_DURATION_FACTOR;
 import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.DURATION_FACTOR;
 import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.REPS_FACTOR;
-import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.formatSecondsAlt;
+import static com.apps.adrcotfas.burpeebuddy.db.goal.GoalToString.formatSecondsAlt;
 import static com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper.GOAL_DURATION;
 import static com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper.GOAL_BREAK;
 import static com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper.GOAL_REPS;

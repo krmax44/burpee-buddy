@@ -22,8 +22,8 @@ import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
 import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalConfigurator;
 import com.apps.adrcotfas.burpeebuddy.main.view.challenges.ChallengesAdapter;
 import com.apps.adrcotfas.burpeebuddy.main.view.challenges.LinePagerIndicatorDecoration;
@@ -42,7 +42,7 @@ import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
 import timber.log.Timber;
 
-import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.goalToString;
+import static com.apps.adrcotfas.burpeebuddy.db.goal.GoalToString.goalToString;
 
 public class MainViewImpl extends BaseObservableView<MainView.Listener>
         implements MainView, GoalConfigurator.Listener {

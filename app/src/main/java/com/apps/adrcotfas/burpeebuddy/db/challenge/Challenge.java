@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalTypeConverter;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalTypeConverter;
 
 import static androidx.room.ForeignKey.CASCADE;
 

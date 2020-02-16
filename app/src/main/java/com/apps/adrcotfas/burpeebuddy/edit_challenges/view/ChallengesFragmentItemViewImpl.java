@@ -12,7 +12,7 @@ import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;

@@ -1,34 +1,31 @@
 package com.apps.adrcotfas.burpeebuddy.edit_goals.view;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString;
+import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalToString;
 
 public class GoalsItemViewImpl extends BaseObservableView<GoalsItemView.Listener>
         implements GoalsItemView {
 
-    private Goal mGoal;
     private TextView mTitle;
+    private View overlay;
 
     public GoalsItemViewImpl(LayoutInflater inflater, ViewGroup parent) {
-        setRootView(inflater.inflate(R.layout.view_goal_list_item, parent, false));
+        setRootView(inflater.inflate(R.layout.goal_list_item, parent, false));
 
         mTitle = findViewById(R.id.title);
-        findViewById(R.id.edit).setOnClickListener(v -> {
-            for (Listener l : getListeners()) {
-                l.onGoalEditClicked(mGoal);
-            }
-        });
+        overlay = findViewById(R.id.overlay);
     }
 
     @Override
-    public void bindGoal(Goal goal) {
-        mGoal = goal;
+    public void bindGoal(Goal goal, boolean selected) {
         mTitle.setText(GoalToString.goalToString(goal));
+        overlay.setVisibility(selected ? View.VISIBLE : View.GONE);
     }
 }

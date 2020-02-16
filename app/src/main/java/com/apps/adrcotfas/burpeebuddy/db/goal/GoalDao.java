@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.db.goals;
+package com.apps.adrcotfas.burpeebuddy.db.goal;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -8,7 +8,7 @@ import androidx.room.TypeConverters;
 
 import java.util.List;
 
-import static androidx.room.OnConflictStrategy.REPLACE;
+import static androidx.room.OnConflictStrategy.IGNORE;
 
 @Dao
 public interface GoalDao {
@@ -21,10 +21,10 @@ public interface GoalDao {
     @Query("select * from Goal where type = :type order by sets")
     LiveData<List<Goal>> getGoals(GoalType type);
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = IGNORE)
     void addGoal(Goal goal);
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = IGNORE)
     void insertAll(List<Goal> goals);
 
     @TypeConverters(GoalTypeConverter.class)

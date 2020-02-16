@@ -2,9 +2,9 @@ package com.apps.adrcotfas.burpeebuddy.workout.manager;
 
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalToString;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
 
 import java.util.ArrayList;
 import java.util.List;

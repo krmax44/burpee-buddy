@@ -1,7 +1,7 @@
-package com.apps.adrcotfas.burpeebuddy.db.goals;
+package com.apps.adrcotfas.burpeebuddy.db.goal;
 
-import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalType.REPS;
-import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalType.TIME;
+import static com.apps.adrcotfas.burpeebuddy.db.goal.GoalType.REPS;
+import static com.apps.adrcotfas.burpeebuddy.db.goal.GoalType.TIME;
 
 public class GoalToString {
     public static String goalToString(Goal goal) {

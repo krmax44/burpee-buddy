@@ -2,9 +2,9 @@ package com.apps.adrcotfas.burpeebuddy.settings;
 
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalTypeConverter;
+import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalTypeConverter;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 

@@ -1,11 +1,14 @@
-package com.apps.adrcotfas.burpeebuddy.db.goals;
+package com.apps.adrcotfas.burpeebuddy.db.goal;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
-//TODO: rename package to "goal"
-@Entity
+
+@Entity(indices =
+        {@Index(value = {"type", "sets", "reps", "duration", "duration_break" }, unique = true),
+         @Index(value = {"id"}, unique = true)})
 public class Goal {
 
     public static int DEFAULT_SETS = 3;

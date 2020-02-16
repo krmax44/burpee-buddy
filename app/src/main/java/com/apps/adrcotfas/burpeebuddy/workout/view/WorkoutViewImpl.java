@@ -14,7 +14,7 @@ import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
 import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.State;
 import com.google.android.material.button.MaterialButton;
@@ -26,7 +26,7 @@ import java.util.List;
 import timber.log.Timber;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
-import static com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString.formatSecondsAlt;
+import static com.apps.adrcotfas.burpeebuddy.db.goal.GoalToString.formatSecondsAlt;
 
 public class WorkoutViewImpl extends BaseObservableView<WorkoutView.Listener>
         implements WorkoutView {

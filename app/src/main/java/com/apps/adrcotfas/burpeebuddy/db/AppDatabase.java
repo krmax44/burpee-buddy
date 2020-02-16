@@ -12,9 +12,9 @@ import com.apps.adrcotfas.burpeebuddy.db.challenge.ChallengeDao;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseDao;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseGenerator;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalDao;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalGenerator;
+import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalDao;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalGenerator;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.db.workout.WorkoutDao;
 

@@ -3,7 +3,7 @@ package com.apps.adrcotfas.burpeebuddy.common;
 import com.apps.adrcotfas.burpeebuddy.common.timers.TimerType;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 
 public class Events {

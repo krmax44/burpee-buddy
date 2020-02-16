@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
 import com.apps.adrcotfas.burpeebuddy.edit_goals.GoalsViewHolder;
 
 import java.util.ArrayList;
@@ -15,44 +15,41 @@ import java.util.List;
 class GoalsAdapter extends RecyclerView.Adapter<GoalsViewHolder>
         implements GoalsItemView.Listener {
 
-    private final LayoutInflater mInflater;
-    private final Listener mListener;
-    private List<Goal> mGoals = new ArrayList<>();
+    private final LayoutInflater inflater;
+    private List<Goal> goals = new ArrayList<>();
+    private List<Integer> selectedItems = new ArrayList<>();
 
-    public interface Listener {
-        void onGoalEditClicked(Goal goal);
-    }
-
-    public GoalsAdapter(LayoutInflater inflater, Listener listener) {
-        mInflater = inflater;
-        mListener = listener;
+    public GoalsAdapter(LayoutInflater inflater) {
+        this.inflater = inflater;
     }
 
     public void bindGoals(List<Goal> goals) {
-        mGoals = goals;
+        this.goals = goals;
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public GoalsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        GoalsItemView viewMvc = new GoalsItemViewImpl(mInflater, parent);
+        GoalsItemView viewMvc = new GoalsItemViewImpl(inflater, parent);
         viewMvc.registerListener(this);
         return new GoalsViewHolder(viewMvc);
     }
 
     @Override
     public void onBindViewHolder(@NonNull GoalsViewHolder holder, int position) {
-        holder.getViewMvc().bindGoal(mGoals.get(position));
+        final Goal goal = goals.get(position);
+        final boolean selected = selectedItems.contains(goal.id);
+        holder.getViewMvc().bindGoal(goals.get(position), selected);
     }
 
     @Override
     public int getItemCount() {
-        return mGoals.size();
+        return goals.size();
     }
 
-    @Override
-    public void onGoalEditClicked(Goal goal) {
-        mListener.onGoalEditClicked(goal);
+    public void setSelectedItems(List<Integer> selectedItems) {
+        this.selectedItems = selectedItems;
+        notifyDataSetChanged();
     }
 }

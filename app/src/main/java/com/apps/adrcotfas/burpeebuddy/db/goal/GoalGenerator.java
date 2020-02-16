@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.db.goals;
+package com.apps.adrcotfas.burpeebuddy.db.goal;
 
 import java.util.ArrayList;
 import java.util.List;

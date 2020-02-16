@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.ObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
 
 import java.util.List;
 

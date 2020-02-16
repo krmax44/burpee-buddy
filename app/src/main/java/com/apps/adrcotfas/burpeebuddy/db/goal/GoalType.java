@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.db.goals;
+package com.apps.adrcotfas.burpeebuddy.db.goal;
 
 public enum GoalType {
 

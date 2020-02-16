@@ -7,9 +7,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
-import com.apps.adrcotfas.burpeebuddy.db.goals.Goal;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalToString;
-import com.apps.adrcotfas.burpeebuddy.db.goals.GoalType;
+import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
+import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
 import com.apps.adrcotfas.burpeebuddy.edit_goals.view.GoalConfigurator;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -44,17 +43,6 @@ public class AddEditGoalDialog extends DialogFragment implements GoalConfigurato
                 .inflate(R.layout.dialog_add_edit_goal, null, false);
 
         mGoalConfigurator = new GoalConfigurator(v, mGoal, this, getContext());
-
-        if(mEditMode) {
-            b.setNeutralButton(getString(R.string.delete), ((dialog, which)
-                    -> new MaterialAlertDialogBuilder(getActivity())
-                            .setPositiveButton(android.R.string.ok, ((dialog2, which2)
-                                    -> EventBus.getDefault().post(new Events.DeleteGoal(mGoal.id))))
-                            .setNegativeButton(android.R.string.cancel, (dialog3, which3) -> {})
-                            .setTitle("Delete " + GoalToString.goalToString(mGoal) + "?")
-                            .setMessage("Deleting this goal will not remove completed workouts from the statistics.")
-                            .create().show()));
-        }
 
         Dialog d = b
                 .setCancelable(false)
