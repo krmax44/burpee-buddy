@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatisticsAdapter extends RecyclerView.Adapter<StatisticsViewHolder>
-    implements StatisticsItemViewMvc.Listener {
+    implements StatisticsItemView.Listener {
 
     public interface Listener {
     }
@@ -33,7 +33,7 @@ public class StatisticsAdapter extends RecyclerView.Adapter<StatisticsViewHolder
     @NonNull
     @Override
     public StatisticsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        StatisticsItemViewMvc viewMvc = new StatisticsItemViewMvcImpl(mInflater, parent);
+        StatisticsItemView viewMvc = new StatisticsItemViewImpl(mInflater, parent);
         viewMvc.registerListener(this);
         return new StatisticsViewHolder(viewMvc);
     }

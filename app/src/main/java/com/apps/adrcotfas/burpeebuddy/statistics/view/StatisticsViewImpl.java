@@ -1,11 +1,10 @@
-package com.apps.adrcotfas.burpeebuddy.edit_challenges.view;
+package com.apps.adrcotfas.burpeebuddy.statistics.view;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,31 +12,33 @@ import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.ActionModeHelper;
 import com.apps.adrcotfas.burpeebuddy.common.recyclerview.RecyclerItemClickListener;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
-import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
+import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Listener>
-        implements ChallengeView, ActionModeHelper.Listener{
+public class StatisticsViewImpl
+        extends BaseObservableViewMvc<StatisticsView.Listener>
+        implements StatisticsView, ActionModeHelper.Listener {
 
     private RecyclerView recyclerView;
-    private ChallengesFragmentAdapter adapter;
+    private StatisticsAdapter adapter;
     private LinearLayout emptyState;
-    private List<Challenge> challenges = new ArrayList<>();
+
+    private List<Workout> workouts = new ArrayList<>();
 
     private ActionModeHelper actionModeHelper;
 
-    public ChallengeViewImpl(LayoutInflater inflater, ViewGroup parent) {
-        actionModeHelper = new ActionModeHelper(this, false);
+    public StatisticsViewImpl(LayoutInflater inflater, ViewGroup parent) {
+
+        actionModeHelper = new ActionModeHelper(this, true);
 
         setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
-
         emptyState = findViewById(R.id.empty_state);
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ChallengesFragmentAdapter(inflater);
+        adapter = new StatisticsAdapter(inflater);
         recyclerView.setAdapter(adapter);
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext()
                 , recyclerView
@@ -45,37 +46,32 @@ public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Liste
 
             @Override
             public void onItemClick(View view, int position) {
-                actionModeHelper.onItemClick(challenges.get(position).id);
+                actionModeHelper.onItemClick(workouts.get(position).id);
                 adapter.setSelectedItems(actionModeHelper.getSelectedEntries());
+
             }
             @Override
             public void onItemLongClick(View view, int position) {
-                actionModeHelper.onItemLongClick(challenges.get(position).id);
+                actionModeHelper.onItemLongClick(workouts.get(position).id);
                 adapter.setSelectedItems(actionModeHelper.getSelectedEntries());
             }
         }));
     }
 
     @Override
-    public void bindChallenges(List<Pair<Challenge, Integer>> challenges) {
-        recyclerView.setVisibility(challenges.isEmpty() ? View.GONE : View.VISIBLE);
-        emptyState.setVisibility(challenges.isEmpty() ? View.VISIBLE : View.GONE);
-
-        adapter.bindChallenges(challenges);
-
-        this.challenges.clear();
-        for (Pair<Challenge, Integer> o : challenges) {
-            this.challenges.add(o.first);
-        }
+    public void bindWorkouts(List<Workout> workouts) {
+        recyclerView.setVisibility(workouts.isEmpty() ? View.GONE : View.VISIBLE);
+        emptyState.setVisibility(workouts.isEmpty() ? View.VISIBLE : View.GONE);
+        adapter.bindWorkouts(workouts);
+        this.workouts = workouts;
     }
-
 
     @Override
     public void actionSelectAllItems() {
         actionModeHelper.toggleEditButtonVisibility(false);
 
-        List<Integer> ids = new ArrayList<>(challenges.size());
-        for (Challenge w : challenges) {
+        List<Integer> ids = new ArrayList<>(workouts.size());
+        for (Workout w : workouts) {
             ids.add(w.id);
         }
 
@@ -93,7 +89,18 @@ public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Liste
     }
 
     @Override
-    public void actionEditSelected() {}
+    public void actionEditSelected() {
+        Workout selectedWorkout = null;
+        for (Workout w : workouts) {
+            if (w.id == actionModeHelper.getSelectedEntries().get(0)) {
+                selectedWorkout = w;
+                break;
+            }
+        }
+        for (Listener l : getListeners()) {
+            l.onEditSelected(selectedWorkout);
+        }
+    }
 
     @Override
     public void startActionMode() {
@@ -107,5 +114,4 @@ public class ChallengeViewImpl extends BaseObservableViewMvc<ChallengeView.Liste
     public void destroyActionMode() {
         adapter.setSelectedItems(new ArrayList<>());
     }
-
 }

@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.statistics;
 
 import android.os.Bundle;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,30 +14,29 @@ import androidx.fragment.app.Fragment;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
-import com.apps.adrcotfas.burpeebuddy.common.ActionModeCallback;
+import com.apps.adrcotfas.burpeebuddy.common.ActionModeHelper;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.statistics.dialog.AddEditWorkoutDialog;
-import com.apps.adrcotfas.burpeebuddy.statistics.view.StatisticsViewMvc;
-import com.apps.adrcotfas.burpeebuddy.statistics.view.StatisticsViewMvcImpl;
+import com.apps.adrcotfas.burpeebuddy.statistics.view.StatisticsView;
+import com.apps.adrcotfas.burpeebuddy.statistics.view.StatisticsViewImpl;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StatisticsFragment extends Fragment
-        implements StatisticsViewMvc.Listener {
+        implements StatisticsView.Listener {
     private static final String TAG = "StatisticsFragment";
 
-    private StatisticsViewMvc view;
+    private StatisticsView view;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         EventBus.getDefault().register(this);
-        view = new StatisticsViewMvcImpl(inflater, container);
+        view = new StatisticsViewImpl(inflater, container);
 
         AppDatabase.getDatabase(getContext()).workoutDao().getAll().observe(
                 getViewLifecycleOwner(), workouts -> view.bindWorkouts(workouts));
@@ -94,6 +92,12 @@ public class StatisticsFragment extends Fragment
         AppDatabase.editWorkout(getContext(), e.id, e.workout);
     }
 
+
+    @Override
+    public void startActionMode(ActionModeHelper actionModeHelper) {
+        actionModeHelper.setActionMode(getActivity().startActionMode(actionModeHelper));
+    }
+
     @Override
     public void onDeleteSelected(List<Integer> ids) {
         new MaterialAlertDialogBuilder(getActivity())
@@ -115,10 +119,5 @@ public class StatisticsFragment extends Fragment
             AddEditWorkoutDialog.getInstance(selectedWorkout, true)
                     .show(getActivity().getSupportFragmentManager(), TAG);
         }
-    }
-
-    @Override
-    public ActionMode startActionMode(ActionModeCallback actionModeCallback) {
-        return getActivity().startActionMode(actionModeCallback);
     }
 }

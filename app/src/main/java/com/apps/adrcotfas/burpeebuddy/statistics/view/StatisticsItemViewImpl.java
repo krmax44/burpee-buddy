@@ -12,8 +12,8 @@ import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.google.android.material.chip.Chip;
 
-class StatisticsItemViewMvcImpl extends BaseObservableViewMvc<StatisticsItemViewMvc.Listener>
-        implements StatisticsItemViewMvc {
+class StatisticsItemViewImpl extends BaseObservableViewMvc<StatisticsItemView.Listener>
+        implements StatisticsItemView {
 
     private Workout workout;
 
@@ -26,7 +26,7 @@ class StatisticsItemViewMvcImpl extends BaseObservableViewMvc<StatisticsItemView
 
     private View overlay;
 
-    public StatisticsItemViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
+    public StatisticsItemViewImpl(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.statistics_list_item, parent, false));
 
         exerciseName = findViewById(R.id.exercise);

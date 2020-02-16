@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.edit_challenges;
 
 import android.os.Bundle;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 
 import com.apps.adrcotfas.burpeebuddy.R;
-import com.apps.adrcotfas.burpeebuddy.common.ActionModeCallback;
+import com.apps.adrcotfas.burpeebuddy.common.ActionModeHelper;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
@@ -38,13 +37,11 @@ import java.util.Map;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
 
 public class ChallengesFragment extends Fragment
-        implements ChallengeView.Listener, ActionModeCallback.Listener {
+        implements ChallengeView.Listener {
 
     private static final String TAG = "ChallengesFragment";
 
     private ChallengeView view;
-    private ActionMode actionMode;
-    private ActionModeCallback actionModeCallback;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -53,21 +50,16 @@ public class ChallengesFragment extends Fragment
         view = new ChallengeViewImpl(inflater, container);
         view.registerListener(this);
 
-        actionModeCallback = new ActionModeCallback(this, false);
-
         setupChallenges();
 
         setHasOptionsMenu(true);
         return view.getRootView();
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
-        if (actionMode != null) {
-            actionMode.finish();
-        }
+        view.destroyActionMode();
     }
 
     @Override
@@ -170,51 +162,22 @@ public class ChallengesFragment extends Fragment
     }
 
     @Override
-    public void actionSelectAllItems() {
-        view.selectAllItems();
+    public void startActionMode(ActionModeHelper actionModeHelper) {
+        actionModeHelper.setActionMode(getActivity().startActionMode(actionModeHelper));
     }
 
     @Override
-    public void actionDeleteSelected() {
+    public void onDeleteSelected(List<Integer> ids) {
         new MaterialAlertDialogBuilder(getActivity())
                 .setTitle("Delete challenges?")
                 .setMessage("This will delete the selected challenges")
                 .setPositiveButton(android.R.string.ok, (dialog, i) -> {
-                    for (int id : view.getSelectedEntriesIds()) {
-                        AppDatabase.deleteChallenge(getContext(), id);
+                    for (int id : ids) {
+                        AppDatabase.deleteWorkout(getContext(), id);
                     }
-                    finishAction();
+                    view.destroyActionMode();
                 })
                 .setNegativeButton(android.R.string.cancel, (dialog, i) -> dialog.cancel())
                 .show();
-    }
-
-    @Override
-    public void destroyActionMode() {
-        view.unselectItems();
-        actionMode = null;
-    }
-
-    @Override
-    public void actionEditSelected() {
-        // do nothing
-    }
-
-    @Override
-    public void startActionMode() {
-        if (actionMode == null) {
-            actionMode = getActivity().startActionMode(actionModeCallback);
-        }
-    }
-
-    @Override
-    public void updateTitle(String numberOfSelectedItems) {
-        actionMode.setTitle(numberOfSelectedItems);
-    }
-
-    @Override
-    public void finishAction() {
-        actionMode.setTitle("");
-        actionMode.finish();
     }
 }
