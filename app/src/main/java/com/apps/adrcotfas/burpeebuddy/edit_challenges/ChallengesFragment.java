@@ -175,7 +175,7 @@ public class ChallengesFragment extends Fragment
     }
 
     @Override
-    public void actionDelete() {
+    public void actionDeleteSelected() {
         new MaterialAlertDialogBuilder(getActivity())
                 .setTitle("Delete challenges?")
                 .setMessage("This will delete the selected challenges")
@@ -196,7 +196,7 @@ public class ChallengesFragment extends Fragment
     }
 
     @Override
-    public void editSelected() {
+    public void actionEditSelected() {
         // do nothing
     }
 

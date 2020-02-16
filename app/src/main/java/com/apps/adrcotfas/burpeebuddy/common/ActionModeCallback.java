@@ -11,9 +11,9 @@ public class ActionModeCallback implements ActionMode.Callback{
 
     public interface Listener {
         void actionSelectAllItems();
-        void actionDelete();
+        void actionDeleteSelected();
+        void actionEditSelected();
         void destroyActionMode();
-        void editSelected();
     }
 
     private Listener listener;
@@ -43,13 +43,13 @@ public class ActionModeCallback implements ActionMode.Callback{
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
-                listener.editSelected();
+                listener.actionEditSelected();
                 break;
             case R.id.action_select_all:
                 listener.actionSelectAllItems();
                 break;
             case R.id.action_delete:
-                listener.actionDelete();
+                listener.actionDeleteSelected();
                 break;
         }
         return true;

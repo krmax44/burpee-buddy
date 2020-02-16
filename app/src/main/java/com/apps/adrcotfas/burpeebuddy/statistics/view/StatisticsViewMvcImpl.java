@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.burpeebuddy.statistics.view;
 
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.common.ActionModeCallback;
 import com.apps.adrcotfas.burpeebuddy.common.recyclerview.RecyclerItemClickListener;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableViewMvc;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
@@ -18,7 +20,7 @@ import java.util.List;
 
 public class StatisticsViewMvcImpl
         extends BaseObservableViewMvc<StatisticsViewMvc.Listener>
-    implements StatisticsViewMvc, StatisticsAdapter.Listener {
+        implements StatisticsViewMvc, StatisticsAdapter.Listener, ActionModeCallback.Listener {
 
     private RecyclerView recyclerView;
     private StatisticsAdapter adapter;
@@ -26,9 +28,15 @@ public class StatisticsViewMvcImpl
 
     private List<Workout> workouts = new ArrayList<>();
     private List<Integer> selectedEntries = new ArrayList<>();
+
+    private ActionMode actionMode;
+    private ActionModeCallback actionModeCallback;
     private boolean isMultiSelect = false;
 
     public StatisticsViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
+
+        actionModeCallback = new ActionModeCallback(this, true);
+
         setRootView(inflater.inflate(R.layout.fragment_recycler, parent, false));
         emptyState = findViewById(R.id.empty_state);
 
@@ -51,9 +59,7 @@ public class StatisticsViewMvcImpl
                 if (!isMultiSelect) {
                     adapter.setSelectedItems(new ArrayList<>());
                     isMultiSelect = true;
-                    for(Listener l : getListeners()) {
-                        l.startActionMode();
-                    }
+                    startActionMode();
                 }
                 multiSelect(position);
             }
@@ -78,14 +84,10 @@ public class StatisticsViewMvcImpl
                 selectedEntries.add(w.id);
             }
             if (!selectedEntries.isEmpty()) {
-                for(Listener l : getListeners()) {
-                    l.toggleEditButtonVisibility(selectedEntries.size() == 1);
-                    l.updateTitle(String.valueOf(selectedEntries.size()));
-                }
+                toggleEditButtonVisibility(selectedEntries.size() == 1);
+                updateTitle(String.valueOf(selectedEntries.size()));
             } else {
-                for(Listener l : getListeners()) {
-                    l.finishAction();
-                }
+                finishAction();
             }
             adapter.setSelectedItems(selectedEntries);
         }
@@ -98,26 +100,67 @@ public class StatisticsViewMvcImpl
         }
 
         if (!selectedEntries.isEmpty()) {
-            for(Listener l : getListeners()) {
-                l.updateTitle(String.valueOf(selectedEntries.size()));
-            }
+            updateTitle(String.valueOf(selectedEntries.size()));
             adapter.setSelectedItems(selectedEntries);
         }  else {
-            for(Listener l : getListeners()) {
-                l.finishAction();
-            }
+            finishAction();
         }
     }
 
     @Override
-    public void unselectItems() {
-        isMultiSelect = false;
-        selectedEntries = new ArrayList<>();
-        adapter.setSelectedItems(new ArrayList<>());
+    public void actionSelectAllItems() {
+        actionModeCallback.toggleEditButtonVisibility(false);
+        selectAllItems();
     }
 
     @Override
-    public List<Integer> getSelectedEntriesIds() {
-        return selectedEntries;
+    public void actionDeleteSelected() {
+        for (Listener l : getListeners()) {
+            l.onDeleteSelected(selectedEntries);
+        }
+    }
+
+    @Override
+    public void actionEditSelected() {
+        Workout selectedWorkout = null;
+        for (Workout w : workouts) {
+            if (w.id == selectedEntries.get(0)) {
+                selectedWorkout = w;
+                break;
+            }
+        }
+        for (Listener l : getListeners()) {
+            l.onEditSelected(selectedWorkout);
+        }
+    }
+
+    @Override
+    public void destroyActionMode() {
+        isMultiSelect = false;
+        selectedEntries = new ArrayList<>();
+        adapter.setSelectedItems(new ArrayList<>());
+        actionMode = null;
+    }
+
+    public void startActionMode() {
+        if (actionMode == null) {
+            for (Listener l : getListeners()) {
+                actionMode = l.startActionMode(actionModeCallback);
+                break;
+            }
+        }
+    }
+
+    public void updateTitle(String numberOfSelectedItems) {
+        actionMode.setTitle(numberOfSelectedItems);
+    }
+
+    public void finishAction() {
+        actionMode.setTitle("");
+        actionMode.finish();
+    }
+
+    public void toggleEditButtonVisibility(boolean visible) {
+        actionModeCallback.toggleEditButtonVisibility(visible);
     }
 }

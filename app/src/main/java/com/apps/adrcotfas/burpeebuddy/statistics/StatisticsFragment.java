@@ -29,14 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatisticsFragment extends Fragment
-        implements StatisticsViewMvc.Listener, ActionModeCallback.Listener {
+        implements StatisticsViewMvc.Listener {
     private static final String TAG = "StatisticsFragment";
 
     private StatisticsViewMvc view;
-    private List<Workout> workouts = new ArrayList<>();
-
-    private ActionMode actionMode;
-    private ActionModeCallback actionModeCallback;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -44,13 +40,8 @@ public class StatisticsFragment extends Fragment
         EventBus.getDefault().register(this);
         view = new StatisticsViewMvcImpl(inflater, container);
 
-        actionModeCallback = new ActionModeCallback(this, false);
-
         AppDatabase.getDatabase(getContext()).workoutDao().getAll().observe(
-                getViewLifecycleOwner(), workouts -> {
-                    view.bindWorkouts(workouts);
-                    this.workouts = workouts;
-                });
+                getViewLifecycleOwner(), workouts -> view.bindWorkouts(workouts));
         setHasOptionsMenu(true);
         return view.getRootView();
     }
@@ -65,9 +56,7 @@ public class StatisticsFragment extends Fragment
     @Override
     public void onPause() {
         super.onPause();
-        if (actionMode != null) {
-            actionMode.finish();
-        }
+        view.destroyActionMode();
     }
 
     @Override
@@ -106,41 +95,22 @@ public class StatisticsFragment extends Fragment
     }
 
     @Override
-    public void actionSelectAllItems() {
-        actionModeCallback.toggleEditButtonVisibility(false);
-        view.selectAllItems();
-    }
-
-    @Override
-    public void actionDelete() {
+    public void onDeleteSelected(List<Integer> ids) {
         new MaterialAlertDialogBuilder(getActivity())
                 .setTitle("Delete workouts?")
                 .setMessage("This will delete the selected workouts")
                 .setPositiveButton(android.R.string.ok, (dialog, i) -> {
-                    for (int id : view.getSelectedEntriesIds()) {
+                    for (int id : ids) {
                         AppDatabase.deleteWorkout(getContext(), id);
                     }
-                    finishAction();
+                    view.destroyActionMode();
                 })
                 .setNegativeButton(android.R.string.cancel, (dialog, i) -> dialog.cancel())
                 .show();
     }
 
     @Override
-    public void destroyActionMode() {
-        view.unselectItems();
-        actionMode = null;
-    }
-
-    @Override
-    public void editSelected() {
-        Workout selectedWorkout = null;
-        for (Workout w : workouts) {
-            if (w.id == view.getSelectedEntriesIds().get(0)) {
-                selectedWorkout = w;
-                break;
-            }
-        }
+    public void onEditSelected(Workout selectedWorkout) {
         if (selectedWorkout != null) {
             AddEditWorkoutDialog.getInstance(selectedWorkout, true)
                     .show(getActivity().getSupportFragmentManager(), TAG);
@@ -148,25 +118,7 @@ public class StatisticsFragment extends Fragment
     }
 
     @Override
-    public void startActionMode() {
-        if (actionMode == null) {
-            actionMode = getActivity().startActionMode(actionModeCallback);
-        }
-    }
-
-    @Override
-    public void updateTitle(String numberOfSelectedItems) {
-        actionMode.setTitle(numberOfSelectedItems);
-    }
-
-    @Override
-    public void finishAction() {
-        actionMode.setTitle("");
-        actionMode.finish();
-    }
-
-    @Override
-    public void toggleEditButtonVisibility(boolean visible) {
-        actionModeCallback.toggleEditButtonVisibility(visible);
+    public ActionMode startActionMode(ActionModeCallback actionModeCallback) {
+        return getActivity().startActionMode(actionModeCallback);
     }
 }
