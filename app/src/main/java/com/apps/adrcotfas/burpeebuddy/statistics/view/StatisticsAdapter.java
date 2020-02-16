@@ -17,12 +17,12 @@ public class StatisticsAdapter extends RecyclerView.Adapter<StatisticsViewHolder
     public interface Listener {
     }
 
-    private final LayoutInflater mInflater;
+    private final LayoutInflater inflater;
     private List<Workout> workouts = new ArrayList<>();
     private List<Integer> selectedItems = new ArrayList<>();
 
     public StatisticsAdapter(LayoutInflater inflater) {
-        mInflater = inflater;
+        this.inflater = inflater;
     }
 
     public void bindWorkouts(List<Workout> workouts) {
@@ -33,7 +33,7 @@ public class StatisticsAdapter extends RecyclerView.Adapter<StatisticsViewHolder
     @NonNull
     @Override
     public StatisticsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        StatisticsItemView viewMvc = new StatisticsItemViewImpl(mInflater, parent);
+        StatisticsItemView viewMvc = new StatisticsItemViewImpl(inflater, parent);
         viewMvc.registerListener(this);
         return new StatisticsViewHolder(viewMvc);
     }

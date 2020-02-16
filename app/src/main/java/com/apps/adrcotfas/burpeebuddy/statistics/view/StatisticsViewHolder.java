@@ -6,14 +6,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class StatisticsViewHolder extends RecyclerView.ViewHolder {
 
-    private final StatisticsItemView mViewMvc;
+    private final StatisticsItemView view;
 
     public StatisticsViewHolder(@NonNull StatisticsItemView viewMvc) {
         super(viewMvc.getRootView());
-        this.mViewMvc = viewMvc;
+        this.view = viewMvc;
     }
 
     public StatisticsItemView getViewMvc() {
-        return mViewMvc;
+        return view;
     }
 }

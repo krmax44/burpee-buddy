@@ -21,7 +21,6 @@ import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -41,23 +40,23 @@ public class AddEditWorkoutDialog extends DialogFragment
 
     private static final String TAG = "AddEditWorkoutDialog";
 
-    private boolean mEditMode;
-    private Workout mWorkout;
-    private List<String> mExercisesNames;
-    private List<Exercise> mExercises;
-    private TextInputEditText mSeconds;
-    private TextInputEditText mMinutes;
-    private TextView mDate;
-    private TextView mTime;
+    private boolean isEditMode;
+    private Workout workout;
+    private List<String> exercisesNames;
+    private List<Exercise> exercises;
+    private TextInputEditText seconds;
+    private TextInputEditText minutes;
+    private TextView date;
+    private TextView time;
 
     public static AddEditWorkoutDialog getInstance(Workout workout, boolean editMode) {
         AddEditWorkoutDialog dialog = new AddEditWorkoutDialog();
-        dialog.mEditMode = editMode;
+        dialog.isEditMode = editMode;
 
         if (editMode && workout != null) {
-            dialog.mWorkout  = workout;
+            dialog.workout = workout;
         } else {
-            dialog.mWorkout = new Workout();
+            dialog.workout = new Workout();
         }
         return dialog;
     }
@@ -76,12 +75,12 @@ public class AddEditWorkoutDialog extends DialogFragment
 
         Dialog d = b
                 .setCancelable(false)
-                .setTitle(mEditMode ? "Edit Workout" : "Add Workout")
+                .setTitle(isEditMode ? "Edit Workout" : "Add Workout")
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    mWorkout.pace = InProgressWorkout.getAvgPace(mWorkout.reps, mWorkout.duration);
-                    EventBus.getDefault().post(mEditMode
-                            ? new Events.EditWorkout(mWorkout.id, mWorkout)
-                            : new Events.AddWorkout(mWorkout));
+                    workout.pace = InProgressWorkout.getAvgPace(workout.reps, workout.duration);
+                    EventBus.getDefault().post(isEditMode
+                            ? new Events.EditWorkout(workout.id, workout)
+                            : new Events.AddWorkout(workout));
                 })
                 .setNegativeButton(android.R.string.cancel, ((dialog, which) -> {}))
                 .setView(v)
@@ -91,12 +90,12 @@ public class AddEditWorkoutDialog extends DialogFragment
     }
 
     private void setupDateAndTimeViews(View v) {
-        mDate = v.findViewById(R.id.edit_date);
-        mTime = v.findViewById(R.id.edit_time);
-        mDate.setText(StringUtils.formatDate(mWorkout.timestamp));
-        mTime.setText(StringUtils.formatTime(mWorkout.timestamp));
+        date = v.findViewById(R.id.edit_date);
+        time = v.findViewById(R.id.edit_time);
+        date.setText(StringUtils.formatDate(workout.timestamp));
+        time.setText(StringUtils.formatTime(workout.timestamp));
 
-        mDate.setOnClickListener(v1 -> {
+        date.setOnClickListener(v1 -> {
             Calendar now = Calendar.getInstance();
             DatePickerDialog d = DatePickerDialog.newInstance(
                     AddEditWorkoutDialog.this,
@@ -109,7 +108,7 @@ public class AddEditWorkoutDialog extends DialogFragment
             d.show(getParentFragmentManager(), TAG);
         });
 
-        mTime.setOnClickListener(v12 -> {
+        time.setOnClickListener(v12 -> {
             Calendar now = Calendar.getInstance();
             TimePickerDialog d = TimePickerDialog.newInstance(
                     AddEditWorkoutDialog.this,
@@ -128,16 +127,16 @@ public class AddEditWorkoutDialog extends DialogFragment
 
         AppDatabase.getDatabase(getContext()).exerciseDao().getAll().observe(this,
                 exercises -> {
-                    mExercises = exercises;
-                    mExercisesNames = new ArrayList<>();
-                    mExercisesNames.clear();
+                    this.exercises = exercises;
+                    exercisesNames = new ArrayList<>();
+                    exercisesNames.clear();
                     for (Exercise e : exercises) {
-                        mExercisesNames.add(e.name);
+                        exercisesNames.add(e.name);
                     }
                     nameEditText.setAdapter(new ArrayAdapter<>(getContext(),
-                            R.layout.select_dialog_item, mExercisesNames));
-                    if(mEditMode) {
-                        nameEditText.setText(mWorkout.exerciseName);
+                            R.layout.select_dialog_item, exercisesNames));
+                    if(isEditMode) {
+                        nameEditText.setText(workout.exerciseName);
                     }
                 });
 
@@ -153,7 +152,7 @@ public class AddEditWorkoutDialog extends DialogFragment
             @Override
             public void afterTextChanged(Editable s) {
                 AlertDialog dialog = (AlertDialog) getDialog();
-                if (s.length() == 0 || !mExercisesNames.contains(s.toString())) {
+                if (s.length() == 0 || !exercisesNames.contains(s.toString())) {
                     nameEditTextLayout.setError(getString(R.string.exercise_dialog_name_error));
                     if (dialog != null) {
                         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
@@ -163,10 +162,10 @@ public class AddEditWorkoutDialog extends DialogFragment
                     }
                 } else {
                     nameEditTextLayout.setError(null);
-                    for (Exercise e : mExercises) {
+                    for (Exercise e : exercises) {
                         if (e.name.equals(s.toString())) {
-                            mWorkout.exerciseName = e.name;
-                            mWorkout.type = e.type;
+                            workout.exerciseName = e.name;
+                            workout.type = e.type;
                             v.findViewById(R.id.reps_layout).setVisibility(
                                     e.type != ExerciseType.TIME_BASED ? View.VISIBLE : View.GONE);
                             v.findViewById(R.id.minutes_layout).setVisibility(View.VISIBLE);
@@ -183,10 +182,10 @@ public class AddEditWorkoutDialog extends DialogFragment
         TextInputLayout repsEditTextLayout = v.findViewById(R.id.reps_layout);
         TextInputEditText repsEditText = v.findViewById(R.id.reps);
 
-        if (mEditMode) {
-            repsEditText.setText(String.valueOf(mWorkout.reps));
+        if (isEditMode) {
+            repsEditText.setText(String.valueOf(workout.reps));
             v.findViewById(R.id.reps_layout).setVisibility(
-                    mWorkout.type != ExerciseType.TIME_BASED ? View.VISIBLE : View.GONE);
+                    workout.type != ExerciseType.TIME_BASED ? View.VISIBLE : View.GONE);
         }
 
         repsEditText.addTextChangedListener(new TextWatcher() {
@@ -211,7 +210,7 @@ public class AddEditWorkoutDialog extends DialogFragment
                     }
                     value = Integer.valueOf(s.toString());
                 }
-                mWorkout.reps = value;
+                workout.reps = value;
             }
         });
     }
@@ -219,15 +218,15 @@ public class AddEditWorkoutDialog extends DialogFragment
     private void setupDurationsEditText(View v) {
         final TextInputLayout minutesLayout = v.findViewById(R.id.minutes_layout);
         final TextInputLayout secondsLayout = v.findViewById(R.id.seconds_layout);
-        mMinutes = v.findViewById(R.id.minutes);
-        mSeconds = v.findViewById(R.id.seconds);
+        minutes = v.findViewById(R.id.minutes);
+        seconds = v.findViewById(R.id.seconds);
 
-        if (mEditMode) {
-            mMinutes.setText(String.valueOf(mWorkout.duration / 60));
-            mSeconds.setText(String.valueOf(mWorkout.duration % 60));
+        if (isEditMode) {
+            minutes.setText(String.valueOf(workout.duration / 60));
+            seconds.setText(String.valueOf(workout.duration % 60));
         }
 
-        mMinutes.addTextChangedListener(new TextWatcher() {
+        minutes.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -238,8 +237,8 @@ public class AddEditWorkoutDialog extends DialogFragment
             public void afterTextChanged(Editable s) {
                 AlertDialog dialog = (AlertDialog) getDialog();
                 if (s.length() == 0) {
-                    if (mWorkout.type == ExerciseType.TIME_BASED
-                            && (mSeconds.length() == 0 || mSeconds.getText().toString().equals("0"))) {
+                    if (workout.type == ExerciseType.TIME_BASED
+                            && (seconds.length() == 0 || seconds.getText().toString().equals("0"))) {
                         minutesLayout.setError("");
                         if (dialog != null) {
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
@@ -248,19 +247,19 @@ public class AddEditWorkoutDialog extends DialogFragment
                 } else {
                     minutesLayout.setError(null);
                     if (dialog != null) {
-                        if (mWorkout.type == ExerciseType.TIME_BASED) {
+                        if (workout.type == ExerciseType.TIME_BASED) {
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                         }
                     }
                     int minutes = Integer.valueOf(s.toString());
-                    final String seconds = mSeconds.getText().toString().equals("") ? "0" : mSeconds.getText().toString();
-                    mWorkout.duration = (int) TimeUnit.MINUTES.toSeconds(minutes)
+                    final String seconds = AddEditWorkoutDialog.this.seconds.getText().toString().equals("") ? "0" : AddEditWorkoutDialog.this.seconds.getText().toString();
+                    workout.duration = (int) TimeUnit.MINUTES.toSeconds(minutes)
                             + Integer.valueOf(seconds);
                 }
             }
         });
 
-        mSeconds.addTextChangedListener(new TextWatcher() {
+        seconds.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
@@ -270,8 +269,8 @@ public class AddEditWorkoutDialog extends DialogFragment
             public void afterTextChanged(Editable s) {
                 AlertDialog dialog = (AlertDialog) getDialog();
                 if (s.length() == 0) {
-                    if (mWorkout.type == ExerciseType.TIME_BASED
-                            && (mMinutes.length() == 0 || mMinutes.getText().toString().equals("0"))) {
+                    if (workout.type == ExerciseType.TIME_BASED
+                            && (minutes.length() == 0 || minutes.getText().toString().equals("0"))) {
                         secondsLayout.setError("");
                         if (dialog != null) {
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
@@ -279,17 +278,17 @@ public class AddEditWorkoutDialog extends DialogFragment
                     }
                 } else {
                     if (Integer.valueOf(s.toString()) > 60 ) {
-                        mSeconds.setText(String.valueOf(60));
+                        seconds.setText(String.valueOf(60));
                     }
                     secondsLayout.setError(null);
                     if (dialog != null) {
-                        if (mWorkout.type == ExerciseType.TIME_BASED) {
+                        if (workout.type == ExerciseType.TIME_BASED) {
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                         }
                     }
                     int seconds = Integer.valueOf(s.toString());
-                    final String minutes = mMinutes.getText().toString().equals("") ? "0" : mMinutes.getText().toString();
-                    mWorkout.duration = (int) TimeUnit.MINUTES.toSeconds(Integer.valueOf(minutes))
+                    final String minutes = AddEditWorkoutDialog.this.minutes.getText().toString().equals("") ? "0" : AddEditWorkoutDialog.this.minutes.getText().toString();
+                    workout.duration = (int) TimeUnit.MINUTES.toSeconds(Integer.valueOf(minutes))
                             + seconds;
                 }
             }
@@ -299,7 +298,7 @@ public class AddEditWorkoutDialog extends DialogFragment
     @Override
     public void onResume() {
         super.onResume();
-        if (!mEditMode) {
+        if (!isEditMode) {
             AlertDialog dialog = (AlertDialog) getDialog();
             if (dialog != null) {
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
@@ -309,21 +308,21 @@ public class AddEditWorkoutDialog extends DialogFragment
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        final long millis = new DateTime(mWorkout.timestamp)
+        final long millis = new DateTime(workout.timestamp)
                 .withYear(year)
                 .withMonthOfYear(monthOfYear + 1)
                 .withDayOfMonth(dayOfMonth).getMillis();
-        mWorkout.timestamp = millis;
-        mDate.setText(StringUtils.formatDate(millis));
+        workout.timestamp = millis;
+        date.setText(StringUtils.formatDate(millis));
     }
 
     @Override
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        final long millis = new DateTime(mWorkout.timestamp)
+        final long millis = new DateTime(workout.timestamp)
                 .withHourOfDay(hourOfDay)
                 .withMinuteOfHour(minute)
                 .withSecondOfMinute(second).getMillis();
-        mWorkout.timestamp = millis;
-        mTime.setText(StringUtils.formatTime(millis));
+        workout.timestamp = millis;
+        time.setText(StringUtils.formatTime(millis));
     }
 }
