@@ -113,14 +113,6 @@ public class AddEditExerciseDialog extends DialogFragment {
                     Timber.tag(TAG).wtf("Invalid exercise type.");
                     break;
             }
-
-            b.setNeutralButton(getString(R.string.delete), ((dialog, which) -> new MaterialAlertDialogBuilder(getActivity())
-                    .setPositiveButton(android.R.string.ok, ((dialog2, which2)
-                            -> EventBus.getDefault().post(new Events.DeleteExercise(mExercise.name))))
-                    .setNegativeButton(android.R.string.cancel, (dialog3, which3) -> {})
-                    .setTitle("Delete " + mExercise.name + "?")
-                    .setMessage("Deleting this exercise will remove the associated completed workouts from the statistics.")
-                    .create().show()));
         }
 
         Dialog d = b

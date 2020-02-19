@@ -5,27 +5,26 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.apps.adrcotfas.burpeebuddy.common.viewmvc.actionMode.ActionModeRecyclerViewAdapter;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChallengesFragmentAdapter
-        extends ActionModeRecyclerViewAdapter<List<Pair<Challenge, Integer>>, ChallengesFragmentViewHolder>
+public class ChallengesFragmentAdapter extends RecyclerView.Adapter<ChallengesFragmentViewHolder>
         implements ChallengesFragmentItemView.Listener {
 
     private final LayoutInflater inflater;
     private List<Pair<Challenge, Integer>> challenges = new ArrayList<>();
+    private List<Integer> selectedItems = new ArrayList<>();
 
     public ChallengesFragmentAdapter(LayoutInflater inflater) {
         this.inflater = inflater;
     }
 
-    @Override
-    public void bindItems(List<Pair<Challenge, Integer>> items) {
-        this.challenges = new ArrayList<>(items);
+    public void bindChallenges(List<Pair<Challenge, Integer>> challenges) {
+        this.challenges = new ArrayList<>(challenges);
         notifyDataSetChanged();
     }
 
@@ -39,7 +38,7 @@ public class ChallengesFragmentAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ChallengesFragmentViewHolder holder, int position) {
-        final boolean selected = getSelectedItems().contains(challenges.get(position).first.id);
+        final boolean selected = selectedItems.contains(challenges.get(position).first.id);
         holder.getView().bindChallenge(
                 challenges.get(position), selected);
     }
@@ -47,5 +46,10 @@ public class ChallengesFragmentAdapter
     @Override
     public int getItemCount() {
         return challenges.size();
+    }
+
+    public void setSelectedItems(List<Integer> selectedItems) {
+        this.selectedItems = selectedItems;
+        notifyDataSetChanged();
     }
 }

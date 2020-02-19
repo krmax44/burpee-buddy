@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +42,7 @@ public class ExercisesViewImpl
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ExercisesAdapter(inflater, this);
         recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
         itemTouchHelper = new ItemTouchHelper(callback);

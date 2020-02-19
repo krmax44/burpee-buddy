@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.core.util.Pair;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +40,7 @@ public class ChallengeViewImpl extends BaseObservableView<ChallengeView.Listener
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ChallengesFragmentAdapter(inflater);
         recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext()
                 , recyclerView
                 , new RecyclerItemClickListener.OnItemClickListener() {

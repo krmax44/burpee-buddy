@@ -1,10 +1,12 @@
 package com.apps.adrcotfas.burpeebuddy.edit_goals.view;
 
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,6 +40,7 @@ public class GoalsViewImpl
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new GoalsAdapter(inflater);
         recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext()
                 , recyclerView
                 , new RecyclerItemClickListener.OnItemClickListener() {

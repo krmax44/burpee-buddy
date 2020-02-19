@@ -10,14 +10,13 @@ import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
 import com.apps.adrcotfas.burpeebuddy.common.viewmvc.BaseObservableView;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
 import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
-import com.google.android.material.chip.Chip;
 
 class StatisticsItemViewImpl extends BaseObservableView<StatisticsItemView.Listener>
         implements StatisticsItemView {
 
     private Workout workout;
 
-    private Chip exerciseName;
+    private TextView exerciseName;
 
     private TextView date;
     private TextView reps;
@@ -42,6 +41,7 @@ class StatisticsItemViewImpl extends BaseObservableView<StatisticsItemView.Liste
 
         this.workout = workout;
         if (this.workout.type == ExerciseType.TIME_BASED) {
+            //TODO: investigate why setting visibility to GONE causes problems here
             reps.setText("");
             pace.setText("");
         }

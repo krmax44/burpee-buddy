@@ -1,13 +1,17 @@
 package com.apps.adrcotfas.burpeebuddy.statistics.dialog;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
@@ -24,11 +28,10 @@ import com.apps.adrcotfas.burpeebuddy.workout.manager.InProgressWorkout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -97,27 +100,25 @@ public class AddEditWorkoutDialog extends DialogFragment
 
         date.setOnClickListener(v1 -> {
             Calendar now = Calendar.getInstance();
-            DatePickerDialog d = DatePickerDialog.newInstance(
-                    AddEditWorkoutDialog.this,
+            DatePickerDialog d =  new DatePickerDialog(
+                    getActivity(),
+                    R.style.DialogStyle,
+                    this,
                     now.get(Calendar.YEAR),
                     now.get(Calendar.MONTH),
                     now.get(Calendar.DAY_OF_MONTH));
-            d.setThemeDark(true);
-            d.setAccentColor(getContext().getResources().getColor(R.color.colorPrimary));
-            d.setMaxDate(now);
-            d.show(getParentFragmentManager(), TAG);
+            d.getDatePicker().setMaxDate(new LocalDate().toDateTimeAtStartOfDay().getMillis());
+            d.show();
         });
 
         time.setOnClickListener(v12 -> {
             Calendar now = Calendar.getInstance();
-            TimePickerDialog d = TimePickerDialog.newInstance(
-                    AddEditWorkoutDialog.this,
-                    now.get(Calendar.HOUR),
-                    now.get(Calendar.MINUTE),
-                    DateFormat.is24HourFormat(getContext()));
-            d.setThemeDark(true);
-            d.setAccentColor(getContext().getResources().getColor(R.color.colorPrimary));
-            d.show(getParentFragmentManager(), TAG);
+            TimePickerDialog d = new TimePickerDialog(
+                    getActivity(),
+                    R.style.DialogStyle,
+                    this, now.get(Calendar.HOUR),
+                    now.get(Calendar.MINUTE), DateFormat.is24HourFormat(getContext()));
+            d.show();
         });
     }
 
@@ -307,21 +308,20 @@ public class AddEditWorkoutDialog extends DialogFragment
     }
 
     @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        final long millis = new DateTime(workout.timestamp)
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                final long millis = new DateTime(workout.timestamp)
                 .withYear(year)
-                .withMonthOfYear(monthOfYear + 1)
+                .withMonthOfYear(month + 1)
                 .withDayOfMonth(dayOfMonth).getMillis();
         workout.timestamp = millis;
         date.setText(StringUtils.formatDate(millis));
     }
 
     @Override
-    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         final long millis = new DateTime(workout.timestamp)
                 .withHourOfDay(hourOfDay)
-                .withMinuteOfHour(minute)
-                .withSecondOfMinute(second).getMillis();
+                .withMinuteOfHour(minute).getMillis();
         workout.timestamp = millis;
         time.setText(StringUtils.formatTime(millis));
     }
