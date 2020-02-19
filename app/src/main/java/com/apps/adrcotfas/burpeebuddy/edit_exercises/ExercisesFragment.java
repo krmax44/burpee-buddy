@@ -24,12 +24,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExercisesFragment extends Fragment implements ExercisesView.Listener {
     private static final String TAG = "ExercisesFragment";
 
     private ExercisesView view;
+    private List<Exercise> rearrangedExercises = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -38,8 +40,10 @@ public class ExercisesFragment extends Fragment implements ExercisesView.Listene
         view = new ExercisesViewImpl(inflater, container);
 
         AppDatabase.getDatabase(getContext()).exerciseDao().getAll().observe(
-                getViewLifecycleOwner(), exercises ->
-                        view.bindExercises(exercises));
+                getViewLifecycleOwner(), exercises -> {
+                    view.bindExercises(exercises);
+                    rearrangedExercises = exercises;
+                });
         setHasOptionsMenu(true);
         return view.getRootView();
     }
@@ -61,6 +65,11 @@ public class ExercisesFragment extends Fragment implements ExercisesView.Listene
         if (view != null){
             view.unregisterListener(this);
         }
+
+        for (int i = 0; i < rearrangedExercises.size(); ++i) {
+            AppDatabase.editExerciseOrder(getContext(), rearrangedExercises.get(i).name, i);
+        }
+
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
@@ -87,13 +96,9 @@ public class ExercisesFragment extends Fragment implements ExercisesView.Listene
         AppDatabase.editVisibility(getContext(), exercise, visibility);
     }
 
-    //TODO: to avoid clipping it may be needed to call this when the user navigates back
-    // instead of every time the user rearranges a row
     @Override
     public void onExercisesRearranged(List<Exercise> exercises) {
-        for (int i = 0; i < exercises.size(); ++i) {
-            AppDatabase.editExerciseOrder(getContext(), exercises.get(i).name, i);
-        }
+        rearrangedExercises = exercises;
     }
 
     @Subscribe
