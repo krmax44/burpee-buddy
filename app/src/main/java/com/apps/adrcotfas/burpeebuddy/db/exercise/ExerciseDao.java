@@ -4,12 +4,11 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 
 import java.util.List;
 
-import static androidx.room.OnConflictStrategy.REPLACE;
+import static androidx.room.OnConflictStrategy.IGNORE;
 
 @Dao
 public interface ExerciseDao {
@@ -23,10 +22,10 @@ public interface ExerciseDao {
     @Query("select * from Exercise where visible = 1 ORDER BY `order`")
     LiveData<List<Exercise>> getAllVisible();
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = IGNORE)
     void addExercise(Exercise exercise);
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = IGNORE)
     void insertAll(List<Exercise> exercises);
 
     @Query("delete from Exercise where name = :name")
