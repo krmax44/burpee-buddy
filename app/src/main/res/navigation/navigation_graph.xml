@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.apps.adrcotfas.burpeebuddy.main.MainFragment"
-        android:label="@string/title_main"
+        android:label=" "
         tools:layout="@layout/fragment_main">
         <argument
             android:name="showFinishedDialog"

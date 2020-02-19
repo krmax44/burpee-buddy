@@ -38,7 +38,7 @@ import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED
 public class MainFragment extends Fragment implements MainViewImpl.Listener {
 
     private static final String TAG = "MainFragment";
-    private MainView mViewMvc;
+    private MainView view;
 
     private Exercise mExercise;
 
@@ -54,13 +54,13 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.tag(TAG).d( "onCreateView");
-        mViewMvc = new MainViewImpl(inflater, container);
+        view = new MainViewImpl(inflater, container);
 
         AppDatabase.getDatabase(getContext()).exerciseDao().getAllVisible().observe(
                 getViewLifecycleOwner(), exerciseTypes ->
-                        mViewMvc.updateExercises(exerciseTypes));
+                        view.updateExercises(exerciseTypes));
 
-        mViewMvc.getExercise().observe(getViewLifecycleOwner(), exercise -> {
+        view.getExercise().observe(getViewLifecycleOwner(), exercise -> {
             mExercise = exercise;
             LiveData<List<Goal>> goalsLd;
             if (mExercise.type.equals(TIME_BASED)) {
@@ -69,9 +69,9 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
                 goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getAll();
             }
             goalsLd.observe(getViewLifecycleOwner(),
-                    goals -> mViewMvc.updateGoals(goals));
+                    goals -> view.updateGoals(goals));
         });
-        return mViewMvc.getRootView();
+        return view.getRootView();
     }
 
     private void setupChallenges() {
@@ -95,7 +95,7 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
             List<Pair<Challenge, Integer>> output = new ArrayList<>();
 
             if (challenges.isEmpty()) {
-                mViewMvc.updateChallenges(output);
+                view.updateChallenges(output);
             }
 
             for (Challenge c : challenges) {
@@ -161,7 +161,7 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
                                     ((ch.type == GoalType.TIME && crtProgress >= ch.duration) ||
                                             ch.type == GoalType.REPS && crtProgress >= ch.reps)) {
                                 // Hurray, challenge completed
-                                mViewMvc.showKonfeti();
+                                view.showKonfeti();
 
                                 final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, true);
                                 dialog.show(getParentFragmentManager(), TAG);
@@ -170,7 +170,7 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
                                 output.add(new Pair<>(ch, crtProgress));
                             }
                         }
-                        mViewMvc.updateChallenges(output);
+                        view.updateChallenges(output);
                     }
                 });
             }
@@ -182,23 +182,23 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
         super.onResume();
         getActivity().getWindow().clearFlags(FLAG_KEEP_SCREEN_ON);
         Timber.tag(TAG).d( "onResume");
-        mViewMvc.registerListener(this);
-        mViewMvc.showIntroduction();
+        view.registerListener(this);
+        view.showIntroduction();
         setupChallenges();
     }
 
     @Override
     public void onDestroy() {
         Timber.tag(TAG).d( "onDestroy");
-        if (mViewMvc != null){
-            mViewMvc.unregisterListener(this);
+        if (view != null){
+            view.unregisterListener(this);
         }
         super.onDestroy();
     }
 
     @Override
     public void onStartButtonClicked() {
-        BuddyApplication.getWorkoutManager().init(mExercise, mViewMvc.getGoal());
+        BuddyApplication.getWorkoutManager().init(mExercise, view.getGoal());
         NavHostFragment.findNavController(this).navigate(R.id.action_main_to_workout);
     }
 
@@ -214,7 +214,7 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
 
     @Override
     public void onGoalSelectionChanged(boolean valid) {
-        mViewMvc.toggleStartButtonState(valid);
+        view.toggleStartButtonState(valid);
     }
 
     @Override

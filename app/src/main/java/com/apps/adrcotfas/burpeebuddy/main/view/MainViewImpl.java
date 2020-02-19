@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
@@ -51,12 +52,12 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
     private final CoordinatorLayout mCoordinatorLayout;
 
-    private final MaterialButton mAddChallengeButton;
+    private final FrameLayout mAddChallengeButton;
     private final LinearLayout mChallengesContainer;
 
     private final ChipGroup mExerciseTypeChipGroup;
     private final MaterialButton mAddExerciseButton;
-    private final MaterialButton mAddGoalButton;
+    private final FrameLayout mAddGoalButton;
 
     private final ChipGroup mGoalsChipGroup;
     private final MaterialButton mStartButton;
@@ -230,7 +231,7 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
             ChipDrawable d = ChipDrawable.createFromAttributes(
                     getContext(), null, 0,
-                    R.style.Widget_MaterialComponents_Chip_Choice);
+                    R.style.ChipStyle);
             c.setChipDrawable(d);
             mExerciseTypeChipGroup.addView(c);
         }
@@ -254,7 +255,7 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
             c.setText(goalToString(g));
             ChipDrawable d = ChipDrawable.createFromAttributes(
                     getContext(), null, 0,
-                    R.style.Widget_MaterialComponents_Chip_Choice);
+                    R.style.ChipStyle);
             c.setChipDrawable(d);
             mGoalsChipGroup.addView(c);
         }
