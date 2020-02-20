@@ -60,7 +60,7 @@ public class ChallengeCompleteDialog extends DialogFragment {
 
         final MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(getActivity());
         final Dialog d = b
-                .setTitle(challengeFailed ? "Challenge challengeFailed" : "Challenge complete")
+                .setTitle(challengeFailed ? "Challenge failed" : "Challenge complete")
                 .setView(v)
                 .setCancelable(false)
                 .create();

@@ -60,14 +60,8 @@ public class AddEditGoalDialog extends DialogFragment implements GoalConfigurato
         return d;
     }
 
-
-    @Override
-    public void onTypeChanged(GoalType type) {
-
-    }
-
+    @Override public void onTypeChanged(GoalType type) {}
     @Override public void onSetsChanged(int sets) {}
     @Override public void onRepsChanged(int reps) {}
     @Override public void onDurationChanged(int duration) {}
-    @Override public void onBreakChanged(int duration) {}
 }

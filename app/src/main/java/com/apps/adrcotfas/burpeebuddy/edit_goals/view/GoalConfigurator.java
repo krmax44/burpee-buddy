@@ -7,57 +7,31 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
-import com.apps.adrcotfas.burpeebuddy.edit_goals.dialog.SetNumberDialog;
+import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.google.android.material.radiobutton.MaterialRadioButton;
 
-import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.BREAK_DURATION_FACTOR;
 import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.DURATION_FACTOR;
 import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.REPS_FACTOR;
 import static com.apps.adrcotfas.burpeebuddy.db.goal.GoalToString.formatSecondsAlt;
-import static com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper.GOAL_DURATION;
-import static com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper.GOAL_BREAK;
-import static com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper.GOAL_REPS;
-import static com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper.GOAL_SETS;
 
-public class GoalConfigurator implements SetNumberDialog.Listener {
+public class GoalConfigurator {
 
     private static final String TAG = "GoalConfigurator";
 
     private TextView mSetsDesc;
     private TextView mRepsDesc;
     private TextView mDurationDesc;
-    private TextView mBreakDesc;
-
-    @Override
-    public void onValueSet(String what, int value) {
-        switch (what) {
-            case GOAL_SETS:
-                setSets(value);
-                break;
-            case GOAL_REPS:
-                setReps(value);
-                break;
-            case GOAL_DURATION:
-                setDuration(value);
-                break;
-            case GOAL_BREAK:
-                setBreak(value);
-                break;
-        }
-    }
 
     public interface Listener {
         void onTypeChanged(GoalType type);
         void onSetsChanged(int sets);
         void onRepsChanged(int reps);
         void onDurationChanged(int duration);
-        void onBreakChanged(int duration);
     }
 
     private Goal mGoal;
@@ -67,7 +41,6 @@ public class GoalConfigurator implements SetNumberDialog.Listener {
     private AppCompatSeekBar mSetsSeekbar;
     private AppCompatSeekBar mRepsSeekbar;
     private AppCompatSeekBar mDurationSeekbar;
-    private AppCompatSeekBar mBreakSeekbar;
     private MaterialRadioButton mRepBasedRadio;
     private MaterialRadioButton mDurationRadio;
 
@@ -84,38 +57,20 @@ public class GoalConfigurator implements SetNumberDialog.Listener {
         mDurationRadio = v.findViewById(R.id.time_based);
 
         RadioGroup typeContainer = v.findViewById(R.id.goal_type_container);
-        LinearLayout setsContainer = v.findViewById(R.id.sets_container);
         LinearLayout repsContainer = v.findViewById(R.id.reps_container);
         LinearLayout durationContainer = v.findViewById(R.id.duration_container);
-        LinearLayout breakContainer = v.findViewById(R.id.break_container);
-
-        setsContainer.setOnClickListener(v1
-                -> SetNumberDialog.getInstance(GOAL_SETS, GoalConfigurator.this)
-                .show(((AppCompatActivity)mContext).getSupportFragmentManager(), TAG));
-        repsContainer.setOnClickListener(v1
-                -> SetNumberDialog.getInstance(GOAL_REPS, GoalConfigurator.this)
-                        .show(((AppCompatActivity)mContext).getSupportFragmentManager(), TAG));
-        durationContainer.setOnClickListener(v1
-                -> SetNumberDialog.getInstance(GOAL_DURATION, GoalConfigurator.this)
-                .show(((AppCompatActivity)mContext).getSupportFragmentManager(), TAG));
-        breakContainer.setOnClickListener(v1
-                -> SetNumberDialog.getInstance(GOAL_BREAK, GoalConfigurator.this)
-                .show(((AppCompatActivity)mContext).getSupportFragmentManager(), TAG));
 
         mSetsSeekbar = v.findViewById(R.id.sets_seekbar);
         mRepsSeekbar = v.findViewById(R.id.reps_seekbar);
         mDurationSeekbar = v.findViewById(R.id.duration_seekbar);
-        mBreakSeekbar = v.findViewById(R.id.break_seekbar);
 
         mSetsDesc = v.findViewById(R.id.sets_value);
         mRepsDesc = v.findViewById(R.id.reps_value);
         mDurationDesc = v.findViewById(R.id.duration_value);
-        mBreakDesc = v.findViewById(R.id.break_value);
 
         setSets(mGoal.sets);
         setReps(mGoal.reps);
         setDuration(mGoal.duration);
-        setBreak(mGoal.duration_break);
 
         mRepBasedRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -148,7 +103,6 @@ public class GoalConfigurator implements SetNumberDialog.Listener {
             public void onProgressChanged(SeekBar seekBar, int sets, boolean fromUser) {
                 mListener.onSetsChanged(sets);
                 mSetsDesc.setText(String.valueOf(sets));
-                breakContainer.setVisibility(sets == 1 ? View.GONE : View.VISIBLE);
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -175,24 +129,6 @@ public class GoalConfigurator implements SetNumberDialog.Listener {
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-
-        mBreakSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                final int seconds = progress * BREAK_DURATION_FACTOR;
-                mListener.onBreakChanged(seconds);
-                mBreakDesc.setText(formatSecondsAlt(seconds));
-            }
-            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
-    }
-
-    //TODO: set maximum values
-    private void setBreak(int durationBreak) {
-        mBreakDesc.setText(formatSecondsAlt(durationBreak));
-        final int durationBreakProgress = durationBreak / BREAK_DURATION_FACTOR;
-        mBreakSeekbar.setProgress(durationBreakProgress);
     }
 
     private void setDuration(int duration) {
@@ -216,7 +152,7 @@ public class GoalConfigurator implements SetNumberDialog.Listener {
         mGoal.sets = mSetsSeekbar.getProgress();
         mGoal.reps = mRepsSeekbar.getProgress() * REPS_FACTOR;
         mGoal.duration = mDurationSeekbar.getProgress() * DURATION_FACTOR;
-        mGoal.duration_break = mBreakSeekbar.getProgress() * BREAK_DURATION_FACTOR;
+        mGoal.duration_break = SettingsHelper.getBreakDuration();
         mGoal.type = mDurationRadio.isChecked() ? GoalType.TIME : GoalType.REPS;
         return mGoal;
     }

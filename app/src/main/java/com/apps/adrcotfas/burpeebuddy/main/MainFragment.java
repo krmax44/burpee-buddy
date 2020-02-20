@@ -132,13 +132,13 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
                     if (challenges.size() == progress.size()) {
 
                         for (Challenge ch : challenges) {
-                            final int crtProgress = progress.get(ch.exerciseName).first;
-                            final int crtProgressYesterday = progress.get(ch.exerciseName).second;
+                            final int progressToday = progress.get(ch.exerciseName).first;
+                            final int progressYesterday = progress.get(ch.exerciseName).second;
 
                             // did not start today and did not complete yesterday
                             if ((ch.date < startOfTodayM)
-                                    && ((ch.type == GoalType.TIME && crtProgressYesterday < ch.duration)
-                                    || ch.type == GoalType.REPS && crtProgressYesterday < ch.reps)) {
+                                    && ((ch.type == GoalType.TIME && progressYesterday < ch.duration)
+                                    || ch.type == GoalType.REPS && progressYesterday < ch.reps)) {
                                 final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, true);
                                 dialog.show(getParentFragmentManager(), TAG);
                                 AppDatabase.completeChallenge(getContext(), ch.id, startOfYesterdayM, true);
@@ -157,17 +157,16 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
 
                             final DateTime endOfChallenge = new DateTime(ch.date).plusDays(ch.days - 1);
                             final boolean thisIsTheLastDay = endOfChallenge.getMillis() == startOfTodayM;
-                            if (thisIsTheLastDay &&
-                                    ((ch.type == GoalType.TIME && crtProgress >= ch.duration) ||
-                                            ch.type == GoalType.REPS && crtProgress >= ch.reps)) {
+
+                            if (thisIsTheLastDay && ((ch.type == GoalType.TIME && progressToday >= ch.duration) ||
+                                 (ch.type == GoalType.REPS && progressToday >= ch.reps))) {
                                 // Hurray, challenge completed
                                 view.showKonfeti();
-
                                 final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, false);
                                 dialog.show(getParentFragmentManager(), TAG);
                                 AppDatabase.completeChallenge(getContext(), ch.id, startOfTodayM, false);
                             } else {
-                                output.add(new Pair<>(ch, crtProgress));
+                                output.add(new Pair<>(ch, progressToday));
                             }
                         }
                         view.updateChallenges(output);

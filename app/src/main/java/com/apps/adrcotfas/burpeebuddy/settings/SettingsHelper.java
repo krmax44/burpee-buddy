@@ -7,6 +7,7 @@ import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
 import com.apps.adrcotfas.burpeebuddy.db.goal.GoalTypeConverter;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.BREAK_DURATION_FACTOR;
 
 public class SettingsHelper {
     private static final String IS_FIRST_RUN = "pref_is_first_run";
@@ -15,13 +16,13 @@ public class SettingsHelper {
     public final static String AUTO_START_BREAK_COUNTABLE = "pref_auto_start_break_countable";
     public final static String AUTO_START_BREAK_UNCOUNTABLE = "pref_auto_start_break_uncountable";
     public final static String AUTO_START_BREAK_TIME_BASED = "pref_auto_start_break_time_based";
+    public final static String BREAK_DURATION = "pref_break_duration";
 
     public final static String GOAL_VIEW_FAVORITES_VISIBLE = "pref_goal_view_favorites";
     public final static String GOAL_TYPE = "pref_goal_type";
     public final static String GOAL_SETS = "pref_goal_sets";
     public final static String GOAL_REPS = "pref_goal_reps";
     public final static String GOAL_DURATION = "pref_goal_duration";
-    public final static String GOAL_BREAK = "pref_goal_duration_break";
 
     public static boolean isFirstRun() {
         return BuddyApplication.getPrivatePreferences().getBoolean(IS_FIRST_RUN, true);
@@ -120,16 +121,12 @@ public class SettingsHelper {
                 .putInt(GOAL_DURATION, seconds).apply();
     }
 
-    public static int getGoalBreak() {
-        return BuddyApplication.getPrivatePreferences().getInt(GOAL_BREAK, 30);
-    }
-
-    public static void setGoalBreak(int seconds) {
-        BuddyApplication.getPrivatePreferences().edit()
-                .putInt(GOAL_BREAK, seconds).apply();
+    public static int getBreakDuration() {
+        return getDefaultSharedPreferences(BuddyApplication.getInstance())
+                .getInt(BREAK_DURATION, 2) * BREAK_DURATION_FACTOR;
     }
 
     public static Goal getGoal() {
-        return new Goal(getGoalType(), getGoalSets(), getGoalReps(), getGoalDuration(), getGoalBreak());
+        return new Goal(getGoalType(), getGoalSets(), getGoalReps(), getGoalDuration(), getBreakDuration());
     }
 }

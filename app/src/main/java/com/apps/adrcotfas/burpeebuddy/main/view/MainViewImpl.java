@@ -377,5 +377,4 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
     @Override public void onSetsChanged(int sets) { SettingsHelper.setGoalSets(sets); }
     @Override public void onRepsChanged(int reps) { SettingsHelper.setGoalReps(reps); }
     @Override public void onDurationChanged(int duration) { SettingsHelper.setGoalDuration(duration); }
-    @Override public void onBreakChanged(int duration) { SettingsHelper.setGoalBreak(duration); }
 }

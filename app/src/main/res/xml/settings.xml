@@ -26,4 +26,13 @@
         android:summary="@string/auto_start_break_time_based"
         app:iconSpaceReserved="false"/>
 
+    <com.apps.adrcotfas.burpeebuddy.common.seekbar_preference.ProperSeekBarPreference
+        android:key="pref_break_duration"
+        android:title="Break duration"
+        app:min="1"
+        android:defaultValue="2"
+        android:max="8"
+        app:showSeekBarValue="true"
+        app:iconSpaceReserved="false"/>
+
 </PreferenceScreen>
