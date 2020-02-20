@@ -139,7 +139,7 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
                             if ((ch.date < startOfTodayM)
                                     && ((ch.type == GoalType.TIME && crtProgressYesterday < ch.duration)
                                     || ch.type == GoalType.REPS && crtProgressYesterday < ch.reps)) {
-                                final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, false);
+                                final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, true);
                                 dialog.show(getParentFragmentManager(), TAG);
                                 AppDatabase.completeChallenge(getContext(), ch.id, startOfYesterdayM, true);
                                 continue;
@@ -148,7 +148,7 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
                             // last day was yesterday or earlier
                             final DateTime lastDay = new DateTime(c.date).plusDays(c.days);
                             if (lastDay.isBefore(startOfToday)) {
-                                final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, false);
+                                final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, true);
                                 dialog.show(getParentFragmentManager(), TAG);
                                 AppDatabase.completeChallenge(getContext(), c.id,
                                         startOfYesterdayM, true);
@@ -163,7 +163,7 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
                                 // Hurray, challenge completed
                                 view.showKonfeti();
 
-                                final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, true);
+                                final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, false);
                                 dialog.show(getParentFragmentManager(), TAG);
                                 AppDatabase.completeChallenge(getContext(), ch.id, startOfTodayM, false);
                             } else {

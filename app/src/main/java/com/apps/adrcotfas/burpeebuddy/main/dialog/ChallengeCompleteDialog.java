@@ -22,12 +22,12 @@ import static com.apps.adrcotfas.burpeebuddy.edit_challenges.view.ChallengesFrag
 public class ChallengeCompleteDialog extends DialogFragment {
 
     private Challenge challenge;
-    private boolean success;
+    private boolean challengeFailed;
 
-    public static ChallengeCompleteDialog getInstance(Challenge challenge, boolean success) {
+    public static ChallengeCompleteDialog getInstance(Challenge challenge, boolean failed) {
         ChallengeCompleteDialog dialog = new ChallengeCompleteDialog();
         dialog.challenge = challenge;
-        dialog.success = success;
+        dialog.challengeFailed = failed;
         return dialog;
     }
 
@@ -45,11 +45,11 @@ public class ChallengeCompleteDialog extends DialogFragment {
         final String total = challenge.type == GoalType.REPS ? challenge.days * challenge.reps + " total " + challenge.exerciseName
                 : StringUtils.secondsToTimerFormatAlt(challenge.days * challenge.duration) + " total time";
 
-        text.setText((success ? "Congratulations! You have completed the "
-                : "You have failed the ") + buildChallengeText(challenge) + " challenge." + (success ? '\n' + total : ""));
+        text.setText((challengeFailed ? "You have challengeFailed the "
+                : "Congratulations! You have completed the ") + buildChallengeText(challenge) + " challenge." + (challengeFailed ? "" : '\n' + total));
 
         imageView.setImageDrawable(getContext().getDrawable(
-                success ? R.drawable.ic_success: R.drawable.ic_failure));
+                challengeFailed ? R.drawable.ic_failure : R.drawable.ic_success));
 
         button.setOnClickListener(v1 -> {
             AlertDialog dialog = (AlertDialog) getDialog();
@@ -60,7 +60,7 @@ public class ChallengeCompleteDialog extends DialogFragment {
 
         final MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(getActivity());
         final Dialog d = b
-                .setTitle(success ? "Challenge complete" : "Challenge failed")
+                .setTitle(challengeFailed ? "Challenge challengeFailed" : "Challenge complete")
                 .setView(v)
                 .setCancelable(false)
                 .create();
