@@ -1,108 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".main.MainFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/challenges"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/menu_item_ripple_size"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
         android:orientation="vertical"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/smallTextSize"
-            android:fontFamily="@font/source_sans_lite_"
-            android:text="@string/title_challenges"
-            />
-
-        <include
-            android:id="@+id/challenges_container"
-            layout="@layout/section_challenge_summary_container"/>
-
-        <include layout="@layout/button_add"
-            android:id="@+id/add_challenge_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:visibility="gone"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/exercises"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/challenges">
-        <TextView
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:textSize="@dimen/smallTextSize"
             android:fontFamily="@font/source_sans_lite_"
-            android:text="Exercises"
-            />
-        <ScrollView
-            android:id="@+id/exercises_container"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:overScrollMode="never">
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/exercise_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:chipSpacingHorizontal="10dp"
-                app:chipSpacingVertical="10dp"
-                app:selectionRequired="true"
-                app:singleSelection="true"/>
-        </ScrollView>
+            android:layout_centerVertical="true"
+            android:textSize="@dimen/smallTextSize"
+            android:text="@string/title_challenges"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/add_exercise_button"
+        <include layout="@layout/button_edit"
+            android:id="@+id/button_edit_challenges"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create an exercise"
-            android:visibility="gone"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
 
-    </LinearLayout>
+    <include
+        android:id="@+id/challenges_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/challenges"
+        layout="@layout/section_challenge_summary_container"/>
+
+    <RelativeLayout
+        android:id="@+id/exercises"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/menu_item_ripple_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/challenges_container"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/source_sans_lite_"
+            android:layout_centerVertical="true"
+            android:textSize="@dimen/smallTextSize"
+            android:text="Exercises"/>
+
+        <include layout="@layout/button_edit"
+            android:id="@+id/button_edit_exercises"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/exercises_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintHeight_max="80dp"
+        app:layout_constrainedHeight="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exercises"
+        android:overScrollMode="never">
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/exercise_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="10dp"
+            app:chipSpacingVertical="10dp"
+            app:selectionRequired="true"
+            app:singleSelection="true"/>
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/goal_section"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/menu_item_ripple_size"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/exercises"
+        app:layout_constraintTop_toBottomOf="@id/exercises_container"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/goal_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginBottom="16dp"
             android:textSize="@dimen/smallTextSize"
             android:fontFamily="@font/source_sans_lite_"
+            android:layout_centerVertical="true"
             android:text="Goals"
             />
         <LinearLayout
@@ -156,17 +166,6 @@
             app:selectionRequired="true"
             app:singleSelection="true" />
     </ScrollView>
-
-    <include layout="@layout/button_add"
-        android:id="@+id/add_goal_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/goal_section"/>
 
     <!--    anchor for the snack-->
     <com.google.android.material.button.MaterialButton

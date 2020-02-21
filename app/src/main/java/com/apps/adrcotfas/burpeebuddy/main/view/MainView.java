@@ -34,12 +34,9 @@ public interface MainView extends ObservableView<MainView.Listener> {
 
     public interface Listener {
         void onStartButtonClicked();
+
+        void onEditChallengesClicked();
         void onEditExercisesClicked();
         void onEditGoalsClicked();
-        void onGoalSelectionChanged(boolean valid);
-
-        void onAddChallengeButtonClicked();
-        void onAddGoalButtonClicked();
-        void onAddExerciseButtonClicked();
     }
 }

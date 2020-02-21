@@ -92,7 +92,8 @@ public class ChallengesFragment extends Fragment
         final DateTime now = new DateTime();
         final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
 
-        final LiveData<List<Challenge>> completedLd = AppDatabase.getDatabase(getContext()).challengeDao().getCompleted();
+        final LiveData<List<Challenge>> completedLd =
+                AppDatabase.getDatabase(getContext()).challengeDao().getCompleted();
 
         ChallengesCombinedLiveData result = new ChallengesCombinedLiveData();
 
@@ -111,7 +112,8 @@ public class ChallengesFragment extends Fragment
             result.setValue(list);
         });
 
-        final LiveData<List<Challenge>> inProgressLd = AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
+        final LiveData<List<Challenge>> inProgressLd =
+                AppDatabase.getDatabase(getContext()).challengeDao().getInProgress();
         result.addSource(inProgressLd, challenges -> {
 
             Map<String, Integer> progress = new HashMap<>(challenges.size());

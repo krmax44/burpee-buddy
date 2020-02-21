@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
@@ -52,12 +51,9 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
     private final CoordinatorLayout mCoordinatorLayout;
 
-    private final FrameLayout mAddChallengeButton;
     private final LinearLayout mChallengesContainer;
 
     private final ChipGroup mExerciseTypeChipGroup;
-    private final MaterialButton mAddExerciseButton;
-    private final FrameLayout mAddGoalButton;
 
     private final ChipGroup mGoalsChipGroup;
     private final MaterialButton mStartButton;
@@ -68,7 +64,6 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
     private MutableLiveData<Exercise> mExercise = new MutableLiveData<>();
     private final ImageView mFavoriteGoalButton;
     private GoalConfigurator mGoalConfigurator;
-    private final FrameLayout mEditGoalButton;
 
     private ScrollView mExercisesContainer;
     private ScrollView mGoalsContainer;
@@ -83,11 +78,8 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
         setRootView(view);
         mGoalConfigurator = new GoalConfigurator(view, SettingsHelper.getGoal(), this, getContext());
 
-        mAddChallengeButton = findViewById(R.id.add_challenge_button);
         mChallengesContainer = findViewById(R.id.challenges_container);
-        mAddChallengeButton.setOnClickListener(v -> onAddChallengeButtonClicked());
         mChallengesContainer.setVisibility(View.GONE);
-        mAddChallengeButton.setVisibility(View.VISIBLE);
 
         mExercisesContainer = findViewById(R.id.exercises_container);
         mGoalsContainer = findViewById(R.id.goals_container);
@@ -105,17 +97,29 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
         mGoalsChipGroup.setSelectionRequired(true);
         mGoalsChipGroup.setSingleSelection(true);
         mGoalsChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            for (Listener listener : MainViewImpl.this.getListeners()) {
-                if (SettingsHelper.isGoalFavoritesVisible()) {
-                    listener.onGoalSelectionChanged(checkedId != View.NO_ID);
-                }
+            if (SettingsHelper.isGoalFavoritesVisible()) {
+                toggleStartButtonState(checkedId != View.NO_ID);
             }
         });
 
         mCoordinatorLayout = findViewById(R.id.top_coordinator);
 
-        mEditGoalButton = findViewById(R.id.button_edit_goals);
-        mEditGoalButton.findViewById(R.id.button_edit).setOnClickListener(v -> {
+        FrameLayout editChallengesButton = findViewById(R.id.button_edit_challenges);
+        editChallengesButton.findViewById(R.id.button_edit).setOnClickListener(v -> {
+            for (Listener listener : getListeners()) {
+                listener.onEditChallengesClicked();
+            }
+        });
+
+        FrameLayout editExercisesButton = findViewById(R.id.button_edit_exercises);
+        editExercisesButton.findViewById(R.id.button_edit).setOnClickListener(v -> {
+            for (Listener listener : getListeners()) {
+                listener.onEditExercisesClicked();
+            }
+        });
+
+        FrameLayout editGoalsButton = findViewById(R.id.button_edit_goals);
+        editGoalsButton.findViewById(R.id.button_edit).setOnClickListener(v -> {
             for (Listener listener : getListeners()) {
                 listener.onEditGoalsClicked();
             }
@@ -123,35 +127,18 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
         mStartButton.setOnClickListener(v -> onStartButtonClicked());
 
-        mAddExerciseButton = findViewById(R.id.add_exercise_button);
-        mAddGoalButton = findViewById(R.id.add_goal_button);
-
-        mAddExerciseButton.setOnClickListener(v -> onAddExerciseButtonClicked());
-        mAddGoalButton.setOnClickListener(v -> onAddGoalButtonClicked());
-
         mKonfetti = findViewById(R.id.viewKonfetti);
 
         FrameLayout favoriteGoalsContainer = findViewById(R.id.button_favorite_goals);
         mFavoriteGoalButton = favoriteGoalsContainer.findViewById(R.id.button_drawable);
-        updateGoalSectionState(SettingsHelper.isGoalFavoritesVisible());
+
+        updateGoalSectionState();
         favoriteGoalsContainer.setOnClickListener(v -> {
             SettingsHelper.setGoalFavoritesVisibility(!SettingsHelper.isGoalFavoritesVisible());
-            updateGoalSectionState(SettingsHelper.isGoalFavoritesVisible());
+            updateGoalSectionState();
         });
 
         setupChallengesView(inflater);
-    }
-
-    private void onAddGoalButtonClicked() {
-        for (Listener l : getListeners()) {
-            l.onAddGoalButtonClicked();
-        }
-    }
-
-    private void onAddExerciseButtonClicked() {
-        for (Listener l : getListeners()) {
-            l.onAddExerciseButtonClicked();
-        }
     }
 
     private void setupChallengesView(LayoutInflater inflater) {
@@ -166,20 +153,18 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
         snapHelperCenter.attachToRecyclerView(mChallengesRecycler);
     }
 
-    private void updateGoalSectionState(boolean isFavoritesVisible) {
+    //TODO: make this more efficient because it gets called too often
+    private void updateGoalSectionState() {
+        boolean isFavoritesVisible = SettingsHelper.isGoalFavoritesVisible();
+        toggleStartButtonState(!isFavoritesVisible
+                // hide the start button when there is no exercise selected (empty or all are hidden)
+                && !mExercises.isEmpty());
+
         findViewById(R.id.goals_container).setVisibility(isFavoritesVisible ? View.VISIBLE : View.GONE);
         findViewById(R.id.goal_seekbars).setVisibility(isFavoritesVisible ? View.GONE : View.VISIBLE);
 
-        if (!isFavoritesVisible || mGoalsChipGroup.getChildCount() != 0) {
-            mAddGoalButton.setVisibility(View.GONE);
-        } else {
-            mAddGoalButton.setVisibility(View.VISIBLE);
-        }
-
         mFavoriteGoalButton.setImageDrawable(getContext().getResources().getDrawable(
                 isFavoritesVisible ? R.drawable.ic_tune : R.drawable.ic_star_outline));
-        mEditGoalButton.setVisibility(isFavoritesVisible ? View.VISIBLE : View.GONE);
-        mStartButton.setEnabled(!isFavoritesVisible);
         mGoalsChipGroup.clearCheck();
     }
 
@@ -198,12 +183,6 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
         }
     }
 
-    public void onAddChallengeButtonClicked() {
-        for (Listener listener : getListeners()) {
-            listener.onAddChallengeButtonClicked();
-        }
-    }
-
     @Override
     public void showIntroduction() {
         if (SettingsHelper.showStartSnack()) {
@@ -218,10 +197,11 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
     @Override
     public void updateExercises(List<Exercise> exercises) {
-
-        mAddExerciseButton.setVisibility(exercises.isEmpty() ? View.VISIBLE : View.GONE);
+        updateGoalSectionState();
         mExercisesContainer.setVisibility(exercises.isEmpty() ? View.GONE : View.VISIBLE);
-        mStartButton.setEnabled(!exercises.isEmpty());
+        if (exercises.isEmpty()) {
+            toggleStartButtonState(false);
+        }
 
         mExercises = exercises;
         mExerciseTypeChipGroup.removeAllViews();
@@ -242,9 +222,7 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
     @Override
     public void updateGoals(List<Goal> goals) {
-
         if (SettingsHelper.isGoalFavoritesVisible()) {
-            mAddGoalButton.setVisibility(goals.isEmpty() ? View.VISIBLE : View.GONE);
             mGoalsContainer.setVisibility(goals.isEmpty() ? View.GONE : View.VISIBLE);
         }
 
@@ -264,14 +242,11 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
     @Override
     public void updateChallenges(List<Pair<Challenge, Integer>> challenges) {
-
         if (challenges.isEmpty()) {
             mChallengesContainer.setVisibility(View.GONE);
-            mAddChallengeButton.setVisibility(View.VISIBLE);
             return;
         } else {
             mChallengesContainer.setVisibility(View.VISIBLE);
-            mAddChallengeButton.setVisibility(View.GONE);
         }
 
         mChallengesAdapter.bindChallenges(challenges);

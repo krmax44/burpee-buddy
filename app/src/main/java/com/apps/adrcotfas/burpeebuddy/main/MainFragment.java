@@ -211,23 +211,9 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
         NavHostFragment.findNavController(this).navigate(R.id.action_main_to_goals);
     }
 
-    @Override
-    public void onGoalSelectionChanged(boolean valid) {
-        view.toggleStartButtonState(valid);
-    }
 
     @Override
-    public void onAddChallengeButtonClicked() {
+    public void onEditChallengesClicked() {
         NavHostFragment.findNavController(this).navigate(R.id.action_main_to_challenges);
-    }
-
-    @Override
-    public void onAddGoalButtonClicked() {
-        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_goals);
-    }
-
-    @Override
-    public void onAddExerciseButtonClicked() {
-        NavHostFragment.findNavController(this).navigate(R.id.action_main_to_exercises);
     }
 }
