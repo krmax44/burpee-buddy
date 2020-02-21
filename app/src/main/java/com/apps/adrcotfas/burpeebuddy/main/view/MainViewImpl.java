@@ -197,13 +197,15 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
     @Override
     public void updateExercises(List<Exercise> exercises) {
+        mExercises = exercises;
         updateGoalSectionState();
-        mExercisesContainer.setVisibility(exercises.isEmpty() ? View.GONE : View.VISIBLE);
-        if (exercises.isEmpty()) {
+
+        mExercisesContainer.setVisibility(mExercises.isEmpty() ? View.GONE : View.VISIBLE);
+
+        if (mExercises.isEmpty()) {
             toggleStartButtonState(false);
         }
 
-        mExercises = exercises;
         mExerciseTypeChipGroup.removeAllViews();
         for (Exercise w : mExercises) {
             Chip c = new Chip(getContext());

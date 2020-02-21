@@ -20,10 +20,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:fontFamily="@font/source_sans_lite_"
             android:layout_centerVertical="true"
-            android:textSize="@dimen/smallTextSize"
+            android:textSize="@dimen/regular_text_size"
             android:text="@string/title_challenges"/>
 
         <include layout="@layout/button_edit"
@@ -57,10 +56,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:fontFamily="@font/source_sans_lite_"
             android:layout_centerVertical="true"
-            android:textSize="@dimen/smallTextSize"
+            android:textSize="@dimen/regular_text_size"
             android:text="Exercises"/>
 
         <include layout="@layout/button_edit"
@@ -110,7 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginBottom="16dp"
-            android:textSize="@dimen/smallTextSize"
+            android:textSize="@dimen/regular_text_size"
             android:fontFamily="@font/source_sans_lite_"
             android:layout_centerVertical="true"
             android:text="Goals"
