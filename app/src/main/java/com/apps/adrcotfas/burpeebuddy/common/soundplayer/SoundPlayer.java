@@ -25,7 +25,7 @@ public class SoundPlayer extends ContextWrapper {
             final Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + sound);
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(this, uri);
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
             mMediaPlayer.prepare();
 
             mMediaPlayer.setOnCompletionListener(mp -> mMediaPlayer.release());
