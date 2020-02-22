@@ -164,7 +164,7 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
         findViewById(R.id.goal_seekbars).setVisibility(isFavoritesVisible ? View.GONE : View.VISIBLE);
 
         mFavoriteGoalButton.setImageDrawable(getContext().getResources().getDrawable(
-                isFavoritesVisible ? R.drawable.ic_tune : R.drawable.ic_star_outline));
+                isFavoritesVisible ? R.drawable.ic_tune : R.drawable.ic_goals));
         mGoalsChipGroup.clearCheck();
     }
 
