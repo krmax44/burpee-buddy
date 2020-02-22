@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.main.view.challenges;
 
 import android.annotation.SuppressLint;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -58,11 +59,23 @@ class ChallengesItemViewImpl extends BaseObservableView<ChallengesItemView.Liste
         } else {
             text.setText(progress + "/" + challenge.reps + " " + challenge.exerciseName + " ‧ " + "day " + day + "/" + challenge.days);
         }
+
         int progressPercent = (int) Math.ceil(day * 100.F / (double) challenge.days);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             this.progress.setProgress(progressPercent, true);
         } else {
             this.progress.setProgress(progressPercent);
+        }
+
+        if ((challenge.type == GoalType.TIME && progress < challenge.duration) ||
+                challenge.type == GoalType.REPS && progress < challenge.reps) {
+            int red = getContext().getResources().getColor(R.color.red);
+            this.progress.getIndeterminateDrawable().setColorFilter(red, PorterDuff.Mode.SRC_IN);
+            this.progress.getProgressDrawable().setColorFilter(red, PorterDuff.Mode.SRC_IN);
+        } else {
+            int green = getContext().getResources().getColor(R.color.green);
+            this.progress.getIndeterminateDrawable().setColorFilter(green, PorterDuff.Mode.SRC_IN);
+            this.progress.getProgressDrawable().setColorFilter(green, PorterDuff.Mode.SRC_IN);
         }
     }
 }

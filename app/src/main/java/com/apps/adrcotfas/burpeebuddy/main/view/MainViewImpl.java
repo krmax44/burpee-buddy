@@ -244,6 +244,10 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
     @Override
     public void updateChallenges(List<Pair<Challenge, Integer>> challenges) {
+        for (int i = 0; i < mChallengesRecycler.getItemDecorationCount(); ++i) {
+            mChallengesRecycler.removeItemDecorationAt(i);
+        }
+
         if (challenges.isEmpty()) {
             mChallengesContainer.setVisibility(View.GONE);
             return;
@@ -256,20 +260,6 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
         if (challenges.size() > 1) {
             mChallengesRecycler.addItemDecoration(new LinePagerIndicatorDecoration());
         }
-
-//        for (int i = 0; i < challenges.size(); ++i) {
-//            final Challenge c = challenges.get(i);
-//            final Integer crtProgress = progress.get(c.exerciseName);
-//            final LinearLayout challengesContainer = findViewById(R.id.challenges);
-//
-//            if (crtProgress != null &&
-//                    ((c.type == GoalType.TIME && crtProgress < c.duration) ||
-//                      c.type == GoalType.REPS && crtProgress < c.reps)) {
-//                challengesContainer.setBackgroundColor(
-//                        getContext().getResources().getColor(R.color.transparent_red));
-//                break;
-//            }
-//        }
     }
 
     @Override
