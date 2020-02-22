@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
+import android.os.Handler;
 
 public class SoundPlayer extends ContextWrapper {
 
@@ -29,6 +30,14 @@ public class SoundPlayer extends ContextWrapper {
         final float PLAY_RATE = 1.0f;
 
         soundPool.setOnLoadCompleteListener((soundPool1, sampleId, status)
-                -> soundPool1.play(soundId, LEFT_VOLUME_VALUE, RIGHT_VOLUME_VALUE, SOUND_PLAY_PRIORITY, MUSIC_LOOP, PLAY_RATE));
+                -> {
+            soundPool1.play(soundId, LEFT_VOLUME_VALUE, RIGHT_VOLUME_VALUE, SOUND_PLAY_PRIORITY, MUSIC_LOOP, PLAY_RATE);
+
+            new Handler().postDelayed(() -> {
+                if (soundPool1 != null) {
+                    soundPool1.release();
+                }
+            }, 3000); //TODO: find a more elegant solution for the SoundPool crash
+        });
     }
 }
