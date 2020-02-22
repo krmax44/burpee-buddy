@@ -2,45 +2,33 @@ package com.apps.adrcotfas.burpeebuddy.common.soundplayer;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
-
-import java.io.IOException;
-
-import timber.log.Timber;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 
 public class SoundPlayer extends ContextWrapper {
-
-    private static final String TAG = "SoundPlayer";
-    private MediaPlayer mMediaPlayer;
 
     public SoundPlayer(Context base) {
         super(base);
     }
 
     public void play(int sound) {
-        mMediaPlayer = new MediaPlayer();
-        try {
-            final Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + sound);
-            mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(this, uri);
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-            mMediaPlayer.prepare();
+        AudioAttributes attributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+        SoundPool soundPool = new SoundPool.Builder()
+                .setAudioAttributes(attributes)
+                .build();
 
-            mMediaPlayer.setOnCompletionListener(mp -> mMediaPlayer.release());
+        int soundId = soundPool.load(getApplicationContext(), sound, 1);
 
-            mMediaPlayer.setOnPreparedListener(mp -> {
-                mMediaPlayer.start();
-            });
+        final float LEFT_VOLUME_VALUE = 1.0f;
+        final float RIGHT_VOLUME_VALUE = 1.0f;
+        final int MUSIC_LOOP = 0;
+        final int SOUND_PLAY_PRIORITY = 0;
+        final float PLAY_RATE = 1.0f;
 
-        } catch (IllegalStateException | SecurityException | IOException e) {
-            Timber.tag(TAG).wtf(e.getMessage());
-            mMediaPlayer.release();
-        }
-    }
-
-    public void stop() {
-        mMediaPlayer.release();
+        soundPool.setOnLoadCompleteListener((soundPool1, sampleId, status)
+                -> soundPool1.play(soundId, LEFT_VOLUME_VALUE, RIGHT_VOLUME_VALUE, SOUND_PLAY_PRIORITY, MUSIC_LOOP, PLAY_RATE));
     }
 }
