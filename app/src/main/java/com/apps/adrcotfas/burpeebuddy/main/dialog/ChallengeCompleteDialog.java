@@ -45,8 +45,8 @@ public class ChallengeCompleteDialog extends DialogFragment {
         final String total = challenge.type == GoalType.REPS ? challenge.days * challenge.reps + " total " + challenge.exerciseName
                 : StringUtils.secondsToTimerFormatAlt(challenge.days * challenge.duration) + " total time";
 
-        text.setText((challengeFailed ? "You have challengeFailed the "
-                : "Congratulations! You have completed the ") + buildChallengeText(challenge) + " challenge." + (challengeFailed ? "" : '\n' + total));
+        text.setText((challengeFailed ? "You have failed the challenge"
+                : "Congratulations for completing the challenge!") + '\n' + buildChallengeText(challenge) + (challengeFailed ? "" : '\n' + total));
 
         imageView.setImageDrawable(getContext().getDrawable(
                 challengeFailed ? R.drawable.ic_failure : R.drawable.ic_success));

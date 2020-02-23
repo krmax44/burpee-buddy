@@ -37,9 +37,6 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.dionsegijn.konfetti.KonfettiView;
-import nl.dionsegijn.konfetti.models.Shape;
-import nl.dionsegijn.konfetti.models.Size;
 import timber.log.Timber;
 
 import static com.apps.adrcotfas.burpeebuddy.db.goal.GoalToString.goalToString;
@@ -70,8 +67,6 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
     private RecyclerView mChallengesRecycler;
     private ChallengesAdapter mChallengesAdapter;
-
-    private KonfettiView mKonfetti;
 
     public MainViewImpl(LayoutInflater inflater, ViewGroup parent) {
         final View view = inflater.inflate(R.layout.fragment_main, parent, false);
@@ -126,8 +121,6 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
         });
 
         mStartButton.setOnClickListener(v -> onStartButtonClicked());
-
-        mKonfetti = findViewById(R.id.viewKonfetti);
 
         FrameLayout favoriteGoalsContainer = findViewById(R.id.button_favorite_goals);
         mFavoriteGoalButton = favoriteGoalsContainer.findViewById(R.id.button_drawable);
@@ -260,21 +253,6 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
         if (challenges.size() > 1) {
             mChallengesRecycler.addItemDecoration(new LinePagerIndicatorDecoration());
         }
-    }
-
-    @Override
-    public void showKonfeti() {
-        mKonfetti.build()
-                //TODO: add nicer colors
-                .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA)
-                .setDirection(0.0, 359.0)
-                .setSpeed(1f, 5f)
-                .setFadeOutEnabled(true)
-                .setTimeToLive(2000L)
-                .addShapes(Shape.RECT, Shape.CIRCLE)
-                .addSizes(new Size(12, 5))
-                .setPosition(-50f, mKonfetti.getWidth() + 50f, -50f, -50f)
-                .streamFor(300, 3000L);
     }
 
     private void onExerciseSelected() {

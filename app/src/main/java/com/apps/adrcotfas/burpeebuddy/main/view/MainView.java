@@ -18,8 +18,6 @@ public interface MainView extends ObservableView<MainView.Listener> {
     void updateGoals(List<Goal> goals);
     void updateChallenges(List<Pair<Challenge, Integer>> challenges);
 
-    void showKonfeti();
-
     /**
      * Returns the currently selected exercise
      */

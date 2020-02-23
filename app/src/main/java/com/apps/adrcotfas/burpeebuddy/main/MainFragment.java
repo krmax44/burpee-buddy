@@ -13,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.BuddyApplication;
+import com.apps.adrcotfas.burpeebuddy.common.Events;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
@@ -24,6 +25,7 @@ import com.apps.adrcotfas.burpeebuddy.main.view.MainView;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewImpl;
 import com.apps.adrcotfas.burpeebuddy.settings.reminders.ReminderHelper;
 
+import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -164,7 +166,7 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
                             if (thisIsTheLastDay && ((ch.type == GoalType.TIME && progressToday >= ch.duration) ||
                                  (ch.type == GoalType.REPS && progressToday >= ch.reps))) {
                                 // Hurray, challenge completed
-                                view.showKonfeti();
+                                EventBus.getDefault().post(new Events.Konfetti());
                                 final ChallengeCompleteDialog dialog = ChallengeCompleteDialog.getInstance(ch, false);
                                 dialog.show(getParentFragmentManager(), TAG);
                                 AppDatabase.completeChallenge(getContext(), ch.id, startOfTodayM, false);

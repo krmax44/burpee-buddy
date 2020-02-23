@@ -145,4 +145,7 @@ public class Events {
             this.challenge = challenge;
         }
     }
+
+    public static class Konfetti {
+    }
 }
