@@ -1,13 +1,11 @@
 package com.apps.adrcotfas.burpeebuddy.main.view;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.ScrollView;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -32,6 +30,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -162,11 +161,15 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
     }
 
     private void updateGoalType() {
+        final MaterialRadioButton repRadio = findViewById(R.id.rep_radio);
+        final MaterialRadioButton timeRadio = findViewById(R.id.time_radio);
         if (mExercise.getValue().type == ExerciseType.TIME_BASED) {
-            findViewById(R.id.rep_based).setEnabled(false);
-            ((RadioButton)findViewById(R.id.time_based)).setChecked(true);
+            repRadio.setEnabled(false);
+            timeRadio.setChecked(true);
+            timeRadio.setText("Time");
         } else {
-            findViewById(R.id.rep_based).setEnabled(true);
+            timeRadio.setText("AMRAP");
+            repRadio.setEnabled(true);
         }
     }
 

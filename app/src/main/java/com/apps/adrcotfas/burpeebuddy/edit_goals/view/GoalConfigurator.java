@@ -53,8 +53,8 @@ public class GoalConfigurator {
     }
 
     private void setupViews(View v) {
-        mRepBasedRadio = v.findViewById(R.id.rep_based);
-        mDurationRadio = v.findViewById(R.id.time_based);
+        mRepBasedRadio = v.findViewById(R.id.rep_radio);
+        mDurationRadio = v.findViewById(R.id.time_radio);
 
         RadioGroup typeContainer = v.findViewById(R.id.goal_type_container);
         LinearLayout repsContainer = v.findViewById(R.id.reps_container);

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -12,17 +11,17 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:checkedButton="@id/rep_based"
+        android:checkedButton="@id/rep_radio"
         android:orientation="horizontal">
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/rep_based"
-            android:text="Rep based"
+            android:id="@+id/rep_radio"
+            android:text="Reps for time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingEnd="24dp"/>
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/time_based"
-            android:text="Time based"
+            android:id="@+id/time_radio"
+            android:text="AMRAP"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </RadioGroup>
