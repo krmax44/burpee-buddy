@@ -175,6 +175,7 @@ public class WorkoutFragment extends Fragment implements WorkoutView.Listener {
 
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutIdle event) {
+        mViewMvc.onWorkoutFinished();
         final Workout workout = new Workout(
                 getWorkout().getExerciseName(),
                 getWorkout().getExerciseType(),
@@ -182,7 +183,6 @@ public class WorkoutFragment extends Fragment implements WorkoutView.Listener {
                 getWorkout().getTotalDuration(),
                 getWorkout().getTotalReps(),
                 getWorkout().getTotalAvgPace());
-
         AppDatabase.addWorkout(getContext(), workout);
     }
 
