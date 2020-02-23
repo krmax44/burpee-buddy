@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+//TODO: clean up this mess
 public class AddChallengeDialog extends DialogFragment {
 
     private static final String TAG = "AddChallengeDialog";
@@ -74,7 +75,6 @@ public class AddChallengeDialog extends DialogFragment {
         return b.setCancelable(false)
                 .setTitle("Create a challenge")
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-
                     AppDatabase.getDatabase(getContext()).challengeDao().getInProgress().observe(this, challenges -> {
                         boolean found = false;
                         for (Challenge c : challenges) {
@@ -132,9 +132,6 @@ public class AddChallengeDialog extends DialogFragment {
             public void afterTextChanged(Editable s) {
                 AlertDialog dialog = (AlertDialog) getDialog();
 
-                repsOrMinutesEdit.setText("");
-                secondsEdit.setText("");
-
                 if (s.length() == 0 || !exerciseNames.contains(s.toString())) {
                     nameEditTextLayout.setError(getString(R.string.exercise_dialog_name_error));
                     if (dialog != null) {
@@ -158,10 +155,14 @@ public class AddChallengeDialog extends DialogFragment {
                                 challenge.type = GoalType.REPS;
                                 repsOrMinutesLayout.setHint(getContext().getString(R.string.reps));
                                 secondsLayout.setVisibility(View.GONE);
+                                repsOrMinutesEdit.setText("");
+                                secondsEdit.setText("");
                             } else {
                                 challenge.type = GoalType.TIME;
                                 repsOrMinutesLayout.setHint(getContext().getString(R.string.min));
                                 secondsLayout.setVisibility(View.VISIBLE);
+                                repsOrMinutesEdit.setText("");
+                                secondsEdit.setText("");
                             }
                             break;
                         }
@@ -180,26 +181,34 @@ public class AddChallengeDialog extends DialogFragment {
             public void afterTextChanged(Editable s) {
                 AlertDialog dialog = (AlertDialog) getDialog();
                 int value = 0;
-                if (s.length() == 0 || Integer.valueOf(s.toString()) == 0) {
+                try {
+                    if (s.length() == 0 || Integer.valueOf(s.toString()) == 0) {
+                        if (dialog != null) {
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        }
+                    } else {
+                        if (dialog != null) {
+                            if ((challenge.type == GoalType.REPS
+                                    && (repsOrMinutesEdit.length() != 0
+                                    && !repsOrMinutesEdit.getText().toString().equals("0")))
+
+                                    || (challenge.type == GoalType.TIME
+                                    && (repsOrMinutesEdit.length() != 0
+                                    && !repsOrMinutesEdit.getText().toString().equals("0"))
+                                    || (secondsEdit.length() != 0
+                                    && !secondsEdit.getText().toString().equals("0")))) {
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                            }
+                        }
+                        value = Integer.valueOf(s.toString());
+                    }
+                } catch (NumberFormatException e) {
                     if (dialog != null) {
                         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                     }
-                } else {
-                    if (dialog != null) {
-                        if ((challenge.type == GoalType.REPS
-                                && (repsOrMinutesEdit.length() != 0
-                                    && !repsOrMinutesEdit.getText().toString().equals("0")))
-
-                                || (challenge.type == GoalType.TIME
-                                    && (repsOrMinutesEdit.length() != 0
-                                        && !repsOrMinutesEdit.getText().toString().equals("0"))
-                                            || (secondsEdit.length() != 0
-                                                && !secondsEdit.getText().toString().equals("0")))) {
-                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                        }
-                    }
-                    value = Integer.valueOf(s.toString());
+                    daysEdit.setText("");
                 }
+
                 challenge.days = value;
                 final long endMillis = new DateTime(challenge.date).plusDays(challenge.days - 1).getMillis();
                 endDate.setText(StringUtils.formatDate(endMillis));
@@ -215,26 +224,39 @@ public class AddChallengeDialog extends DialogFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 AlertDialog dialog = (AlertDialog) getDialog();
-                if (s.length() == 0) {
-                    if (secondsEdit.length() == 0 || secondsEdit.getText().toString().equals("0")) {
+                if (s.length() == 0 || daysEdit.length() == 0 || daysEdit.getText().toString().equals("0")) {
+                    if (dialog != null) {
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    }
+                } else {
+                    try {
+                        Integer val = Integer.valueOf(s.toString());
+                        if (dialog != null && val == 0) {
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                            return;
+                        }
+                        if (challenge.type == GoalType.TIME) {
+                            final String seconds = secondsEdit.getText().toString().equals("")
+                                    ? "0"
+                                    : secondsEdit.getText().toString();
+                            challenge.duration = (int) TimeUnit.MINUTES.toSeconds(val)
+                                    + Integer.valueOf(seconds);
+                            if (challenge.duration != 0) {
+                                if (dialog != null) {
+                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                                }
+                            }
+                        } else {
+                            challenge.reps = val;
+                            if (dialog != null) {
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                            }
+                        }
+                    } catch (NumberFormatException e) {
                         if (dialog != null) {
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                         }
-                    }
-                } else {
-                    if (dialog != null) {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                    }
-
-                    if (challenge.type == GoalType.TIME) {
-                        int minutes = Integer.valueOf(s.toString());
-                        final String seconds = secondsEdit.getText().toString().equals("")
-                                ? "0"
-                                : secondsEdit.getText().toString();
-                        challenge.duration = (int) TimeUnit.MINUTES.toSeconds(minutes)
-                                + Integer.valueOf(seconds);
-                    } else {
-                        challenge.reps = Integer.valueOf(s.toString());
+                        repsOrMinutesEdit.setText("");
                     }
                 }
             }
@@ -247,25 +269,32 @@ public class AddChallengeDialog extends DialogFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 AlertDialog dialog = (AlertDialog) getDialog();
-                if (s.length() == 0) {
-                    if (repsOrMinutesEdit.length() == 0 || repsOrMinutesEdit.getText().toString().equals("0")) {
+                if (s.length() == 0 || daysEdit.length() == 0 || daysEdit.getText().toString().equals("0")) {
                         if (dialog != null) {
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                         }
-                    }
                 } else {
-                    if (Integer.valueOf(s.toString()) > 60 ) {
-                        secondsEdit.setText(String.valueOf(60));
+                    try {
+                        if (Integer.valueOf(s.toString()) > 60 ) {
+                            secondsEdit.setText(String.valueOf(60));
+                        }
+                        int seconds = Integer.valueOf(s.toString());
+                        final String minutes = repsOrMinutesEdit.getText().toString().equals("")
+                                ? "0"
+                                : repsOrMinutesEdit.getText().toString();
+                        challenge.duration = (int) TimeUnit.MINUTES.toSeconds(Integer.valueOf(minutes))
+                                + seconds;
+                        if (challenge.duration != 0) {
+                            if (dialog != null) {
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        if (dialog != null) {
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        }
+                        secondsEdit.setText("");
                     }
-                    if (dialog != null) {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                    }
-                    int seconds = Integer.valueOf(s.toString());
-                    final String minutes = repsOrMinutesEdit.getText().toString().equals("")
-                            ? "0"
-                            : repsOrMinutesEdit.getText().toString();
-                    challenge.duration = (int) TimeUnit.MINUTES.toSeconds(Integer.valueOf(minutes))
-                            + seconds;
                 }
             }
         });
