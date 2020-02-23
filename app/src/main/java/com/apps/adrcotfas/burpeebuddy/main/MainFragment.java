@@ -62,10 +62,16 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
         ReminderHelper.removeNotification(getContext());
 
         AppDatabase.getDatabase(getContext()).exerciseDao().getAllVisible().observe(
-                getViewLifecycleOwner(), exerciseTypes ->
-                        view.updateExercises(exerciseTypes));
+                getViewLifecycleOwner(), exercises ->
+                        view.updateExercises(exercises));
 
         view.getExercise().observe(getViewLifecycleOwner(), exercise -> {
+            if (mExercise != null &&
+                    ((exercise.type == TIME_BASED && mExercise.type == exercise.type) ||
+                     (exercise.type != TIME_BASED && mExercise.type != TIME_BASED))) {
+                return;
+            }
+
             mExercise = exercise;
             LiveData<List<Goal>> goalsLd;
             if (mExercise.type.equals(TIME_BASED)) {

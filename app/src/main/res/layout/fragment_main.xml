@@ -112,17 +112,18 @@
             android:layout_centerVertical="true"
             android:text="Goals"
             />
+        <!--            TODO: use this later-->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:orientation="horizontal">
-
+            android:orientation="horizontal"
+            android:visibility="gone">
             <include layout="@layout/button_favorites"
                 android:id="@+id/button_favorite_goals"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <include layout="@layout/button_edit"
                 android:id="@+id/button_edit_goals"

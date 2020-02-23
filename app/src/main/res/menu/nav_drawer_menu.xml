@@ -8,10 +8,10 @@
         <item android:id="@+id/exercisesFragment"
             android:title="@string/title_exercises"
             android:icon="@drawable/ic_exercise"/>
-
-        <item android:id="@+id/goalsFragment"
-            android:title="@string/title_goals"
-            android:icon="@drawable/ic_goals"/>
+<!--TODO: use this-->
+<!--        <item android:id="@+id/goalsFragment"-->
+<!--            android:title="@string/title_goals"-->
+<!--            android:icon="@drawable/ic_goals"/>-->
     </group>
     <group android:id="@+id/g1">
         <item android:id="@+id/statisticsFragment"
