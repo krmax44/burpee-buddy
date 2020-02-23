@@ -46,4 +46,5 @@
     <string name="title_challenges">Challenges</string>
     <string name="select_all">Select all</string>
     <string name="edit">Edit</string>
+    <string name="reminder_notification_description">Daily reminder</string>
 </resources>

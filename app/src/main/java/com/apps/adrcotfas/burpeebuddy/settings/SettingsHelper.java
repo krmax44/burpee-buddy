@@ -6,12 +6,15 @@ import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
 import com.apps.adrcotfas.burpeebuddy.db.goal.GoalTypeConverter;
 
+import org.joda.time.DateTime;
+
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.BREAK_DURATION_FACTOR;
 
 public class SettingsHelper {
     private static final String IS_FIRST_RUN = "pref_is_first_run";
     private static final String SHOW_START_SNACK = "pref_show_start_snack";
+    public final static String REMINDER_TIME_VALUE = "pref_reminder_time_value";
 
     public final static String AUTO_START_BREAK_COUNTABLE = "pref_auto_start_break_countable";
     public final static String AUTO_START_BREAK_UNCOUNTABLE = "pref_auto_start_break_uncountable";
@@ -23,6 +26,9 @@ public class SettingsHelper {
     public final static String GOAL_SETS = "pref_goal_sets";
     public final static String GOAL_REPS = "pref_goal_reps";
     public final static String GOAL_DURATION = "pref_goal_duration";
+
+    public final static String ENABLE_REMINDER = "pref_enable_reminder";
+    public final static String REMINDER_TIME = "pref_reminder_time";
 
     public static boolean isFirstRun() {
         return BuddyApplication.getPrivatePreferences().getBoolean(IS_FIRST_RUN, true);
@@ -128,5 +134,25 @@ public class SettingsHelper {
 
     public static Goal getGoal() {
         return new Goal(getGoalType(), getGoalSets(), getGoalReps(), getGoalDuration(), getBreakDuration());
+    }
+
+    public static boolean reminderEnabled() {
+        return getDefaultSharedPreferences(BuddyApplication.getInstance())
+                .getBoolean(ENABLE_REMINDER, false);
+    }
+
+    public static long getTimeOfReminder() {
+        long defaultTime = new DateTime()
+                .withHourOfDay(9)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .getMillis();
+        return getDefaultSharedPreferences(BuddyApplication.getInstance())
+                .getLong(REMINDER_TIME_VALUE, defaultTime);
+    }
+
+    public static void setTimeOfReminder(long time) {
+        getDefaultSharedPreferences(BuddyApplication.getInstance()).edit()
+                .putLong(REMINDER_TIME_VALUE, time).apply();
     }
 }

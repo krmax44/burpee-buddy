@@ -22,6 +22,7 @@ import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.main.dialog.ChallengeCompleteDialog;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainView;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewImpl;
+import com.apps.adrcotfas.burpeebuddy.settings.reminders.ReminderHelper;
 
 import org.joda.time.DateTime;
 
@@ -55,6 +56,8 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
                              Bundle savedInstanceState) {
         Timber.tag(TAG).d( "onCreateView");
         view = new MainViewImpl(inflater, container);
+
+        ReminderHelper.removeNotification(getContext());
 
         AppDatabase.getDatabase(getContext()).exerciseDao().getAllVisible().observe(
                 getViewLifecycleOwner(), exerciseTypes ->

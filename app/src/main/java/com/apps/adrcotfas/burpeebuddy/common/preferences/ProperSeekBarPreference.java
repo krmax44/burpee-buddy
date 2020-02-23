@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.burpeebuddy.common.seekbar_preference;
+package com.apps.adrcotfas.burpeebuddy.common.preferences;
 
 import android.content.Context;
 import android.content.res.TypedArray;

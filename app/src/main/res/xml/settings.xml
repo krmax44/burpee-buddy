@@ -2,6 +2,20 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <SwitchPreference
+        android:key="pref_enable_reminder"
+        android:title="Daily reminder"
+        android:defaultValue="false"
+        android:persistent="true"
+        app:iconSpaceReserved="false"/>
+
+    <Preference
+        android:key="pref_reminder_time"
+        android:dependency="pref_enable_reminder"
+        android:title="Reminder time"
+        android:persistent="true"
+        app:iconSpaceReserved="false"/>
+
     <CheckBoxPreference
         android:key="pref_auto_start_break_uncountable"
         android:defaultValue="false"
@@ -26,11 +40,12 @@
         android:summary="@string/auto_start_break_time_based"
         app:iconSpaceReserved="false"/>
 
-    <com.apps.adrcotfas.burpeebuddy.common.seekbar_preference.ProperSeekBarPreference
+    <com.apps.adrcotfas.burpeebuddy.common.preferences.ProperSeekBarPreference
         android:key="pref_break_duration"
         android:title="Break duration"
         app:min="1"
         android:defaultValue="2"
+        android:persistent="true"
         android:max="8"
         app:showSeekBarValue="true"
         app:iconSpaceReserved="false"/>

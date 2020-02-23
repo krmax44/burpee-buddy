@@ -10,6 +10,7 @@ import androidx.navigation.NavDeepLinkBuilder;
 
 import com.apps.adrcotfas.burpeebuddy.BuildConfig;
 import com.apps.adrcotfas.burpeebuddy.R;
+import com.apps.adrcotfas.burpeebuddy.settings.reminders.ReminderHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.NotificationHelper;
 import com.apps.adrcotfas.burpeebuddy.common.soundplayer.SoundPlayer;
 import com.apps.adrcotfas.burpeebuddy.workout.manager.WorkoutManager;
@@ -30,11 +31,16 @@ public class BuddyApplication extends Application {
     private static BuddyApplication INSTANCE;
     private static WorkoutManager mWorkoutManager;
     private static NotificationHelper mNotificationHelper;
+    private static ReminderHelper mReminderHelper;
 
     private static SharedPreferences mPrivatePreferences;
 
     public static NotificationHelper getNotificationHelper() {
         return mNotificationHelper;
+    }
+
+    public ReminderHelper getReminderHelper() {
+        return mReminderHelper;
     }
 
     public static WorkoutManager getWorkoutManager() {
@@ -63,14 +69,17 @@ public class BuddyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        INSTANCE = this;
-        mWorkoutManager = new WorkoutManager(this);
-        mNotificationHelper = new NotificationHelper(this);
-        mPrivatePreferences =
-                getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
+
+        INSTANCE = this;
+        mPrivatePreferences =
+                getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
+
+        mWorkoutManager = new WorkoutManager(this);
+        mNotificationHelper = new NotificationHelper(this);
+        mReminderHelper = new ReminderHelper(this);
     }
 }

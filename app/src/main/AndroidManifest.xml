@@ -9,6 +9,9 @@
     <!-- Used to wake the screen when a session is finished -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!--    To reschedule reminders when the phone restarts-->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <!--        TODO: enable allowBackup -->
     <application
         android:name=".common.BuddyApplication"
@@ -36,14 +39,15 @@
             android:enabled="true"
             android:exported="true" />
 
-        <receiver
-            android:name="android.app.admin.DeviceAdminReceiver"
-            android:permission="android.permission.BIND_DEVICE_ADMIN" >
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/admin" />
+        <receiver android:name=".settings.reminders.BootReceiver">
             <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".settings.reminders.ReminderReceiver">
+            <intent-filter>
+                <action android:name="buddy.reminder_action"/>
             </intent-filter>
         </receiver>
 
