@@ -85,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:backgroundTint="@color/button_start_color"
         android:gravity="center"
         android:text="Finish set"
         android:textColor="@color/cardview_light_background"
