@@ -6,7 +6,7 @@ import com.apps.adrcotfas.burpeebuddy.db.goal.Goal;
 import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
 import com.apps.adrcotfas.burpeebuddy.db.goal.GoalTypeConverter;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.apps.adrcotfas.burpeebuddy.common.BuddyApplication.BREAK_DURATION_FACTOR;
@@ -142,11 +142,7 @@ public class SettingsHelper {
     }
 
     public static long getTimeOfReminder() {
-        long defaultTime = new DateTime()
-                .withHourOfDay(9)
-                .withMinuteOfHour(0)
-                .withSecondOfMinute(0)
-                .getMillis();
+        long defaultTime = new LocalTime(9, 0).toDateTimeToday().getMillis();
         return getDefaultSharedPreferences(BuddyApplication.getInstance())
                 .getLong(REMINDER_TIME_VALUE, defaultTime);
     }

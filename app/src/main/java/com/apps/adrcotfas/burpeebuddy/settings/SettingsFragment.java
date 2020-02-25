@@ -12,6 +12,7 @@ import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements TimePickerDialog.OnTimeSetListener {
 
@@ -44,9 +45,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements TimePi
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        final long millis = new DateTime()
-                .withHourOfDay(hourOfDay)
-                .withMinuteOfHour(minute).getMillis();
+        final long millis = new LocalTime(hourOfDay, minute).toDateTimeToday().getMillis();
         SettingsHelper.setTimeOfReminder(millis);
         timePreference.setSummary(StringUtils.formatTime(millis));
     }

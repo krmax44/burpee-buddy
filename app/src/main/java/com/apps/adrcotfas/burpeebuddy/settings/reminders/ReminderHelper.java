@@ -22,6 +22,7 @@ import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
 import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 
 import timber.log.Timber;
@@ -124,13 +125,18 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
 
     public void scheduleNotification() {
         if (SettingsHelper.reminderEnabled()) {
-            Timber.tag(TAG).d("scheduleNotification at %s", StringUtils.formatDateAndTime(SettingsHelper.getTimeOfReminder()));
 
             long calendarMillis = SettingsHelper.getTimeOfReminder();
+            Timber.tag(TAG).d("time of reminder: %s", StringUtils.formatDateAndTime(calendarMillis));
 
-            if (calendarMillis < new DateTime().getMillis()) {
-                calendarMillis  += AlarmManager.INTERVAL_DAY;
+            final DateTime now = new DateTime();
+            Timber.tag(TAG).d("now: %s", StringUtils.formatDateAndTime(now.getMillis()));
+            if (now.isAfter(calendarMillis)) {
+                calendarMillis  = new LocalTime(calendarMillis).toDateTimeToday().plusDays(1).getMillis();
             }
+
+            Timber.tag(TAG).d("scheduleNotification at %s", StringUtils.formatDateAndTime(calendarMillis));
+
             getAlarmManager().setInexactRepeating(
                     RTC_WAKEUP,
                     calendarMillis,
