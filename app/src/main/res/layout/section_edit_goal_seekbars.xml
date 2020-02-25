@@ -15,13 +15,13 @@
         android:orientation="horizontal">
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/rep_radio"
-            android:text="Reps for time"
+            android:text="Reps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingEnd="24dp"/>
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/time_radio"
-            android:text="AMRAP"
+            android:text="Time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </RadioGroup>

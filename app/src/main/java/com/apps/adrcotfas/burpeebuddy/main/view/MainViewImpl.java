@@ -166,9 +166,7 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
         if (mExercise.getValue().type == ExerciseType.TIME_BASED) {
             repRadio.setEnabled(false);
             timeRadio.setChecked(true);
-            timeRadio.setText("Time");
         } else {
-            timeRadio.setText("AMRAP");
             repRadio.setEnabled(true);
         }
     }
