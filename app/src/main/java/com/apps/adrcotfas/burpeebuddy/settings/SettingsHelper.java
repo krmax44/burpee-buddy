@@ -30,6 +30,8 @@ public class SettingsHelper {
     public final static String ENABLE_REMINDER = "pref_enable_reminder";
     public final static String REMINDER_TIME = "pref_reminder_time";
 
+    public final static String PROXIMITY_SENSOR_STATE = "pref_proximity_sensor_state";
+
     public static boolean isFirstRun() {
         return BuddyApplication.getPrivatePreferences().getBoolean(IS_FIRST_RUN, true);
     }
@@ -37,6 +39,15 @@ public class SettingsHelper {
     public static void setIsFirstRun(boolean value) {
         BuddyApplication.getPrivatePreferences().edit()
                 .putBoolean(IS_FIRST_RUN, value).apply();
+    }
+
+    public static boolean isProximityEnabled() {
+        return BuddyApplication.getPrivatePreferences().getBoolean(PROXIMITY_SENSOR_STATE, true);
+    }
+
+    public static void setProximitySensorState(boolean value) {
+        BuddyApplication.getPrivatePreferences().edit()
+                .putBoolean(PROXIMITY_SENSOR_STATE, value).apply();
     }
 
     public static boolean showStartSnack() {

@@ -17,7 +17,7 @@ public interface ExerciseDao {
     LiveData<List<Exercise>> getAll();
 
     @Query("select * from Exercise where name = :name")
-    Exercise getExercise(String name);
+    LiveData<Exercise> getExercise(String name);
 
     @Query("select * from Exercise where visible = 1 ORDER BY `order`")
     LiveData<List<Exercise>> getAllVisible();

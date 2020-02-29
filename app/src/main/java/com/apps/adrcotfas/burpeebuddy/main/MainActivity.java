@@ -10,7 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -49,7 +49,10 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         mKonfetti = findViewById(R.id.viewKonfetti);
 
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavHostFragment fragment = (NavHostFragment)
+                getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+
+        navController = fragment.getNavController();
         appBarConfiguration = new AppBarConfiguration.Builder(R.id.mainFragment)
                 .setDrawerLayout(drawerLayout)
                 .build();
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         if (SettingsHelper.isFirstRun()) {
             AppDatabase.getDatabase(getApplicationContext());
             AppDatabase.populateExercises(getApplicationContext());
-            SettingsHelper.setIsFirstRun(false); // TODO: set to false
+            SettingsHelper.setIsFirstRun(false);
         }
     }
 

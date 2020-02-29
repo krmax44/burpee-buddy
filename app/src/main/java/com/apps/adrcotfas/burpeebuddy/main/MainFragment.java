@@ -2,8 +2,12 @@ package com.apps.adrcotfas.burpeebuddy.main;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
@@ -23,6 +27,7 @@ import com.apps.adrcotfas.burpeebuddy.db.workout.Workout;
 import com.apps.adrcotfas.burpeebuddy.main.dialog.ChallengeCompleteDialog;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainView;
 import com.apps.adrcotfas.burpeebuddy.main.view.MainViewImpl;
+import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.settings.reminders.ReminderHelper;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,7 +41,9 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.COUNTABLE;
 import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.TIME_BASED;
+import static com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType.UNCOUNTABLE;
 
 public class MainFragment extends Fragment implements MainViewImpl.Listener {
 
@@ -58,6 +65,7 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
                              Bundle savedInstanceState) {
         Timber.tag(TAG).d( "onCreateView");
         view = new MainViewImpl(inflater, container);
+        setHasOptionsMenu(true);
 
         ReminderHelper.removeNotification(getContext());
 
@@ -208,8 +216,43 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem toggleSensor = menu.findItem(R.id.toggle_proximity);
+        final boolean proximityEnabled = SettingsHelper.isProximityEnabled();
+        toggleSensor.setIcon(proximityEnabled ? R.drawable.ic_sensor_enabled : R.drawable.ic_sensor_disabled);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu,
+                                    MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.toggle_proximity) {
+            SettingsHelper.setProximitySensorState(!SettingsHelper.isProximityEnabled());
+            final boolean proximityEnabled = SettingsHelper.isProximityEnabled();
+            item.setIcon(proximityEnabled ? R.drawable.ic_sensor_enabled : R.drawable.ic_sensor_disabled);
+            Toast.makeText(getContext(), "The proximity sensor was " +
+                    (proximityEnabled ? "enabled" : "disabled"), Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void onStartButtonClicked() {
-        BuddyApplication.getWorkoutManager().init(mExercise, view.getGoal());
+        // this is a workaround for the case with disabled proximity sensor
+        // the COUNTABLE exercises act as UNCOUNTABLE
+        Exercise tmp = mExercise;
+        if (SettingsHelper.isProximityEnabled() && tmp.type == COUNTABLE) {
+            tmp.type = UNCOUNTABLE;
+        }
+
+        BuddyApplication.getWorkoutManager().init(tmp, view.getGoal());
         NavHostFragment.findNavController(this).navigate(R.id.action_main_to_workout);
     }
 

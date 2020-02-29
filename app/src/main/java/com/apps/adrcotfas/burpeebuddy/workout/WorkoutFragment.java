@@ -144,11 +144,6 @@ public class WorkoutFragment extends Fragment implements WorkoutView.Listener {
 
     @Subscribe
     public void onMessageEvent(Events.PreWorkoutCountdownFinished event) {
-        //TODO: handle this later
-        //TODO: and if the workout is countable
-//        if (SettingsHelper.autoLockEnabled() && Power.isScreenOn(getActivity())) {
-//            Power.lockScreen((AppCompatActivity) getActivity());
-//        }
         setFinishSetButtonVisibility(View.VISIBLE);
         mViewMvc.toggleRowAppearance(true);
     }
@@ -176,14 +171,19 @@ public class WorkoutFragment extends Fragment implements WorkoutView.Listener {
     @Subscribe
     public void onMessageEvent(Events.FinishedWorkoutIdle event) {
         mViewMvc.onWorkoutFinished();
-        final Workout workout = new Workout(
-                getWorkout().getExerciseName(),
-                getWorkout().getExerciseType(),
-                System.currentTimeMillis(),
-                getWorkout().getTotalDuration(),
-                getWorkout().getTotalReps(),
-                getWorkout().getTotalAvgPace());
-        AppDatabase.addWorkout(getContext(), workout);
+        final String exerciseName = getWorkout().getExerciseName();
+        AppDatabase.getDatabase(getContext()).exerciseDao().getExercise(exerciseName).observe(this, exercise -> {
+            final Workout workout = new Workout(
+                    exerciseName,
+                    // this is a workaround for the case with disabled proximity sensor
+                    // the COUNTABLE exercises act as UNCOUNTABLE
+                    exercise.type,
+            System.currentTimeMillis(),
+                    getWorkout().getTotalDuration(),
+                    getWorkout().getTotalReps(),
+                    getWorkout().getTotalAvgPace());
+            AppDatabase.addWorkout(getContext(), workout);
+        });
     }
 
     @Subscribe
