@@ -69,10 +69,11 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
             if (mExercise != null &&
                     ((exercise.type == TIME_BASED && mExercise.type == exercise.type) ||
                      (exercise.type != TIME_BASED && mExercise.type != TIME_BASED))) {
+                mExercise = exercise;
                 return;
             }
-
             mExercise = exercise;
+
             LiveData<List<Goal>> goalsLd;
             if (mExercise.type.equals(TIME_BASED)) {
                 goalsLd = AppDatabase.getDatabase(getContext()).goalDao().getGoals(GoalType.TIME);
