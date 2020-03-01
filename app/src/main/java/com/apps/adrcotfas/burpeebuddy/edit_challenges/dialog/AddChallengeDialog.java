@@ -47,14 +47,11 @@ public class AddChallengeDialog extends DialogFragment {
     private TextInputLayout repsOrMinutesLayout;
     private TextInputLayout secondsLayout;
 
+    private TextInputEditText daysEdit;
     private TextInputEditText secondsEdit;
     private TextInputEditText repsOrMinutesEdit;
 
-    private TextView startDate;
-    private TextView endDate;
-    private TextInputEditText daysEdit;
-
-    private LinearLayout intervalContainer;
+    private TextView intervalText;
 
     public static AddChallengeDialog getInstance() {
         return new AddChallengeDialog();
@@ -104,9 +101,7 @@ public class AddChallengeDialog extends DialogFragment {
         repsOrMinutesEdit = v.findViewById(R.id.reps_or_minutes);
         secondsLayout = v.findViewById(R.id.seconds_layout);
         secondsEdit = v.findViewById(R.id.seconds);
-        intervalContainer = v.findViewById(R.id.interval_container);
-        startDate = v.findViewById(R.id.edit_start);
-        endDate = v.findViewById(R.id.edit_end);
+        intervalText = v.findViewById(R.id.interval_text);
     }
 
     private void setupExerciseTextView(View v) {
@@ -140,7 +135,7 @@ public class AddChallengeDialog extends DialogFragment {
                         daysLayout.setVisibility(View.GONE);
                         repsOrMinutesLayout.setVisibility(View.GONE);
                         secondsLayout.setVisibility(View.GONE);
-                        intervalContainer.setVisibility(View.GONE);
+                        intervalText.setVisibility(View.GONE);
                     }
                 } else {
                     nameEditTextLayout.setError(null);
@@ -150,7 +145,7 @@ public class AddChallengeDialog extends DialogFragment {
 
                             daysLayout.setVisibility(View.VISIBLE);
                             repsOrMinutesLayout.setVisibility(View.VISIBLE);
-                            intervalContainer.setVisibility(View.VISIBLE);
+                            intervalText.setVisibility(View.VISIBLE);
                             if (e.type != ExerciseType.TIME_BASED ) {
                                 challenge.type = GoalType.REPS;
                                 repsOrMinutesLayout.setHint(getContext().getString(R.string.reps));
@@ -205,13 +200,15 @@ public class AddChallengeDialog extends DialogFragment {
                 } catch (NumberFormatException e) {
                     if (dialog != null) {
                         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        intervalText.setVisibility(View.GONE);
                     }
                     daysEdit.setText("");
                 }
 
                 challenge.days = value;
                 final long endMillis = new DateTime(challenge.date).plusDays(challenge.days - 1).getMillis();
-                endDate.setText(StringUtils.formatDate(endMillis));
+                //TODO: extract string
+                intervalText.setText(challenge.days == 0 ? "" : "Today until " + StringUtils.formatDate(endMillis));
             }
         });
     }
@@ -304,9 +301,9 @@ public class AddChallengeDialog extends DialogFragment {
         final DateTime now = new DateTime();
         final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
         challenge.date = startOfToday.getMillis();
-        startDate.setText("Today");
         final long endMillis = new DateTime(challenge.date).plusDays(challenge.days - 1).getMillis();
-        endDate.setText(StringUtils.formatDate(endMillis));
+        //TODO: extract string
+        intervalText.setText("Today until " + StringUtils.formatDate(endMillis));
     }
 
     @Override
