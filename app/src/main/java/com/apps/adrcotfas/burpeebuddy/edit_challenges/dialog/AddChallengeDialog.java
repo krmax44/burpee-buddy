@@ -2,316 +2,72 @@ package com.apps.adrcotfas.burpeebuddy.edit_challenges.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.fragment.app.DialogFragment;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
-import com.apps.adrcotfas.burpeebuddy.common.utilities.StringUtils;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.challenge.Challenge;
-import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.db.exercise.ExerciseType;
-import com.apps.adrcotfas.burpeebuddy.db.goal.GoalType;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
+import com.apps.adrcotfas.burpeebuddy.edit_challenges.view.ChallengeConfigurator;
 
 import org.greenrobot.eventbus.EventBus;
-import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-//TODO: clean up this mess
-public class AddChallengeDialog extends DialogFragment {
+public class AddChallengeDialog extends DialogFragment implements ChallengeConfigurator.Listener{
 
     private static final String TAG = "AddChallengeDialog";
 
-    private Challenge challenge = new Challenge();
-
-    private List<String> exerciseNames;
-    private List<Exercise> exercises;
-
-    private TextInputLayout daysLayout;
-    private TextInputLayout repsOrMinutesLayout;
-    private TextInputLayout secondsLayout;
-
-    private TextInputEditText daysEdit;
-    private TextInputEditText secondsEdit;
-    private TextInputEditText repsOrMinutesEdit;
-
-    private TextView intervalText;
 
     public static AddChallengeDialog getInstance() {
         return new AddChallengeDialog();
     }
 
+    private ChallengeConfigurator challengeConfigurator;
+
     @Override
     public final Dialog onCreateDialog(Bundle savedInstBundle) {
-        final MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(getActivity());
         final View v = getActivity().getLayoutInflater()
                 .inflate(R.layout.dialog_add_challenge, null, false);
 
-        findViews(v);
-        setupExerciseTextView(v);
-        setupDaysEditText();
-        setupMetrics();
-        setupStartDate();
+        challengeConfigurator = new ChallengeConfigurator(getContext(), this, this, v);
 
-        return b.setCancelable(false)
-                .setTitle("Create a challenge")
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    AppDatabase.getDatabase(getContext()).challengeDao().getInProgress().observe(this, challenges -> {
-                        boolean found = false;
-                        for (Challenge c : challenges) {
-                            if (c.exerciseName.equals(challenge.exerciseName)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (found) {
-                            Toast.makeText(getContext(), "There's already a challenge in progress for " + challenge.exerciseName
-                                    , Toast.LENGTH_SHORT).show();
-                        } else {
-                            EventBus.getDefault().post(
-                                    new Events.AddChallenge(challenge));
-                        }
-                    });
-                })
-                .setNegativeButton(android.R.string.cancel, ((dialog, which) -> {}))
-                .setView(v)
-                .create();
-    }
-
-    private void findViews(View v) {
-        daysLayout = v.findViewById(R.id.days_layout);
-        daysEdit = v.findViewById(R.id.days);
-        repsOrMinutesLayout = v.findViewById(R.id.reps_or_minutes_layout);
-        repsOrMinutesEdit = v.findViewById(R.id.reps_or_minutes);
-        secondsLayout = v.findViewById(R.id.seconds_layout);
-        secondsEdit = v.findViewById(R.id.seconds);
-        intervalText = v.findViewById(R.id.interval_text);
-    }
-
-    private void setupExerciseTextView(View v) {
-        final TextInputLayout nameEditTextLayout = v.findViewById(R.id.name_layout);
-        final AppCompatAutoCompleteTextView nameEditText = v.findViewById(R.id.name);
-
-        AppDatabase.getDatabase(getContext()).exerciseDao().getAll().observe(this,
-                exercises -> {
-                    this.exercises = exercises;
-                    exerciseNames = new ArrayList<>();
-                    exerciseNames.clear();
-                    for (Exercise e : exercises) {
-                        this.exerciseNames.add(e.name);
-                    }
-                    nameEditText.setAdapter(new ArrayAdapter<>(getContext(),
-                            R.layout.select_dialog_item, exerciseNames));
-                });
-        nameEditText.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                AlertDialog dialog = (AlertDialog) getDialog();
-
-                if (s.length() == 0 || !exerciseNames.contains(s.toString())) {
-                    nameEditTextLayout.setError(getString(R.string.exercise_dialog_name_error));
-                    if (dialog != null) {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-
-                        daysLayout.setVisibility(View.GONE);
-                        repsOrMinutesLayout.setVisibility(View.GONE);
-                        secondsLayout.setVisibility(View.GONE);
-                        intervalText.setVisibility(View.GONE);
-                    }
-                } else {
-                    nameEditTextLayout.setError(null);
-                    for (Exercise e : exercises) {
-                        if (e.name.equals(s.toString())) {
-                            challenge.exerciseName = e.name;
-
-                            daysLayout.setVisibility(View.VISIBLE);
-                            repsOrMinutesLayout.setVisibility(View.VISIBLE);
-                            intervalText.setVisibility(View.VISIBLE);
-                            if (e.type != ExerciseType.TIME_BASED ) {
-                                challenge.type = GoalType.REPS;
-                                repsOrMinutesLayout.setHint(getContext().getString(R.string.reps));
-                                secondsLayout.setVisibility(View.GONE);
-                                repsOrMinutesEdit.setText("");
-                                secondsEdit.setText("");
-                            } else {
-                                challenge.type = GoalType.TIME;
-                                repsOrMinutesLayout.setHint(getContext().getString(R.string.min));
-                                secondsLayout.setVisibility(View.VISIBLE);
-                                repsOrMinutesEdit.setText("");
-                                secondsEdit.setText("");
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    private void setupDaysEditText() {
-        daysEdit.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                AlertDialog dialog = (AlertDialog) getDialog();
-                int value = 0;
-                try {
-                    if (s.length() == 0 || Integer.valueOf(s.toString()) == 0) {
-                        if (dialog != null) {
-                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        }
-                    } else {
-                        if (dialog != null) {
-                            if ((challenge.type == GoalType.REPS
-                                    && (repsOrMinutesEdit.length() != 0
-                                    && !repsOrMinutesEdit.getText().toString().equals("0")))
-
-                                    || (challenge.type == GoalType.TIME
-                                    && (repsOrMinutesEdit.length() != 0
-                                    && !repsOrMinutesEdit.getText().toString().equals("0"))
-                                    || (secondsEdit.length() != 0
-                                    && !secondsEdit.getText().toString().equals("0")))) {
-                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                            }
-                        }
-                        value = Integer.valueOf(s.toString());
-                    }
-                } catch (NumberFormatException e) {
-                    if (dialog != null) {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        intervalText.setVisibility(View.GONE);
-                    }
-                    daysEdit.setText("");
-                }
-
-                challenge.days = value;
-                final long endMillis = new DateTime(challenge.date).plusDays(challenge.days - 1).getMillis();
-                //TODO: extract string
-                intervalText.setText(challenge.days == 0 ? "" : "Today until " + StringUtils.formatDate(endMillis));
-            }
-        });
-    }
-
-    private void setupMetrics() {
-        repsOrMinutesEdit.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                AlertDialog dialog = (AlertDialog) getDialog();
-                if (s.length() == 0 || daysEdit.length() == 0 || daysEdit.getText().toString().equals("0")) {
-                    if (dialog != null) {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                    }
-                } else {
-                    try {
-                        Integer val = Integer.valueOf(s.toString());
-                        if (dialog != null && val == 0) {
-                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                            return;
-                        }
-                        if (challenge.type == GoalType.TIME) {
-                            final String seconds = secondsEdit.getText().toString().equals("")
-                                    ? "0"
-                                    : secondsEdit.getText().toString();
-                            challenge.duration = (int) TimeUnit.MINUTES.toSeconds(val)
-                                    + Integer.valueOf(seconds);
-                            if (challenge.duration != 0) {
-                                if (dialog != null) {
-                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                                }
-                            }
-                        } else {
-                            challenge.reps = val;
-                            if (dialog != null) {
-                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                            }
-                        }
-                    } catch (NumberFormatException e) {
-                        if (dialog != null) {
-                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        }
-                        repsOrMinutesEdit.setText("");
-                    }
-                }
-            }
-        });
-
-        secondsEdit.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                AlertDialog dialog = (AlertDialog) getDialog();
-                if (s.length() == 0 || daysEdit.length() == 0 || daysEdit.getText().toString().equals("0")) {
-                        if (dialog != null) {
-                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        }
-                } else {
-                    try {
-                        if (Integer.valueOf(s.toString()) > 60 ) {
-                            secondsEdit.setText(String.valueOf(60));
-                        }
-                        int seconds = Integer.valueOf(s.toString());
-                        final String minutes = repsOrMinutesEdit.getText().toString().equals("")
-                                ? "0"
-                                : repsOrMinutesEdit.getText().toString();
-                        challenge.duration = (int) TimeUnit.MINUTES.toSeconds(Integer.valueOf(minutes))
-                                + seconds;
-                        if (challenge.duration != 0) {
-                            if (dialog != null) {
-                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                            }
-                        }
-                    } catch (NumberFormatException e) {
-                        if (dialog != null) {
-                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        }
-                        secondsEdit.setText("");
-                    }
-                }
-            }
-        });
-    }
-
-    private void setupStartDate() {
-        final DateTime now = new DateTime();
-        final DateTime startOfToday = now.toLocalDate().toDateTimeAtStartOfDay(now.getZone());
-        challenge.date = startOfToday.getMillis();
-        final long endMillis = new DateTime(challenge.date).plusDays(challenge.days - 1).getMillis();
-        //TODO: extract string
-        intervalText.setText("Today until " + StringUtils.formatDate(endMillis));
+        return challengeConfigurator.createDialog();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        toggleState(false);
+    }
+
+    @Override
+    public void onPositiveButtonClick(Challenge challenge) {
+        AppDatabase.getDatabase(getContext()).challengeDao().getInProgress().observe(this, challenges -> {
+            boolean found = false;
+            for (Challenge c : challenges) {
+                if (c.exerciseName.equals(challenge.exerciseName)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                Toast.makeText(getContext(), "There's already a challenge in progress for " + challenge.exerciseName
+                        , Toast.LENGTH_SHORT).show();
+            } else {
+                EventBus.getDefault().post(
+                        new Events.AddChallenge(challenge));
+            }
+        });
+    }
+
+    @Override
+    public void toggleState(boolean valid) {
         AlertDialog dialog = (AlertDialog) getDialog();
         if (dialog != null) {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(valid);
         }
     }
 }

@@ -1,5 +1,8 @@
 package com.apps.adrcotfas.burpeebuddy.common.utilities;
 
+import android.content.Context;
+import android.text.format.DateFormat;
+
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -41,12 +44,21 @@ public class StringUtils {
 
     private static final DateTimeFormatter monthFormatter = DateTimeFormat.forPattern("EEE', 'MMM d', ' yyyy");
     private static final DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("HH:mm");
+    private static final DateTimeFormatter timeFormatterAMPM = DateTimeFormat.forPattern("hh:mm aa");
 
     public static String formatDate(long millis) {
         return monthFormatter.print(millis);
     }
     public static String formatTime(long millis) {
         return timeFormatter.print(millis);
+    }
+
+    public static String formatTime(Context context, long millis) {
+        if (DateFormat.is24HourFormat(context)) {
+            return timeFormatter.print(millis);
+        } else {
+            return timeFormatterAMPM.print(millis);
+        }
     }
 
 }

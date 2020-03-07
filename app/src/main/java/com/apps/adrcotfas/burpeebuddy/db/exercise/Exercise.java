@@ -40,4 +40,12 @@ public class Exercise {
         this.visible = true;
         this.order = Integer.MAX_VALUE;
     }
+
+    @Ignore
+    public Exercise(String name, ExerciseType type, boolean visible) {
+        this.name = name;
+        this.type = type;
+        this.visible = visible;
+        this.order = Integer.MAX_VALUE;
+    }
 }

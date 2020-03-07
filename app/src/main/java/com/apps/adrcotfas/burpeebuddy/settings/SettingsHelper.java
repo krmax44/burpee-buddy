@@ -147,9 +147,14 @@ public class SettingsHelper {
         return new Goal(getGoalType(), getGoalSets(), getGoalReps(), getGoalDuration(), getBreakDuration());
     }
 
-    public static boolean reminderEnabled() {
+    public static boolean isReminderEnabled() {
         return getDefaultSharedPreferences(BuddyApplication.getInstance())
-                .getBoolean(ENABLE_REMINDER, false);
+                .getBoolean(ENABLE_REMINDER, true);
+    }
+
+    public static void setReminderEnabled(boolean value) {
+        getDefaultSharedPreferences(BuddyApplication.getInstance())
+                .edit().putBoolean(ENABLE_REMINDER, value);
     }
 
     public static long getTimeOfReminder() {

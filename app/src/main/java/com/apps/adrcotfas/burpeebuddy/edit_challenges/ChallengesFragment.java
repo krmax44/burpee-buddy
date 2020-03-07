@@ -80,8 +80,7 @@ public class ChallengesFragment extends Fragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.add) {
-            AddChallengeDialog.getInstance().
-                    show(getActivity().getSupportFragmentManager(), TAG);
+            AddChallengeDialog.getInstance().show(getActivity().getSupportFragmentManager(), TAG);
             return true;
         }
         return false;

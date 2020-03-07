@@ -8,7 +8,7 @@ import androidx.room.TypeConverters;
 
 import java.util.List;
 
-import static androidx.room.OnConflictStrategy.IGNORE;
+import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface ExerciseDao {
@@ -22,10 +22,10 @@ public interface ExerciseDao {
     @Query("select * from Exercise where visible = 1 ORDER BY `order`")
     LiveData<List<Exercise>> getAllVisible();
 
-    @Insert(onConflict = IGNORE)
+    @Insert(onConflict = REPLACE)
     void addExercise(Exercise exercise);
 
-    @Insert(onConflict = IGNORE)
+    @Insert(onConflict = REPLACE)
     void insertAll(List<Exercise> exercises);
 
     @Query("delete from Exercise where name = :name")
@@ -33,6 +33,9 @@ public interface ExerciseDao {
 
     @Query("update Exercise SET `order` = :order WHERE name = :name")
     void editOrder(String name, int order);
+
+    @Query("update Exercise SET `visible` = 1")
+    void setVisibleToAll();
 
     @TypeConverters(ExerciseTypeConverter.class)
     @Query("update Exercise SET `name` = :newName, 'type' = :type WHERE name = :name")

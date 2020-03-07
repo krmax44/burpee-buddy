@@ -100,6 +100,11 @@ public abstract class AppDatabase extends RoomDatabase {
                 -> getDatabase(context).exerciseDao().delete(name));
     }
 
+    public static void enableAllExercises(Context context) {
+        mExecutorService.execute(()
+                -> getDatabase(context).exerciseDao().setVisibleToAll());
+    }
+
     public static void addChallenge(Context context, Challenge challenge) {
         mExecutorService.execute(()
                 -> getDatabase(context).challengeDao().addChallenge(challenge));

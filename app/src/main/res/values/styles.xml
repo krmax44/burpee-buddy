@@ -20,6 +20,10 @@
         <item name="materialButtonStyle">@style/MaterialButton</item>
     </style>
 
+    <style name="AppTheme.Intro" parent="Theme.Intro">
+        <item name="android:navigationBarColor">@color/black</item>
+    </style>
+
     <style name="ToolbarStyle" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
         <item name="android:textColorPrimary">@color/grey500</item>
     </style>

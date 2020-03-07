@@ -34,6 +34,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".intro.MainIntroActivity"
+            android:theme="@style/AppTheme.Intro" />
+
         <service
             android:name="com.apps.adrcotfas.burpeebuddy.workout.WorkoutService"
             android:enabled="true"

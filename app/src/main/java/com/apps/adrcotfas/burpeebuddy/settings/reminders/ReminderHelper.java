@@ -47,7 +47,7 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             initChannel();
         }
-        if (SettingsHelper.reminderEnabled()) {
+        if (SettingsHelper.isReminderEnabled()) {
             enableBootReceiver();
             scheduleNotification();
         }
@@ -69,7 +69,7 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(SettingsHelper.ENABLE_REMINDER)) {
             Timber.tag(TAG).d("onSharedPreferenceChanged");
-            if (SettingsHelper.reminderEnabled()) {
+            if (SettingsHelper.isReminderEnabled()) {
                 enableBootReceiver();
             } else {
                 disableBootReceiver();
@@ -124,7 +124,7 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
     }
 
     public void scheduleNotification() {
-        if (SettingsHelper.reminderEnabled()) {
+        if (SettingsHelper.isReminderEnabled()) {
 
             long calendarMillis = SettingsHelper.getTimeOfReminder();
             Timber.tag(TAG).d("time of reminder: %s", StringUtils.formatDateAndTime(calendarMillis));

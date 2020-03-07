@@ -5,7 +5,7 @@
     <SwitchPreference
         android:key="pref_enable_reminder"
         android:title="Daily reminder"
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:persistent="true"
         app:iconSpaceReserved="false"/>
 
