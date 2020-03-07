@@ -248,7 +248,7 @@ public class MainFragment extends Fragment implements MainViewImpl.Listener {
         // this is a workaround for the case with disabled proximity sensor
         // the COUNTABLE exercises act as UNCOUNTABLE
         Exercise tmp = mExercise;
-        if (SettingsHelper.isProximityEnabled() && tmp.type == COUNTABLE) {
+        if (!SettingsHelper.isProximityEnabled() && tmp.type == COUNTABLE) {
             tmp.type = UNCOUNTABLE;
         }
 
