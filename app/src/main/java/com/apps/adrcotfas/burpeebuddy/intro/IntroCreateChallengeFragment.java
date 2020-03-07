@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.burpeebuddy.intro;
 
 import android.app.TimePickerDialog;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -77,6 +78,7 @@ public class IntroCreateChallengeFragment extends SlideFragment implements Chall
             reminderButton.setTextColor(getContext().getResources().getColor(isChecked ? R.color.white : R.color.gray800));
             SettingsHelper.setReminderEnabled(isChecked);
         });
+        reminderButton.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         return v;

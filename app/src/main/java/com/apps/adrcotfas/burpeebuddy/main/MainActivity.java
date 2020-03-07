@@ -1,6 +1,5 @@
 package com.apps.adrcotfas.burpeebuddy.main;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -9,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
@@ -18,17 +16,11 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
-import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
-import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
-import com.apps.adrcotfas.burpeebuddy.intro.MainIntroActivity;
-import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 import com.apps.adrcotfas.burpeebuddy.workout.WorkoutFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import java.util.List;
 
 import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
@@ -37,7 +29,6 @@ import nl.dionsegijn.konfetti.models.Size;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private static final int REQUEST_CODE_INTRO = 123;
 
     private AppBarConfiguration appBarConfiguration;
     private NavController navController;
@@ -47,15 +38,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if(true) { //TODO: if (SettingsHelper.isFirstRun()) {
-            Intent i = new Intent(MainActivity.this, MainIntroActivity.class);
-            startActivityForResult(i, REQUEST_CODE_INTRO);
-
-            AppDatabase.getDatabase(getApplicationContext());
-            AppDatabase.populateExercises(getApplicationContext());
-            SettingsHelper.setIsFirstRun(false);
-        }
 
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_main);
@@ -125,19 +107,6 @@ public class MainActivity extends AppCompatActivity {
                 .streamFor(300, 3000L);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_INTRO) {
 
-            LiveData<List<Exercise>> allVisible = AppDatabase.getDatabase(this).exerciseDao().getAllVisible();
-            allVisible.observe(this, exercises -> {
-                if (exercises.isEmpty()) {
-                    AppDatabase.enableAllExercises(this);
-                    allVisible.removeObservers(this);
-                }
-            });
-        }
-    }
 
 }
