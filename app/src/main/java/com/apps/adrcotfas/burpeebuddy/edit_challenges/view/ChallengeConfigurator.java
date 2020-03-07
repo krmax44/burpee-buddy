@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,6 +51,7 @@ public class ChallengeConfigurator {
     private TextInputEditText secondsEdit;
     private TextInputEditText repsOrMinutesEdit;
 
+    private ImageView x;
     private TextView intervalText;
 
     private Context context;
@@ -96,6 +98,7 @@ public class ChallengeConfigurator {
         repsOrMinutesEdit = v.findViewById(R.id.reps_or_minutes);
         secondsLayout = v.findViewById(R.id.seconds_layout);
         secondsEdit = v.findViewById(R.id.seconds);
+        x = v.findViewById(R.id.cross);
         intervalText = v.findViewById(R.id.interval_text);
     }
 
@@ -121,6 +124,7 @@ public class ChallengeConfigurator {
 
                     listener.toggleState(false);
                     daysLayout.setVisibility(View.GONE);
+                    x.setVisibility(View.GONE);
                     repsOrMinutesLayout.setVisibility(View.GONE);
                     secondsLayout.setVisibility(View.GONE);
                     intervalText.setVisibility(View.GONE);
@@ -131,6 +135,7 @@ public class ChallengeConfigurator {
                             challenge.exerciseName = e.name;
 
                             daysLayout.setVisibility(View.VISIBLE);
+                            x.setVisibility(View.VISIBLE);
                             repsOrMinutesLayout.setVisibility(View.VISIBLE);
                             intervalText.setVisibility(View.VISIBLE);
                             if (e.type != ExerciseType.TIME_BASED ) {

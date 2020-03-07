@@ -21,8 +21,7 @@ public class LauncerActivity extends AppCompatActivity {
     public void onCreate(Bundle b){
         super.onCreate(b);
 
-        //TODO:
-        if(true) {//SettingsHelper.isFirstRun()) {
+        if(SettingsHelper.isFirstRun()) {
             AppDatabase.getDatabase(getApplicationContext());
             AppDatabase.populateExercises(getApplicationContext());
             SettingsHelper.setIsFirstRun(false);
@@ -30,6 +29,7 @@ public class LauncerActivity extends AppCompatActivity {
             startActivityForResult(i, REQUEST_CODE_INTRO);
         } else {
             startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
     }
 
@@ -45,6 +45,7 @@ public class LauncerActivity extends AppCompatActivity {
                 }
             });
             startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
     }
 }
