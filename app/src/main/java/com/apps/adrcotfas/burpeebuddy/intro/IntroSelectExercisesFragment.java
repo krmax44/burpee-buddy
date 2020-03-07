@@ -75,4 +75,9 @@ public class IntroSelectExercisesFragment extends SlideFragment {
     public boolean canGoForward() {
         return numExercises > 0;
     }
+
+    @Override
+    public boolean canGoBackward() {
+        return false;
+    }
 }
