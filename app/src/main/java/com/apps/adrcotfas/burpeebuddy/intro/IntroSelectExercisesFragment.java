@@ -24,7 +24,7 @@ public class IntroSelectExercisesFragment extends SlideFragment {
     private ChipGroup exercisesChipGroup;
     private MaterialButton continueButton;
 
-    private static int numExercises = 0;
+    public static int numExercises = 0;
 
     public IntroSelectExercisesFragment() {}
 

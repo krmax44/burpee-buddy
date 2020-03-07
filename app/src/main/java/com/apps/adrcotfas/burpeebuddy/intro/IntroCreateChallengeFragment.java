@@ -52,6 +52,8 @@ public class IntroCreateChallengeFragment extends SlideFragment implements Chall
         saveButton.setOnClickListener(v1 -> {
             AppDatabase.addChallenge(getContext(), challengeConfigurator.getChallenge());
             nextSlide();
+            //TODO: clean-up this
+            IntroSelectExercisesFragment.numExercises = 0;
         });
 
         reminderContainer = v.findViewById(R.id.reminder_container);
