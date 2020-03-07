@@ -24,7 +24,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".intro.LauncerActivity"
+            android:name=".intro.LauncherActivity"
             android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait"
             android:noHistory="true">

@@ -13,7 +13,7 @@ import com.apps.adrcotfas.burpeebuddy.settings.SettingsHelper;
 
 import java.util.List;
 
-public class LauncerActivity extends AppCompatActivity {
+public class LauncherActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_INTRO = 123;
 
@@ -25,7 +25,7 @@ public class LauncerActivity extends AppCompatActivity {
             AppDatabase.getDatabase(getApplicationContext());
             AppDatabase.populateExercises(getApplicationContext());
             SettingsHelper.setIsFirstRun(false);
-            Intent i = new Intent(LauncerActivity.this, MainIntroActivity.class);
+            Intent i = new Intent(LauncherActivity.this, MainIntroActivity.class);
             startActivityForResult(i, REQUEST_CODE_INTRO);
         } else {
             startActivity(new Intent(this, MainActivity.class));
