@@ -33,7 +33,7 @@ public class NotificationHelper extends ContextWrapper {
                 BuddyApplication.getNavigationIntent(context, R.id.workoutFragment);
 
         mBuilder = new NotificationCompat.Builder(this, BUDDY_NOTIFICATION)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_goals)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentIntent(pendingIntent)
