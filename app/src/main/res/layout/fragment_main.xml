@@ -59,7 +59,7 @@
             android:fontFamily="@font/source_sans_lite_"
             android:layout_centerVertical="true"
             android:textSize="@dimen/regular_text_size"
-            android:text="Exercises"/>
+            android:text="Exercise"/>
 
         <include layout="@layout/button_edit"
             android:id="@+id/button_edit_exercises"
@@ -110,7 +110,7 @@
             android:textSize="@dimen/regular_text_size"
             android:fontFamily="@font/source_sans_lite_"
             android:layout_centerVertical="true"
-            android:text="Goals"
+            android:text="Goal"
             />
         <!--            TODO: use this later-->
         <LinearLayout
