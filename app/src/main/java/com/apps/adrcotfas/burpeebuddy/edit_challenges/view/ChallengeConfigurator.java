@@ -244,10 +244,11 @@ public class ChallengeConfigurator {
                     listener.toggleState(false);
                 } else {
                     try {
+                        int seconds = Integer.valueOf(s.toString());
                         if (Integer.valueOf(s.toString()) > 60 ) {
                             secondsEdit.setText(String.valueOf(60));
+                            seconds = 60;
                         }
-                        int seconds = Integer.valueOf(s.toString());
                         final String minutes = repsOrMinutesEdit.getText().toString().equals("")
                                 ? "0"
                                 : repsOrMinutesEdit.getText().toString();
