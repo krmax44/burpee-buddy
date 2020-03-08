@@ -24,7 +24,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/goal_chip"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:chipBackgroundColor="@color/colorPrimaryDark"
+            android:clickable="false"/>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/goal_chip"
@@ -33,7 +35,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/exercise_chip" />
+            app:layout_constraintStart_toEndOf="@+id/exercise_chip"
+            app:chipBackgroundColor="@color/colorPrimaryDark"
+            android:clickable="false"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
