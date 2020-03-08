@@ -56,6 +56,8 @@ public class WorkoutViewImpl extends BaseObservableView<WorkoutView.Listener>
 
     private LinearLayout mStatsContainer;
     private ScrollView mStatsScrollView;
+    private TextView advice;
+
     private List<SetViewRow> mStatRowViews;
 
     private boolean mIsTimeBased;
@@ -68,6 +70,8 @@ public class WorkoutViewImpl extends BaseObservableView<WorkoutView.Listener>
         final Chip goalChip = findViewById(R.id.goal_chip);
         exerciseChip.setText(getWorkout().getExerciseName());
         goalChip.setText(getWorkout().getGoalName());
+        advice = findViewById(R.id.advice);
+        advice.setVisibility(getWorkout().getExerciseType() == ExerciseType.COUNTABLE ? View.VISIBLE : View.GONE);
 
         mIsTimeBased = getWorkout().getExerciseType() == ExerciseType.TIME_BASED;
         setupStats();
