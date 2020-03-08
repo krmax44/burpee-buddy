@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/container"
-            android:text="Buddy will help you\n• automatically count burpees or push-ups\n• track your exercises and challenges\n• create a habit of exercising daily\n• transform your body"
+            android:text="Buddy will help you\n\n• automatically count burpees or push-ups\n• track your exercises and challenges\n• create a habit of exercising daily\n• transform your body"
             android:textSize="@dimen/regular_text_size" />
 
         <ImageView
@@ -39,7 +39,7 @@
             android:layout_width="160dp"
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="100dp"/>
+            android:layout_marginTop="64dp"/>
 
     </LinearLayout>
 
