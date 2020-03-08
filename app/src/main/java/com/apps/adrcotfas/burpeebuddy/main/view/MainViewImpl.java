@@ -179,14 +179,15 @@ public class MainViewImpl extends BaseObservableView<MainView.Listener>
 
     @Override
     public void showIntroduction() {
-        if (SettingsHelper.showStartSnack()) {
-            Snackbar snackbar = Snackbar
-                    .make(mCoordinatorLayout, getContext().getString(R.string.snack_avoid_clicks),
-                            Snackbar.LENGTH_INDEFINITE)
-                    .setAction(getContext().getString(android.R.string.ok),
-                            view -> SettingsHelper.setShowStartSnack(false));
-            snackbar.show();
-        }
+        //TODO: improve this later
+//        if (SettingsHelper.showStartSnack()) {
+//            Snackbar snackbar = Snackbar
+//                    .make(mCoordinatorLayout, getContext().getString(R.string.snack_avoid_clicks),
+//                            Snackbar.LENGTH_INDEFINITE)
+//                    .setAction(getContext().getString(android.R.string.ok),
+//                            view -> SettingsHelper.setShowStartSnack(false));
+//            snackbar.show();
+//        }
     }
 
     @Override
