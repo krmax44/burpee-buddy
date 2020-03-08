@@ -5,10 +5,10 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "com.adrcotfas.burpeebuddy"
+        applicationId "com.apps.adrcotfas.burpeebuddy"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
+        versionCode 2
         versionName "0.9"
     }
     buildTypes {
