@@ -2,11 +2,16 @@ package com.apps.adrcotfas.burpeebuddy.main;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
@@ -16,8 +21,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.apps.adrcotfas.burpeebuddy.BuildConfig;
 import com.apps.adrcotfas.burpeebuddy.R;
 import com.apps.adrcotfas.burpeebuddy.common.Events;
+import com.apps.adrcotfas.burpeebuddy.common.utilities.DeviceInfo;
 import com.apps.adrcotfas.burpeebuddy.db.AppDatabase;
 import com.apps.adrcotfas.burpeebuddy.db.exercise.Exercise;
 import com.apps.adrcotfas.burpeebuddy.intro.MainIntroActivity;
@@ -34,7 +41,8 @@ import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
     private static final int REQUEST_CODE_INTRO = 123;
@@ -43,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private NavController navController;
 
     private KonfettiView mKonfetti;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         mKonfetti = findViewById(R.id.viewKonfetti);
 
         NavHostFragment fragment = (NavHostFragment)
@@ -75,9 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             }
         });
-
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
     }
 
     private void setupFirstRun() {
@@ -141,5 +149,31 @@ public class MainActivity extends AppCompatActivity {
             });
             startActivity(new Intent(this, MainActivity.class));
         }
+    }
+
+    private void openFeedback() {
+        Intent email = new Intent(Intent.ACTION_SENDTO);
+        email.setData(new Uri.Builder().scheme("mailto").build());
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"burpee-buddy@googlegroups.com"});
+        email.putExtra(Intent.EXTRA_SUBJECT, "[Burpee Buddy] Feedback");
+        email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo()
+                + "\nApp version: " + BuildConfig.VERSION_NAME);
+        try {
+            startActivity(Intent.createChooser(email, "Send feedback"));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(this, "There are no email clients installed.",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.feedback) {
+            openFeedback();
+        } else {
+            NavigationUI.onNavDestinationSelected(item, navController);
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 }
