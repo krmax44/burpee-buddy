@@ -14,7 +14,7 @@ public class SoundPlayer extends ContextWrapper {
 
     public void play(int sound) {
         AudioAttributes attributes = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build();
         SoundPool soundPool = new SoundPool.Builder()
